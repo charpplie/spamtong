@@ -3,7 +3,6 @@
     "dev": "ts-node main.ts"
   },
   "dependencies": {
-    "@types/node": "^18.11.17",
     "axios": "^0.24.0",
     "discord.js": "^13.6.0",
     "ts-node": "^10.6.0",
