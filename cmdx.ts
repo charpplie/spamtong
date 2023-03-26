@@ -1,57 +1,52 @@
-import fs, { Dirent } from 'fs'
+import path from 'path'
+import { promises as fs } from 'fs'
+import type { Client, Message } from 'discord.js'
 
-async function __CGetComFiles(_dir: string) {
-    const files: Dirent[] = fs.readdirSync(_dir, {
-        withFileTypes: true,
-    })
-
-    let src_files: string[] = []
-
-    for (const file of files) {
-        if (file.isDirectory()) src_files = [...src_files, ... await __CGetComFiles(`${_dir}/${file.name}`)]
-        else if (file.name.endsWith('.ts')) {
-            let file_name: string | string[] = file.name.replace(/\\/g, '/').split('/')
-            file_name = file_name[file_name.length - 1]
-            file_name = file_name.split('.')[0].toLowerCase()
-
-            src_files.push(`${_dir}/${file.name}`)
-        }
-    }
-
-    return src_files
+async function getCommandFilePaths(dirPath: string): Promise<string[]> {
+  try {
+    const dirEntries = await fs.readdir(dirPath, { withFileTypes: true })
+    const filePaths = await Promise.all(
+      dirEntries.map(async (dirEntry) => {
+        const resPath = path.resolve(dirPath, dirEntry.name)
+        return dirEntry.isDirectory()
+          ? getCommandFilePaths(resPath)
+          : resPath
+      })
+    )
+    return filePaths.flat()
+  } catch (error) {
+    console.error(`Error getting command file paths: ${error}`)
+    return []
+  }
 }
 
-import { Client } from 'discord.js'
+export default async function setupCommands(client: Client) {
+  const commandsByName: Record<string, any> = {}
 
-export default async (client: Client) => {
-    const commands = {} as {
-        [key: string]: any,
+  const commandFilePaths = await getCommandFilePaths('./commands')
+
+  for (const filePath of commandFilePaths) {
+    try {
+      const { default: command } = await import(filePath)
+      const commandName = path.basename(filePath, path.extname(filePath)).toLowerCase()
+      commandsByName[commandName] = command
+    } catch (error) {
+      console.error(`Error importing command from file ${filePath}: ${error}`)
     }
+  }
 
-    const command_files = await __CGetComFiles('./commands')
+  client.on('messageCreate', async (message: Message) => {
+    if (message.author.bot || !message.content.startsWith('!')) return
 
-    for (const command of command_files) {
-        let command_file = require(command)
-        if (command_file.default) command_file = command_file.default
+    const [commandName, ...args] = message.content.slice(1).split(/ +/)
 
-        const split = command.replace(/\\/g, '/').split('/')
-        const command_name = split[split.length - 1].replace('.ts', '')
+    const command = commandsByName[commandName.toLowerCase()]
+    if (!command) return
 
-        commands[command_name.toLowerCase()] = command_file
+    try {
+      await command.callback(message, ...args)
+    } catch (error) {
+      console.error(`Error executing command ${commandName}: ${error}`)
     }
-
-    client.on('messageCreate', async (message) => {
-        if (message.author.bot || !message.content.startsWith('!')) return
-
-        const args = message.content.slice(1).split(/ +/)
-        const command_name = args.shift()!.toLowerCase()
-
-        if (!commands[command_name]) return
-
-        try {
-            await commands[command_name].callback(message, ...args)
-        } catch (why) {
-            console.error(why)
-        }
-    })
+  })
 }
