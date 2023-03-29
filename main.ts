@@ -1,9 +1,9 @@
-import { Client, Intents } from 'discord.js'
+import { Client, IntentsBitField } from 'discord.js'
 
 const client = new Client({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
+        IntentsBitField.Flags.Guilds,
+        IntentsBitField.Flags.GuildMessages,
     ],
 })
 
@@ -13,4 +13,4 @@ client.once('ready', async () => {
     await handler(client)
 })
 
-client.login('OTEyMzI2ODI4NTc0NzczMjk5.GYMM8f.UsTu1cZW4-_ZUfBkOyvYiVWh4GuwIPlUJM5L_U')
+client.login('OTEyMzI2ODI4NTc0NzczMjk5.GZ-IY2.GtqmexqMrirArlJc9Mt0xbSj1Z6lZa0de-PBiE')
