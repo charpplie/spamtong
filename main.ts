@@ -1,13 +1,13 @@
-import { Client, IntentsBitField } from 'discord.js'
+import { Client, Events, GatewayIntentBits } from 'discord.js'
 
 const client = new Client({
     intents: [
-        IntentsBitField.Flags.Guilds,
-        IntentsBitField.Flags.GuildMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
     ],
 })
 
-client.once('ready', async () => {
+client.once(Events.ClientReady, async () => {
     let handler = require('./cmdx.ts')
     if (handler.default) handler = handler.default
     await handler(client)
