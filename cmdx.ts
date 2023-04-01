@@ -1,6 +1,6 @@
-import path from 'path'
 import fs from 'fs'
-import type { Client, Message } from 'discord.js'
+import path from 'path'
+import { Client, Message } from 'discord.js'
 import winston, { createLogger } from 'winston'
 import { format } from 'logform'
 
