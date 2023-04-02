@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "ts-node src/main.ts"
+    "dev": "ts-node main.ts"
   },
   "dependencies": {
     "@discordjs/rest": "^1.7.0",
