@@ -25,7 +25,7 @@ const command: ISlashCommand = {
         const chatContent = chatResult.data.choices[0].message?.content
   
         if (!chatContent) {
-          await interaction.reply('<:poel:955585430596771890>')
+          await interaction.editReply('<:poel:955585430596771890>')
           return
         }
 
@@ -35,7 +35,7 @@ const command: ISlashCommand = {
           await interaction.editReply(chatContent)
         }
       } catch (why) {
-        await interaction.reply('<:poel:955585430596771890>')
+        await interaction.editReply('<:poel:955585430596771890>')
       }
     },
     cooldown: 5
