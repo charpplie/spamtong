@@ -1,16 +1,31 @@
-import { Client, Events, GatewayIntentBits } from 'discord.js'
+import 'dotenv/config'
+import { Client, GatewayIntentBits, Collection, Events } from 'discord.js'
+import { ISlashCommand } from './types'
 
 const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-    ],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.DirectMessageTyping,
+    GatewayIntentBits.DirectMessageReactions,
+    GatewayIntentBits.MessageContent,
+  ],
+  shards: 'auto',
 })
 
-client.once(Events.ClientReady, async () => {
-    let handler = require('./cmdx.ts')
-    if (handler.default) handler = handler.default
-    await handler(client)
+client.slashCommands = new Collection<string, ISlashCommand>()
+client.cooldowns = new Collection<string, number>()
+
+client.once(Events.ClientReady, async c => {
+  let handler = require('./cmdx')
+  if (handler.default) handler = handler.default
+  await handler(c)
 })
 
-client.login('OTEyMzI2ODI4NTc0NzczMjk5.GZ-IY2.GtqmexqMrirArlJc9Mt0xbSj1Z6lZa0de-PBiE')
+client.login(process.env.token)
