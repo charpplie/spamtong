@@ -6,7 +6,7 @@ const openai = new OpenAIApi(new Configuration({ apiKey: 'sk-KW1H2577RsOCdXr91rc
 
 const command: ISlashCommand = {
     command: new SlashCommandBuilder()
-      .setName('ask')
+      .setName('s_ask')
       .setDescription('chatgpt-3.5-turbo')
       .addStringOption(option =>
         option.setName('request')
@@ -24,7 +24,7 @@ const command: ISlashCommand = {
         const chatContent = chatResult.data.choices[0].message?.content
   
         if (!chatContent) {
-          interaction.reply('<:poel:955585430596771890>')
+          await interaction.reply('<:poel:955585430596771890>')
           return
         }
 
@@ -48,7 +48,6 @@ async function sendLongMessage(interaction: CommandInteraction, content: string)
     const chunk = chunks[i]
     await interaction.reply({
       content: chunk,
-      ephemeral: true,
     })
   }
 }
