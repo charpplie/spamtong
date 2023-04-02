@@ -14,6 +14,7 @@ const command: ISlashCommand = {
           .setRequired(true)
           ),
     execute: async interaction => {
+      await interaction.deferReply()
       try {
         let request = interaction.options.get('request')
         const chatResult = await openai.createChatCompletion({
@@ -31,7 +32,7 @@ const command: ISlashCommand = {
         if (chatContent.length > 2000) {
           await sendLongMessage(interaction, chatContent)
         } else {
-          await interaction.reply(chatContent)
+          await interaction.editReply(chatContent)
         }
       } catch (why) {
         await interaction.reply('<:poel:955585430596771890>')
@@ -46,7 +47,7 @@ async function sendLongMessage(interaction: CommandInteraction, content: string)
 
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i]
-    await interaction.reply({
+    await interaction.editReply({
       content: chunk,
     })
   }
