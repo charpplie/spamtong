@@ -1,19 +1,13 @@
 import 'dotenv/config'
-import { Client, GatewayIntentBits, Collection, Events } from 'discord.js'
-import { ISlashCommand } from './types'
+import { Client, GatewayIntentBits, Collection, Events, ActivityType } from 'discord.js'
+import type { ISlashCommand } from './types'
 
-const client = new Client({
+export const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildInvites,
     GatewayIntentBits.GuildPresences,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildMessageTyping,
-    GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.DirectMessageTyping,
-    GatewayIntentBits.DirectMessageReactions,
     GatewayIntentBits.MessageContent,
   ],
   shards: 'auto',
@@ -23,8 +17,7 @@ client.slashCommands = new Collection<string, ISlashCommand>()
 client.cooldowns = new Collection<string, number>()
 
 client.once(Events.ClientReady, async c => {
-  let handler = require('./cmdx')
-  if (handler.default) handler = handler.default
+  const handler = (await import('./cmdx')).default
   await handler(c)
 })
 
@@ -33,12 +26,14 @@ const reactions = [
 ]
 
 client.on(Events.MessageCreate, async msg => {
-  if (msg.channel.id == '1004117985830649976') {
-    if (msg.attachments.size > 0) {
-      for (let i = 0; i < reactions.length; i++) {
-        msg.react(reactions[i])
-      }
+  if (msg.channel.id === '1004117985830649976' && msg.attachments.size > 0) {
+    for (const reaction of reactions) {
+      await msg.react(reaction)
     }
+  }
+
+  if (msg.channel.id === '659767822917959702' && msg.author.id === '159985870458322944') {
+    await msg.channel.send('https://media.discordapp.net/attachments/735082107713355796/1089239410597441607/x7B.gif')
   }
 })
 
