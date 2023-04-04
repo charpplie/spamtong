@@ -1,6 +1,5 @@
 import 'dotenv/config'
-import { Client, SlashCommandBuilder, Routes, Interaction, Events } from 'discord.js'
-import { REST } from '@discordjs/rest'
+import { Client, SlashCommandBuilder, Routes, REST, Interaction, Events } from 'discord.js'
 import { ISlashCommand } from './types'
 import { readdirSync } from 'fs'
 import { join } from 'path'
@@ -40,7 +39,7 @@ export default async function(client: Client) {
     if (!command) return
 
     try {
-      await command.execute(interaction)
+      command.execute(interaction)
     } catch (error) {
       console.error(error)
       await interaction.reply({ content: 'An error occurred while executing the command', ephemeral: true })
