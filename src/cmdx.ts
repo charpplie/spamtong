@@ -1,10 +1,12 @@
+// Copyright (C) Thawnezilla 2023
+
 import 'dotenv/config'
-import { Client, SlashCommandBuilder, Routes, REST, Interaction, Events } from 'discord.js'
-import { ISlashCommand } from './types'
+import { SlashCommandBuilder, Routes, REST, Interaction, Events } from 'discord.js'
+import { CustomClient, ISlashCommand } from './types'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 
-export default async function(client: Client) {
+export default async function(client: CustomClient) {
   const slashCommands: SlashCommandBuilder[] = []
 
   const slashCommandsDir = join(__dirname, './commands')
