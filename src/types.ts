@@ -9,6 +9,6 @@ export interface ISlashCommand {
 }
 
 export class CustomClient extends Client {
-  public slashCommands: Readonly<Collection<string, ISlashCommand>>
-  public cooldowns: Readonly<Collection<string, number>>
+  public slashCommands!: Readonly<Collection<string, ISlashCommand>>
+  public cooldowns!: Readonly<Collection<string, number>>
 }
