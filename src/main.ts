@@ -1,5 +1,3 @@
-// Copyright (C) Thawnezilla 2023
-
 import 'dotenv/config'
 import { GatewayIntentBits, Collection, Events } from 'discord.js'
 import { CustomClient, ISlashCommand } from './types'
@@ -16,7 +14,6 @@ const client = new CustomClient({
 })
 
 client.slashCommands = new Collection<string, ISlashCommand>()
-client.cooldowns = new Collection<string, number>()
 
 client.once(Events.ClientReady, async () => {
   const handler = (await import('./cmdx')).default
