@@ -1,5 +1,3 @@
-// Copyright (C) Thawnezilla 2023
-
 import 'dotenv/config'
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js'
 import { ISlashCommand } from '../types'
@@ -50,7 +48,6 @@ const command: ISlashCommand = {
         ]
       })
     } catch (error) {
-      console.error(error)
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError
         if (axiosError.response?.statusText == 'Bad Request') {
@@ -61,6 +58,7 @@ const command: ISlashCommand = {
           await interaction.deleteReply()
         }
       } else {
+        console.error(error)
         await interaction.editReply({
           content: 'An unexpected error ocurred. Please try again later.\nThis message will be deleted in 5 seconds.'
         })
@@ -68,8 +66,7 @@ const command: ISlashCommand = {
         await interaction.deleteReply()
       }
     }
-  },
-  cooldown: 5
+  }
 }
 
 export default command
