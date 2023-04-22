@@ -1,8 +1,13 @@
 import 'dotenv/config'
 
-import { GatewayIntentBits, Collection, Events } from 'discord.js'
-import { CustomClient, SlashCommand } from './types'
-import { ppSlashCommandHandler } from './cmdx'
+import { SlashCommandBuilder, CommandInteraction, Client, Collection, GatewayIntentBits, Events } from 'discord.js'
+
+export interface SlashCommand {
+  command: SlashCommandBuilder | any
+  execute: (interaction: CommandInteraction) => void
+}
+
+export class CustomClient extends Client { public slashCommands!: Readonly<Collection<string, SlashCommand>> }
 
 const client = new CustomClient({
   intents: [
@@ -18,7 +23,8 @@ const client = new CustomClient({
 client.slashCommands = new Collection<string, SlashCommand>()
 
 client.once(Events.ClientReady, async () => {
-  await ppSlashCommandHandler(client)
+  const handler = (await import('./cmdx')).default
+  await handler(client)
 })
 
 client.login(process.env.token)
