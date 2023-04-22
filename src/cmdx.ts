@@ -1,20 +1,14 @@
 import 'dotenv/config'
 
 import type { SlashCommandBuilder, Interaction } from 'discord.js'
-import type { CustomClient, SlashCommand } from './types'
+import type { CustomClient, SlashCommand } from './main'
 
 import { REST, Routes, Events } from 'discord.js'
 
 import { readdir, lstat } from 'fs/promises'
 import { join } from 'path'
 
-/**
- * Registers slash commands to a Discord bot.
- *
- * @param client The Discord bot client instance.
- * @param dir The directory containing the slash command files ("./commands" by default).
- */
-export async function ppSlashCommandHandler(client: CustomClient, dir = 'commands') {
+export default async function(client: CustomClient, dir = 'commands') {
   const slashCommandsDir = join(__dirname, dir)
 
   const slashCommands: SlashCommandBuilder[] = []
