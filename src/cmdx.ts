@@ -8,7 +8,7 @@ import { REST, Routes, Events } from 'discord.js'
 import { readdir, lstat } from 'fs/promises'
 import { join } from 'path'
 
-export default async function(client: CustomClient, dir = 'commands') {
+export async function ppSlashCommandHandler(client: CustomClient, dir = 'commands') {
   const slashCommandsDir = join(__dirname, dir)
 
   const slashCommands: SlashCommandBuilder[] = []
