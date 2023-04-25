@@ -5,12 +5,19 @@ import type { CustomClient, SlashCommand } from './main'
 
 import { REST, Routes, Events } from 'discord.js'
 
-import { readdir, lstat } from 'fs/promises'
+import { readdir, lstat, access } from 'fs/promises'
 import { join } from 'path'
 
 export async function ppSlashCommandHandler(client: CustomClient, dir = 'commands') {
   const slashCommandsDir = join(__dirname, dir)
 
+  try {
+    await access(slashCommandsDir)
+  } catch (why) {
+    console.error(`${slashCommandsDir} doesn't exist`)
+    return
+  }
+  
   const slashCommands: SlashCommandBuilder[] = []
 
   async function readSlashCommands(directoryPath: string) {
@@ -29,8 +36,8 @@ export async function ppSlashCommandHandler(client: CustomClient, dir = 'command
 
       try {
         commandFile = await import(filePath)
-      } catch (err) {
-        console.error(`Error importing ${file}: ${err}`)
+      } catch (why) {
+        console.error(`Error importing ${file}: ${why}`)
         continue
       }
 
@@ -54,7 +61,7 @@ export async function ppSlashCommandHandler(client: CustomClient, dir = 'command
       body: slashCommands,
     })
     console.log(`Successfully loaded ${slashCommands.length} slash commands`)
-  } catch (err) { console.error(`Error loading slash commands: ${err}`) }
+  } catch (why) { console.error(`Error loading slash commands: ${why}`) }
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
     if (!interaction.isCommand()) return
