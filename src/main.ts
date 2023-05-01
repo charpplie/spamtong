@@ -17,7 +17,7 @@ client.slashCommands = new Collection<string, SlashCommand>()
 client.cooldowns = new Collection<string, number>()
 
 ;(async () => {
-  console.log('Hello from CI/CD!')
+  console.log('Hello from CI/CD')
   await ppSlashCommandHandler(client)
   await ppEventHandler(client)
 })()
