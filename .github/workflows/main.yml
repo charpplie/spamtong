@@ -1,0 +1,13 @@
+name: CI/CD Workflow
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: manjaro-latest
+    steps:
+      - name: Build and run
+        run: |
+          npm install
+          npm run dev
