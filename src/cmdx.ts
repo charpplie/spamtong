@@ -123,7 +123,7 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
     if (command.isOwnerOnly && interaction.user.id != '783443296382746672') return
 
     try {
-      command.execute(interaction)
+      command.callback(interaction)
     } catch (error) { console.error(`Error executing slash command ${command.data.name}: ${error}`) }
   })
 }
@@ -157,13 +157,13 @@ export async function ppEventHandler(client: CustomClient, dirs: string[] = ['ev
           if (event.once) {
             client.once(event.name, async (...args: any[]) => {
               try {
-                event.execute(...args)
+                event.callback(...args)
               } catch (error) { console.error(`Error executing event ${event.name}: ${error}`) }
             })
           } else {
             client.on(event.name, async (...args: any[]) => {
               try {
-                event.execute(...args)
+                event.callback(...args)
               } catch (error) { console.error(`Error executing event ${event.name}: ${error}`) }
             })
           }
