@@ -2,7 +2,7 @@ import { SlashCommandBuilder, CommandInteraction, Client, Collection, GuildMembe
 
 export interface SlashCommand {
   data: SlashCommandBuilder | any
-  execute: (interaction: CommandInteraction) => void,
+  callback: (interaction: CommandInteraction) => void,
   cooldown?: string,
   isOwnerOnly?: boolean | false
 }
@@ -10,7 +10,7 @@ export interface SlashCommand {
 export interface IEvent {
   name: string,
   once?: boolean | false,
-  execute: (...args: any) => void,
+  callback: (...args: any) => void,
 }
 
 export class CustomClient extends Client {
