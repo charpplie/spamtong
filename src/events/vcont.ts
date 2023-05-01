@@ -11,6 +11,7 @@ export default {
         interaction.react('3️⃣')
         interaction.react('4️⃣')
         interaction.react('5️⃣')
+        interaction.reply('hello from cicd')
       }
     }
   }
