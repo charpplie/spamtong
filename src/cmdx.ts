@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-import { CustomClient, IEvent, SlashCommand, CEvents, ISlashCommandHandlerOptions } from './comx'
+import { CustomClient, IEvent, SlashCommand, CEvents } from './comx'
 import { SlashCommandBuilder, Interaction, Collection } from 'discord.js'
 
 import { REST, Routes } from 'discord.js'
@@ -8,7 +8,7 @@ import { REST, Routes } from 'discord.js'
 import { readdir, lstat, access } from 'fs/promises'
 import { join } from 'path'
 
-export async function ppSlashCommandHandler(client: CustomClient, options: ISlashCommandHandlerOptions): Promise<void> {
+export async function ppSlashCommandHandler(client: CustomClient, dirs: string[] = ['commands']): Promise<void> {
   const slashCommands: SlashCommandBuilder[] = []
 
   async function readSlashCommands(directoryPath: string) {
@@ -44,7 +44,7 @@ export async function ppSlashCommandHandler(client: CustomClient, options: ISlas
     }
   }
 
-  for (const dir of options.commandsDir) {
+  for (const dir of dirs) {
     const slashCommandsDir = join(__dirname, dir)
 
     try {
@@ -119,17 +119,8 @@ export async function ppSlashCommandHandler(client: CustomClient, options: ISlas
     timestamps.set(interaction.user.id, now)
     setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount)
 
-    if (command.isOwnerOnly && !options.ownerId) {
-      console.error(`[${command.data.name}] The command has an isOwnerOnly field, but the owner identifier is not specified. The command will not be executed.`)
-      return
-    }
 
-    if (command.isOwnerOnly && !options.ownerId?.includes(interaction.user.id)) {
-      interaction.reply({
-        content: 'This command can only be used by the owner(s)',
-        ephemeral: true,
-      })
-    }
+    if (command.isOwnerOnly && interaction.user.id != '783443296382746672') return
 
     try {
       command.execute(interaction)
