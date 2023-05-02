@@ -1,16 +1,30 @@
 import { IEvent, CEvents } from '../comx'
 
+const reactions = [
+  '1️⃣',
+  '2️⃣',
+  '3️⃣',
+  '4️⃣',
+  '5️⃣',
+]
+
 export default {
   name: CEvents.MessageCreate,
   once: false,
   callback: async (interaction) => {
     if (interaction.channel.id == '1004117985830649976') {
       if (interaction.attachments.size > 0) {
-        interaction.react('1️⃣')
-        interaction.react('2️⃣')
-        interaction.react('3️⃣')
-        interaction.react('4️⃣')
-        interaction.react('5️⃣')
+        for (let i = 0; i < interaction.attachments.size; i++) {
+          if (interaction.attachments.at(i)?.contentType?.substring(0, Number((interaction.attachments.at(i)?.contentType)?.indexOf('/'))) == 'video') {
+            if (interaction.id != null) {
+              for (let j = 0; j < reactions.length; j++) {
+                interaction.react(reactions[j])
+              }
+            } else {
+              return
+            }
+          }
+        }
       }
     }
   }
