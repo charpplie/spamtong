@@ -114,7 +114,7 @@ export enum CEvents {
     Hungarian = "hu",
     Italian = "it",
     Japanese = "ja",
-    Korean = "ko",
+    Korean = "ko", 
     Lithuanian = "lt",
     Norwegian = "no",
     Polish = "pl",
