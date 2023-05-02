@@ -123,7 +123,7 @@ export enum CEvents {
     Russian = "ru",
     SpanishES = "es-ES", 
     Swedish = "sv-SE",
-    Thai = "th",
+    Thai = "th", 
     Turkish = "tr",
     Ukrainian = "uk",
     Vietnamese = "vi"
