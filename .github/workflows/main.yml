@@ -7,11 +7,11 @@ on:
 
 jobs:
   build:
+    name: Build and run
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - name: Build and run
       - run: |
           npm install
           npm run dev
