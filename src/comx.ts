@@ -121,7 +121,7 @@ export enum CEvents {
     PortugueseBR = "pt-BR",
     Romanian = "ro",
     Russian = "ru",
-    SpanishES = "es-ES",
+    SpanishES = "es-ES", 
     Swedish = "sv-SE",
     Thai = "th",
     Turkish = "tr",
