@@ -21,4 +21,4 @@ jobs:
       - uses: actions/setup-node@v3
 
       - name: Deploy
-        run: cd /home/charlie/actions-runner/_work/spamtong/spamtong && nohup npm run dev > /dev/null 2>&1 &
+        run: cd /home/charlie/actions-runner/_work/spamtong/spamtong && nohup npm run dev
