@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v3
 
       - name: Install nohup
-        run: sudo pacman -Sy --noconfirm coreutils nohup
+        run: sudo pacman -Sy --noconfirm nohup
 
       - name: Run npm install & npm run
         run: cd /home/charlie/actions-runner/_work/spamtong/spamtong && chmod +x deploy.sh && ./deploy.sh
