@@ -3,6 +3,6 @@
 cd /home/charlie/actions-runner/_work/spamtong/spamtong
 npm run dev &
 
-sleep 5
+sleep 60
 
 exit 0
