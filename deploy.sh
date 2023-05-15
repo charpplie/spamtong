@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pkill node
+
 sudo pacman -Sy --noconfirm coreutils nohup disown
 
 cd /home/charlie/actions-runner/_work/spamtong/spamtong
