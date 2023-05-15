@@ -30,4 +30,4 @@ jobs:
         run: sleep 60
         
       - name: Finish GitHub ACtions
-        run: kill ${cat project_pid} || true
+        run: kill "${cat project_pid}" || true
