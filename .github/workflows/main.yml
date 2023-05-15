@@ -20,5 +20,6 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - run: |
+          sudo pacman -Sy --noconfirm coreutils nohup
           npm install
           cd /home/charlie/actions-runner/_work/spamtong/spamtong && chmod +x deploy.sh && ./deploy.sh
