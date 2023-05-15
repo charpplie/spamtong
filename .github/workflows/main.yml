@@ -23,11 +23,11 @@ jobs:
       - name: Install Node dependencies
         run: npm install
       
-      - name: Run Node project
-        run: npm run dev > /dev/null 2>&1 & echo $! > project_pid
-        
-      - name: Wait for project to start
-        run: sleep 60
+      - name: Run Node project with PM2
+        run: |
+          npm i pm2 -g
+          pm2 start src/main.ts --name spamtong
+          pm2 save
         
       - name: Finish GitHub ACtions
-        run: killall npm || true
+        run: exit 0
