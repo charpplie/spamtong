@@ -21,4 +21,4 @@ jobs:
       - uses: actions/setup-node@v3
       - run: |
           npm install
-          cd /home/charlie/actions-runner/_work/spamtong/spamtong && ./deploy.sh
+          cd /home/charlie/actions-runner/_work/spamtong/spamtong && chmod +x deploy.sh && ./deploy.sh
