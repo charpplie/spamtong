@@ -1,8 +1,6 @@
 #!/bin/bash
 
 cd /home/charlie/actions-runner/_work/spamtong/spamtong
-npm run dev &
-
-sleep 60
+nohup npm run dev > /dev/null 2>&1 &
 
 exit 0
