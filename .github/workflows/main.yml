@@ -21,4 +21,4 @@ jobs:
       - uses: actions/setup-node@v3
 
       - name: Deploy
-        run: cd /home/charlie/actions-runner/_work/spamtong/spamtong && nohup npm install && nohup npm run dev
+        run: cd /home/charlie/actions-runner/_work/spamtong/spamtong && npm install && tmux new-session -d -s mysession 'npm run dev'
