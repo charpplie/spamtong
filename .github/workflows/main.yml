@@ -19,3 +19,4 @@ jobs:
       - uses: actions/setup-node@v3
       - run: |
           npm install
+          ssh charlie@charlie "cd /home/charlie/actions-runner/_work/spamtong/spamtong && npm run start"
