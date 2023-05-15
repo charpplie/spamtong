@@ -19,9 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      
-      - name: Install dependencies
-        run: sudo pacman -Sy --noconfirm tmux
   
       - name: Deploy
         run: cd /home/charlie/actions-runner/_work/spamtong/spamtong && npm install && tmux new-session -d -s mysession 'npm run dev'
