@@ -1,0 +1,21 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches: master
+  pull_request:
+    branches: master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and run
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: |
+          npm install
