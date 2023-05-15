@@ -19,7 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: |
-          sudo pacman -Sy --noconfirm coreutils nohup
-          npm install
-          cd /home/charlie/actions-runner/_work/spamtong/spamtong && chmod +x deploy.sh && ./deploy.sh
+
+      - name: Install nohup
+        run: sudo pacman -Sy --noconfirm coreutils nohup
+
+      - name: Run npm install & npm run
+        run: cd /home/charlie/actions-runner/_work/spamtong/spamtong && chmod +x deploy.sh && ./deploy.sh
