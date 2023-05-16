@@ -1,7 +1,7 @@
 import { SlashCommand } from '../comx'
 import { SlashCommandBuilder } from 'discord.js'
 
-function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, number)) }
+function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
 const command: SlashCommand = {
   data: new SlashCommandBuilder()
