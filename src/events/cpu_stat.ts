@@ -16,7 +16,7 @@ export default {
         status: 'idle',
         activities: [{
           type: ActivityType.Watching,
-          name: `${temp}`
+          name: `${temp}°C`
         }]
       })
       sleep(2)
