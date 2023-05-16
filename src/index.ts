@@ -1,4 +1,5 @@
 import 'dotenv/config'
+
 import { Collection, GatewayIntentBits } from 'discord.js'
 import { ppSlashCommandHandler, ppEventHandler } from './cmdx'
 import { CustomClient, SlashCommand } from './comx'
@@ -17,7 +18,6 @@ client.slashCommands = new Collection<string, SlashCommand>()
 client.cooldowns = new Collection<string, number>()
 
 ;(async () => {
-  console.log('Hello from CI/CD')
   await ppSlashCommandHandler(client)
   await ppEventHandler(client)
 })()

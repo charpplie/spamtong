@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-import { CustomClient, IEvent, SlashCommand, CEvents } from './comx'
+import { CustomClient, SlashCommand, Event, Events } from './comx'
 import { SlashCommandBuilder, Interaction, Collection } from 'discord.js'
 
 import { REST, Routes } from 'discord.js'
@@ -59,13 +59,10 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
 
   try {
     const rest = new REST({ version: '10' }).setToken(String(process.env.token))
-    await rest.put(Routes.applicationCommands(String(process.env.clientId)), {
-      body: slashCommands,
-    })
-    console.log(`Successfully loaded ${slashCommands.length} slash commands`)
-  } catch (error) { console.error(`Error loading slash commands: ${error}`) }
+    await rest.put(Routes.applicationCommands(String(client.application?.id)), { body: slashCommands })
+  } catch (error) { console.error(`Error loading slash command: ${error}`) }
 
-  client.on(CEvents.InteractionCreate, async (interaction: Interaction) => {
+  client.on(Events.InteractionCreate, async (interaction: Interaction) => {
     if (!interaction.isCommand()) return
 
     const command = client.slashCommands.get(interaction.commandName)
@@ -98,13 +95,10 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
       case "d":
         cooldownAmount = cooldownNumber * 24 * 60 * 60 * 1000
         break
-      default:
-        cooldownAmount = defaultCooldown * 1000
-        break
     }
 
     if (timestamps.has(interaction.user.id)) {
-      const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount
+      const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount? cooldownAmount : 0
 
       if (now < expirationTime) {
         const expiredTimestamp = Math.round(expirationTime / 1000)
@@ -152,7 +146,7 @@ export async function ppEventHandler(client: CustomClient, dirs: string[] = ['ev
         }
 
         try {
-          const event: IEvent = (await import(`${filePath}`)).default
+          const event: Event = (await import(`${filePath}`)).default
 
           if (event.once) {
             client.once(event.name, async (...args: any[]) => {

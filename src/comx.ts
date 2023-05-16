@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, Client, Collection, GuildMember, PermissionResolvable } from 'discord.js'
+import { SlashCommandBuilder, CommandInteraction, Client, Collection } from 'discord.js'
 
 export interface SlashCommand {
   data: SlashCommandBuilder | any
@@ -7,7 +7,7 @@ export interface SlashCommand {
   isOwnerOnly?: boolean | false
 }
 
-export interface IEvent {
+export interface Event {
   name: string,
   once?: boolean | false,
   callback: (...args: any) => void,
@@ -18,7 +18,7 @@ export class CustomClient extends Client {
   public cooldowns!: Readonly<Collection<string, number>>
 }
 
-export enum CEvents {
+export enum Events {
   ApplicationCommandPermissionsUpdate = 'applicationCommandPermissionsUpdate',
   AutoModerationActionExecution = 'autoModerationActionExecution',
   AutoModerationRuleCreate = 'autoModerationRuleCreate',
