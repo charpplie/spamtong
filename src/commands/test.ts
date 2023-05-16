@@ -8,9 +8,9 @@ export default {
     .setName('test')
     .setDescription('test'),
   callback: async interaction => {
-    interaction.deferReply()
+    await interaction.deferReply()
     const temp = await si.cpuTemperature()
-    interaction.editReply({
+    await interaction.editReply({
       content: `${temp}`
     })
   },
