@@ -11,7 +11,7 @@ export default {
     await interaction.deferReply()
     const temp = await si.cpuTemperature()
     await interaction.editReply({
-      content: `${temp}`
+      content: `${temp.max}`
     })
   },
   isOwnerOnly: true,
