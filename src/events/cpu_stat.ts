@@ -5,6 +5,6 @@ export default {
   name: Events.ClientReady,
   once: true,
   callback: async (interaction) => {
-    console.log((await si.cpu()).voltage)
+    console.log(await si.cpuTemperature())
   }
 } as Event
