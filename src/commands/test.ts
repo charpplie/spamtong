@@ -11,7 +11,7 @@ export default {
     await interaction.deferReply()
     const temp = await si.cpuTemperature()
     await interaction.editReply({
-      content: `${temp.max}`
+      content: `Core#1: ${temp.cores[0]}\tCore#2: ${temp.cores[1]}\nSocket: ${temp.socket}`
     })
   },
   isOwnerOnly: true,
