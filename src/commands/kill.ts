@@ -9,7 +9,7 @@ const command: SlashCommand = {
     .setDescription('The Heavy is Dead!'),
   callback: async interaction => {
     interaction.reply('The Heavy is Dead!')
-    await sleep(4)
+    await sleep(15)
     process.exit()
   },
   isOwnerOnly: true
