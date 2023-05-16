@@ -6,28 +6,12 @@ on:
     branches: master
   pull_request:
     branches: master
-    
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   build:
-    name: Build and run
+    name: Deploy a repo to server
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      
-      - name: Install Node dependencies
-        run: npm install
-      
-      - name: Run Node project with PM2
-        run: |
-          sudo npm i pm2 -g
-          sudo pm2 start src/main.ts --name spamtong
-          sudo pm2 save
-        
-      - name: Finish GitHub ACtions
-        run: exit 0
+      - run: npm install
