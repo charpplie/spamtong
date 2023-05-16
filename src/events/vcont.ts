@@ -13,7 +13,14 @@ export default {
   once: false,
   callback: async (interaction) => {
     if (interaction.attachments.size > 0) {
-      for (let i = 0; i < interaction.attachments.size; i++) if (interaction.attachments.at(i)?.contentType?.substring(0, Number((interaction.attachments.at(i)?.contentType)?.indexOf('/'))) == 'video') for (let j = 0; j < reactions.length; j++) interaction.react(reactions[j])
+      for (let i = 0; i < interaction.attachments.size; i++) {
+        const attachment = interaction.attachments.at(i)
+        if (attachment && attachment.contentType?.startsWith('video')) {
+          for (let j = 0; j < reactions.length; j++) {
+            interaction.react(reactions[j]).catch((error: any) => {})
+          }
+        }
+      }
     }
   }
 } as Event
