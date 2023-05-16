@@ -6,7 +6,7 @@ const command: SlashCommand = {
     .setName('kill')
     .setDescription('The Heavy is Dead!'),
   callback: async interaction => {
-    exit(0)
+    process.exit()
   },
   isOwnerOnly: true
 }
