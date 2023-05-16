@@ -2,7 +2,7 @@ import { ActivityType } from 'discord.js'
 import { Event, Events, CustomClient } from '../comx'
 import * as si from 'systeminformation'
 
-function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms))}
+function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
 export default {
   name: Events.ClientReady,
@@ -19,7 +19,7 @@ export default {
           name: `${temp}°C`
         }]
       })
-      sleep(120000)
+      await sleep(120000)
     }
   }
 } as Event
