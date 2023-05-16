@@ -59,7 +59,7 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
 
   try {
     const rest = new REST({ version: '10' }).setToken(String(process.env.token))
-    await rest.put(Routes.applicationCommands(String(client.application?.id)), { body: slashCommands })
+    await rest.put(Routes.applicationCommands(String(process.env.clientId)), { body: slashCommands })
   } catch (error) { console.error(`Error loading slash command: ${error}`) }
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
