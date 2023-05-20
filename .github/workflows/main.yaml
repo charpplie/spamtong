@@ -27,3 +27,4 @@ jobs:
               screen -dmS spamtong
               screen -S spamtong bash -c "cd actions-runner/_work/spamtong/spamtong && npm run dev"
             fi
+            screen -ls
