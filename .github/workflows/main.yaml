@@ -17,4 +17,8 @@ jobs:
 
       - run: npm install
 
-      - run: screen -X -S spamtong quit
+      - run: |
+          if screen -ls | grep -q "Spamtong"; then
+            echo "privet"
+          else
+            echo "poka"
