@@ -20,7 +20,6 @@ client.cooldowns = new Collection<string, number>()
 ;(async () => {
   await ppSlashCommandHandler(client)
   await ppEventHandler(client)
-  console.log('Ok!')
 })()
 
 client.login(process.env.token)
