@@ -1,7 +1,5 @@
 #!/bin/bash
 
-if screen -ls | grep -q "spamtong"; then
-  screen -X -S spamtong quit
-  screen -dmS spamtong
-  screen -S spamtong bash -c "echo bebra > catx"
-fi
+screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
+
+screen -dmS spamtong npm run dev
