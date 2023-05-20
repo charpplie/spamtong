@@ -17,6 +17,4 @@ jobs:
 
       - run: npm install
 
-      - run: |
-          screen -dmS spamtong
-          screen -S spamtong -X stuff "echo 'Hello, Screen!'$(printf \\r)"
+      - run: screen -X -S spamtong quit
