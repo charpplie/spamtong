@@ -1,5 +1,5 @@
 #!/bin/bash
 
-tmux kill-session -t spamtong
+pkill -f "npm run dev"
 
-tmux new-session -d -s spamtong "npm run dev"
+npm run dev > /dev/null 2>&1 &
