@@ -16,8 +16,3 @@ jobs:
       - uses: actions/setup-node@v3
 
       - run: npm install
-
-      - name: Run Spamtong on self-hosted runner
-        run: |
-          chmod +x run.sh
-          ./run.sh
