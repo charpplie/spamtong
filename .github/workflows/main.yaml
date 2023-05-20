@@ -18,4 +18,5 @@ jobs:
       - run: npm install
 
       - name: Run Spamtong on self-hosted runner
-        run: screen -dm npm run dev &
+        run: |
+            screen -dmS poshel
