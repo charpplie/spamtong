@@ -15,4 +15,5 @@ export default {
     })
   },
   isOwnerOnly: true,
+  cooldown: '5s'
 } as SlashCommand

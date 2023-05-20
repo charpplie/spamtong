@@ -98,7 +98,7 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
     }
 
     if (timestamps.has(interaction.user.id)) {
-      const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount? cooldownAmount : 0
+      const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount
 
       if (now < expirationTime) {
         const expiredTimestamp = Math.round(expirationTime / 1000)
@@ -112,7 +112,6 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
 
     timestamps.set(interaction.user.id, now)
     setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount)
-
 
     if (command.isOwnerOnly && interaction.user.id != '783443296382746672') return
 
@@ -162,7 +161,6 @@ export async function ppEventHandler(client: CustomClient, dirs: string[] = ['ev
             })
           }
 
-          console.log(`Successfully loaded event ${event.name} from ${filePath}`)
         } catch (error) { console.error(`Error loading event file ${filePath}: ${error}`) }
       }
     }
