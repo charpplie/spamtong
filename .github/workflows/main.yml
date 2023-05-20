@@ -15,4 +15,4 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
       - run: npm install
-      - run: screen -r && sudo pacman -S screen
+      - run: script /dev/null && screen -r && sudo pacman -S screen
