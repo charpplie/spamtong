@@ -1,5 +1,5 @@
 #!/bin/bash
 
-screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
+tmux kill-session -t spamtong
 
-screen -dmS spamtong npm run dev
+tmux new-session -d -s spamtong "npm run dev"
