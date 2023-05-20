@@ -1,5 +1,7 @@
 #!/bin/bash
 
+script /dev/null
+
 if screen -ls | grep -q "Spamtong"; then
   screen -X -S spamtong quit
   screen -dmS spamtong
