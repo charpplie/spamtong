@@ -18,6 +18,4 @@ jobs:
       - run: npm install
 
       - name: Run Spamtong on self-hosted runner
-        run: |
-            script /dev/null
-            screen -dmS spamtong
+        run: screen -dm ./run.sh
