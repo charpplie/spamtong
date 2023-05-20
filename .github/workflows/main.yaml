@@ -19,4 +19,11 @@ jobs:
 
       - name: Run Spamtong on self-hosted runner
         run: |
-            screen -dmS poshel
+            if screen -ls | grep -q "spamtong"; then
+              screen -X -S spamtong quit
+              screen -dmS spamtong
+              screen -S spamtong bash -c "cd actions-runner/_work/spamtong/spamtong && npm run dev"
+            else
+              screen -dmS spamtong
+              screen -S spamtong bash -c "cd actions-runner/_work/spamtong/spamtong && npm run dev"
+            fi
