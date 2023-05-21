@@ -28,5 +28,6 @@ jobs:
           username: ${{ secrets.REMOTE_USERNAME }}
           password: ${{ secrets.RMEOTE_PASSWORD }}
           port: ${{ secrets.REMOTE_PORT }}
+          key: ${{ secrets.KEY }}
           script: |
             screen -dmS spamtong
