@@ -7,12 +7,16 @@ on:
   pull_request:
     branches: master
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  run:
     runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
 
-      - run: npm install
+      - run: screen -dmS test bash -c "echo bebra > catx"
