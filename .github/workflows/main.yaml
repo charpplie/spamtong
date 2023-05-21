@@ -19,4 +19,14 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
 
-      - run: screen -dmS test bash -c "echo bebra > catx"
+      - run: npm install
+
+      - name: Run Spamtong on self-hosted runner
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          password: ${{ secrets.RMEOTE_PASSWORD }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            screen -dmS spamtong
