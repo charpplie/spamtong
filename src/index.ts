@@ -1,6 +1,6 @@
 import 'dotenv/config'
 
-import { Collection, GatewayIntentBits, TextChannel } from 'discord.js'
+import { Collection, GatewayIntentBits } from 'discord.js'
 import { ppSlashCommandHandler, ppEventHandler } from './cmdx'
 import { CustomClient, SlashCommand } from './comx'
 
@@ -20,8 +20,7 @@ client.cooldowns = new Collection<string, number>()
 ;(async () => {
   await ppSlashCommandHandler(client)
   await ppEventHandler(client)
-  const channel = client.channels.cache.get('1058064189610020914') as TextChannel
-  channel.send('Ok!')
+  client.users.send('783443296382746672', 'Ok!')
 })()
 
 client.login(process.env.token)
