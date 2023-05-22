@@ -10,11 +10,12 @@ export default {
   callback: async (cclient) => {
     const client = cclient as CustomClient
 
+    client.user?.setStatus('idle')
+
     while (true) {
       let temp = (await si.cpuTemperature()).max
 
       client.user?.setPresence({
-        status: 'idle',
         activities: [{
           type: ActivityType.Watching,
           name: `${temp}°C`
