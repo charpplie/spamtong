@@ -11,9 +11,7 @@ export default {
     const client = cclient as CustomClient
 
     while (true) {
-      const temp = (await si.cpuTemperature()).max
-      
-      if (temp >= 75) process.exit()
+      let temp = (await si.cpuTemperature()).max
 
       client.user?.setPresence({
         status: 'idle',
