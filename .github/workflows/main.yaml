@@ -27,4 +27,5 @@ jobs:
             host: ${{ secrets.HOST }}
             username: ${{ secrets.USERNAME }}
             password: ${{ secrets.PASSWD }}
-            script: screen -dmS spamt
+            script: |
+              screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
