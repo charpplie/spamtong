@@ -20,3 +20,11 @@ jobs:
       - uses: actions/setup-node@v3
 
       - run: npm install
+
+      - name: Run Spamtong on self-hosted runner via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWD }}
+            script: screen -dmS spamt
