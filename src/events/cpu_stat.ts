@@ -13,7 +13,7 @@ export default {
     while (true) {
       const temp = (await si.cpuTemperature()).max
       
-      if (temp >= 50) process.exit()
+      if (temp >= 75) process.exit()
 
       client.user?.setPresence({
         status: 'idle',
