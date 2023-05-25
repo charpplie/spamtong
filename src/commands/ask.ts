@@ -24,14 +24,29 @@ const command: SlashCommand = {
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: request }]
     })
-
+    
     if (!chatResult) return
     const chatContent = chatResult.data.choices[0].message?.content
     
     if (!chatContent) return
-
-    await interaction.editReply(chatContent)
+    if (chatContent.length > 2000) await sendLongMessage(interaction, chatContent)
+    else await interaction.editReply(chatContent)
   },
+}
+
+async function sendLongMessage(interaction: CommandInteraction, content: string) {
+  const chunkSize = 2000
+  const chunks = content.match(new RegExp(`.{1,${chunkSize}}`, 'gs')) || []
+
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i]
+    await interaction.channel?.send({
+      content: chunk,
+    })
+  }
+  interaction.editReply({
+    content: ''
+  })
 }
 
 export default command
