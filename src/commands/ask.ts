@@ -3,9 +3,10 @@ import { SlashCommandBuilder, CommandInteraction, EmbedBuilder} from 'discord.js
 import { SlashCommand } from '../comx'
 import { Configuration, OpenAIApi } from 'openai'
 
+let completionSessionId: string
+
 const openai = new OpenAIApi(new Configuration({ apiKey: String(process.env.apiKey) }))
 
-function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
 const command: SlashCommand = {
   data: new SlashCommandBuilder()
@@ -35,6 +36,7 @@ const command: SlashCommand = {
 }
 
 async function sendLongMessage(interaction: CommandInteraction, content: string) {
+  await interaction.editReply('Ответ приведен ниже:')
   const chunkSize = 2000
   const chunks = content.match(new RegExp(`.{1,${chunkSize}}`, 'gs')) || []
 

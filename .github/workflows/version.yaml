@@ -1,0 +1,12 @@
+name: Push to Tracking Repo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  push:
+    runs-on: self-hosted
+
+    steps:
+      - name: Creates output
+        run: echo 
