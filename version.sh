@@ -1,4 +1,4 @@
 #!/bin/bash
 RANDOM=$$
 
-echo $RANDOM > spamtong+
+echo $RANDOM > output/spamtong+
