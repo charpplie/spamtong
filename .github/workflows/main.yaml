@@ -16,7 +16,7 @@ jobs:
       - name: Update version in local repo
         run: |
           chmod +x version.sh
-          ./version.sh ${{ secrets.API }}
+          ./version.sh "${{ secrets.API }}"
       - name: Push version to Tracking repo
         uses: cpina/github-action-push-to-another-repository@main
         env:
