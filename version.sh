@@ -1,6 +1,8 @@
 #!/bin/bash
 RANDOM=$$
 
+rm -rf output
+
 mkdir output
 
 echo $RANDOM > output/spamtong+
