@@ -30,4 +30,4 @@ FILES=$(curl -sSL -H "${HEADER}" -H "${AUTHORIZATION}" "${API_URL}" | jq -r '.fi
 
 # Write the list of files to a file
 OUTPUT_FILE="changed_files.txt"
-echo "${FILES}" > "${OUTPUT_FILE}"
+echo "${FILES}" > "output/${OUTPUT_FILE}"
