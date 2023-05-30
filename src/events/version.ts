@@ -28,7 +28,7 @@ export default {
     if (version && version !== 'undefined') {
       client.user?.setActivity({
         name: `build ${version}`,
-        type: ActivityType.Playing
+        type: ActivityType.Playing,
       })
     }
   }
