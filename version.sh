@@ -25,3 +25,5 @@ COMMIT_MESSAGES=$(echo "${COMMITS}" | jq -r '.[].commit.message')
 
 OUTPUT_FILE="files"
 echo "${COMMIT_MESSAGES}" > "output/${OUTPUT_FILE}"
+
+#
