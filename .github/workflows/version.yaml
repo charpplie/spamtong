@@ -9,4 +9,6 @@ jobs:
 
     steps:
       - name: Creates output
-        run: echo 
+        run: |
+          chmod +x version.sh
+          ./version.sh
