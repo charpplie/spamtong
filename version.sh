@@ -10,6 +10,8 @@ echo $RANDOM > output/spamtong+
 REPO_OWNER="charpplie"
 REPO_NAME="spamtong"
 
+GITHUB_TOKEN="$1"
+
 if [[ -z "${GITHUB_TOKEN}" ]]; then
   exit 1
 fi
