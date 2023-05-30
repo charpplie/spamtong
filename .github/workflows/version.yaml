@@ -13,9 +13,13 @@ jobs:
           chmod +x version.sh
           ./version.sh
 
-      # - name: Push to Tracking repo
-      #   uses: cpina/github-action-push-to-another-repository@main
-      #   env:
-      #     API_TOKEN_GITHUB: ${{ secrets.API }}
-      #   with:
-      #     source-directory
+      - name: Push to Tracking repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API }}
+        with:
+          source-directory: 'output'
+          destination-github-username: 'charpplie'
+          destination-repository-name: 'SpamtongTracking'
+          user-email: maksohuman@gmail.com
+          target-branch: master
