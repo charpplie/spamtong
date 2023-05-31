@@ -62,10 +62,10 @@ export default {
               for (let j = 0; j < reactions.length; j++) {
                 interaction.react(reactions[j]).catch((error: any) => {})
               }
+              await interaction.delete()
             }
           }
         }
-        await interaction.delete()
       }
     }
   }
