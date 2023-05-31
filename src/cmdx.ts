@@ -168,5 +168,3 @@ export async function ppEventHandler(client: CustomClient, dirs: string[] = ['ev
     await readEvents(eventsDir)
   }
 }
-
-// vc test
