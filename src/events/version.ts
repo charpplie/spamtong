@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { ActivityType, Client } from 'discord.js'
 import { Event, Events } from '../comx'
 import axios from 'axios'
@@ -27,7 +28,7 @@ export default {
 
     if (version && version !== 'undefined') {
       client.user?.setActivity({
-        name: `build ${version} | se 1.0.0`,
+        name: `build ${version} | se ${process.env.VERSION}`,
         type: ActivityType.Playing,
       })
     }
