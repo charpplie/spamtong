@@ -8,7 +8,9 @@ if [ -f "$env_file" ]; then
         exit 1
     fi
 
-    if grep -Eq '[^A-Za-z0-9_./]"' "$env_file"; then
+    version=$(head -n 1 "$env_file")
+
+    if grep -Eq '[^A-Za-z0-9_./]"' "$version"; then
         echo "Error: The .env file contains invalid characters."
         exit 1
     fi
