@@ -24,11 +24,11 @@ export default {
   callback: async (client: Client) => {
     client.user?.setStatus('idle')
 
-    const version = await getLatestCommitId()
+    const build_version = await getLatestCommitId()
 
-    if (version && version !== 'undefined') {
+    if (build_version && build_version !== 'undefined') {
       client.user?.setActivity({
-        name: `build ${version} | se ${process.env.VERSION}`,
+        name: `build ${build_version} | se ${process.env.VERSION}`,
         type: ActivityType.Playing,
       })
     }
