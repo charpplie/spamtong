@@ -38,7 +38,6 @@ export default {
             })
 
             if (!attachment.name.endsWith('.mov')) {
-              await interaction.delete()
               const convertedFilePath = path.join(__dirname, attachment.name.replace(/\.[^/.]+$/, '.mov'))
               ffmpeg(filePath)
                 .setFfmpegPath(String(require('@ffmpeg-installer/ffmpeg').path))
@@ -68,5 +67,6 @@ export default {
         }
       }
     }
+    await interaction.delete()
   }
 } as Event
