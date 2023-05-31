@@ -65,8 +65,8 @@ export default {
             }
           }
         }
+        await interaction.delete()
       }
     }
-    await interaction.delete()
   }
 } as Event
