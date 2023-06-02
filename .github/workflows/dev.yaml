@@ -1,0 +1,47 @@
+name: Dev
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  devbuild:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Update version in local repo
+        run: |
+          chmod +x version.sh
+          ./version.sh "${{ secrets.API }}" "dev"
+
+      - name: Push version to Tracking repo
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API }}
+        with:
+          source-directory: 'output'
+          destination-github-username: 'charpplie'
+          destination-repository-name: 'SpamtongTracking'
+          user-email: maksohuman@gmail.com
+          target-branch: dev
+
+      - uses: actions/setup-node@v3
+
+      - run: npm install
+
+      - name: Run Spamtong on self-hosted runner via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWD }}
+            script: |
+              screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
+              screen -dmS spamtong
+              screen -S spamtong -X stuff 'cd actions-runner/_work/spamtong/spamtong\n'
+              screen -S spamtong -X stuff 'npm run dev\n'

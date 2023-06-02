@@ -8,15 +8,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  start:
+  terminate:
     runs-on: self-hosted
 
     steps:
-      - name: Run Spamtong on self-hosted runner via SSH
+      - name: Terminate Spamtong session on self-hosted runner via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWD }}
+            host:     ${{ secrets.HOST      }}
+            username: ${{ secrets.USERNAME  }}
+            password: ${{ secrets.PASSWD    }}
             script: |
               screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill

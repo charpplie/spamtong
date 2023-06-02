@@ -1,6 +1,6 @@
 #!/bin/bash
 
-env_file=".env"
+env_file="../.env"
 
 if [ -f "$env_file" ]; then
     if ! [ -r "$env_file" ] || ! [ -f "$env_file" ]; then
@@ -26,12 +26,29 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-if [ -z "$1" ]; then
+while [ "$#" -gt 0 ]; do
+    if [ "$1" = "-github" ]; then
+        GITHUB_TOKEN="$2"
+        shift
+    elif [ "$1" = "-branch" ]; then
+        BRANCH="$2"
+        shift
+    else
+        echo "Error: Invalid argument: $1"
+        exit 1
+    fi
+    shift
+done
+
+if [ -z "$GITHUB_TOKEN" ]; then
     echo "Error: The GITHUB_TOKEN argument is missing."
     exit 1
 fi
 
-GITHUB_TOKEN="$1"
+if [ -z "$BRANCH" ]; then
+    echo "Error: The BRANCH argument is missing."
+    exit 1
+fi
 
 RANDOM=$$
 
@@ -47,6 +64,10 @@ REPO_NAME="spamtong"
 API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits"
 HEADER="Accept: application/vnd.github.v3+json"
 AUTHORIZATION="Authorization: token ${GITHUB_TOKEN}"
+if [ "$BRANCH" = "dev" ]; then
+    API_URL+="?sha=dev"
+fi
+
 COMMIT=$(curl -sSL -H "${HEADER}" -H "${AUTHORIZATION}" "${API_URL}")
 
 COMMIT_HASH=$(echo "${COMMIT}" | jq -r '.[0].sha')

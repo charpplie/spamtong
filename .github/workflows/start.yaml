@@ -12,14 +12,14 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Run Spamtong on self-hosted runner via SSH
+      - name: Restart Spamtong session on self-hosted runner via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWD }}
+            host:     ${{ secrets.HOST      }}
+            username: ${{ secrets.USERNAME  }}
+            password: ${{ secrets.PASSWD    }}
             script: |
               screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
               screen -dmS spamtong
-              screen -S spamtong -X stuff 'cd actions-runner/_work/spamtong/spamtong\n'
-              screen -S spamtong -X stuff 'npm run dev\n'
+              screen -S spamtong -X command 'cd actions-runner/_work/spamtong/spamtong\n'
+              screen -S spamtong -X command 'npm run dev\n'
