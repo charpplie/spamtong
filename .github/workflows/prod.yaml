@@ -18,7 +18,8 @@ jobs:
 
       - name: Update version in local repo
         run: |
-          chmod +x version.sh
+          chmod +x scripts/version.sh
+          cd scripts
           ./version.sh "${{ secrets.API }}" "master"
 
       - name: Push version to Tracking repo
