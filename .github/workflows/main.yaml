@@ -1,14 +1,13 @@
-name: Dev
+name: Main
 
-on:
-  workflow_dispatch:
+on: [push]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  devbuild:
+  prodbuild:
     runs-on: self-hosted
 
     steps:
@@ -17,7 +16,7 @@ jobs:
       - name: Update version in local repo
         run: |
           chmod +x version.sh
-          ./version.sh "${{ secrets.API }}" "dev"
+          ./version.sh "${{ secrets.API }}"
 
       - name: Push version to Tracking repo
         uses: cpina/github-action-push-to-another-repository@main
@@ -28,7 +27,7 @@ jobs:
           destination-github-username: 'charpplie'
           destination-repository-name: 'SpamtongTracking'
           user-email: maksohuman@gmail.com
-          target-branch: dev
+          target-branch: master
 
       - uses: actions/setup-node@v3
 
@@ -43,5 +42,6 @@ jobs:
             script: |
               screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
               screen -dmS spamtong
-              screen -S spamtong -X stuff 'cd actions-runner/_work/spamtong/spamtong\n'
-              screen -S spamtong -X stuff 'npm run dev\n'
+              screen -S spamtong -X command 'cd actions-runner/_work/spamtong/spamtong\n'
+              screen -S spamtong -X command 'chmod +x run.sh\n'
+              screen -S spamtong -X command './run.sh -discord ${{ secrets.TOKEN }} -client ${{ secrets.CLIENT_ID }}\n'
