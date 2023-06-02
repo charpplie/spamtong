@@ -33,10 +33,13 @@ fi
 
 GITHUB_TOKEN="$1"
 
+RANDOM=$$
+
 rm -rf output
 mkdir output
 
 echo "$VERSION" > output/version
+echo "$RANDOM" > output/spamtong+
 
 REPO_OWNER="charpplie"
 REPO_NAME="spamtong"
