@@ -43,5 +43,4 @@ jobs:
               screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
               screen -dmS spamtong
               screen -S spamtong -X command 'cd actions-runner/_work/spamtong/spamtong\n'
-              screen -S spamtong -X command 'chmod +x run.sh\n'
-              screen -S spamtong -X command './run.sh -discord ${{ secrets.TOKEN }} -client ${{ secrets.CLIENT_ID }}\n'
+              screen -S spamtong -X command 'npm run dev\n'
