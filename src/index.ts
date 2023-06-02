@@ -24,5 +24,3 @@ client.cooldowns = new Collection<string, number>()
 })()
 
 client.login(process.env.token)
-
-// vc test
