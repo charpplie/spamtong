@@ -20,7 +20,7 @@ jobs:
         run: |
           chmod +x scripts/version.sh
           cd scripts
-          ./version.sh "${{ secrets.API }}" "master"
+          ./version.sh "-github ${{ secrets.API }}" "-branch master"
 
       - name: Push version to Tracking repo
         uses: cpina/github-action-push-to-another-repository@main
