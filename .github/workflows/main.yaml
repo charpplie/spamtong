@@ -1,6 +1,9 @@
 name: Main
 
-on: [push]
+on: 
+  push:
+    branches:
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -16,7 +19,7 @@ jobs:
       - name: Update version in local repo
         run: |
           chmod +x version.sh
-          ./version.sh "${{ secrets.API }}"
+          ./version.sh
 
       - name: Push version to Tracking repo
         uses: cpina/github-action-push-to-another-repository@main

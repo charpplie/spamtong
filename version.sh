@@ -26,13 +26,6 @@ if [ -z "$VERSION" ]; then
     exit 1
 fi
 
-if [ -z "$1" ]; then
-    echo "Error: The GITHUB_TOKEN argument is missing."
-    exit 1
-fi
-
-GITHUB_TOKEN="$1"
-
 RANDOM=$$
 
 rm -rf output
@@ -40,20 +33,3 @@ mkdir output
 
 echo "$VERSION" > output/version
 echo "$RANDOM" > output/spamtong+
-
-REPO_OWNER="charpplie"
-REPO_NAME="spamtong"
-
-API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits"
-HEADER="Accept: application/vnd.github.v3+json"
-AUTHORIZATION="Authorization: token ${GITHUB_TOKEN}"
-
-COMMIT=$(curl -sSL -H "${HEADER}" -H "${AUTHORIZATION}" "${API_URL}")
-
-COMMIT_HASH=$(echo "${COMMIT}" | jq -r '.[0].sha')
-
-API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits/${COMMIT_HASH}"
-FILES=$(curl -sSL -H "${HEADER}" -H "${AUTHORIZATION}" "${API_URL}" | jq -r '.files[].filename')
-
-OUTPUT_FILE="changed_files.txt"
-echo "$FILES" > "output/${OUTPUT_FILE}"
