@@ -1,14 +1,13 @@
 {
   "scripts": {
-    "dev": "ts-node index.ts"
+    "dev": "ts-node src/index.ts"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "axios": "^1.4.0",
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
-    "fluent-ffmpeg": "^2.1.2",
-    "jukai": "git+https://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:x-oauth-basic@github.com/charpplie/jukai.git"
+    "fluent-ffmpeg": "^2.1.2"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.21",
