@@ -1,6 +1,6 @@
 import 'dotenv/config'
-import { ActivityType, Client } from 'discord.js'
-import { Event, Events } from '../comx'
+import { ActivityType, Client, Events } from 'discord.js'
+import { Event } from 'jukai'
 import axios from 'axios'
 
 async function getLatestCommitId(): Promise<string> {
@@ -22,6 +22,7 @@ async function getLatestCommitId(): Promise<string> {
 export default {
   name: Events.ClientReady,
   callback: async (client: Client) => {
+    console.log('1')
     client.user?.setStatus('idle')
 
     const build_version = await getLatestCommitId()
