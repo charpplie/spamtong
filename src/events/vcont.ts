@@ -1,7 +1,7 @@
 import { Events } from 'discord.js'
 import { Event } from '../comx'
-import * as fs from 'fs'
-import * as path from 'path'
+import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
+import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
 import axios from 'axios'
 
@@ -13,17 +13,20 @@ const reactions = [
   '5️⃣',
 ]
 
+const tmp_folder = `${__dirname}\\..\\..\\temp`
+
 export default {
   name: Events.MessageCreate,
   once: false,
   callback: async (interaction) => {
-    if (interaction.channel.id === '1004117985830649976') {
+    if (interaction.channel.id === '1058064189610020914') {
       if (interaction.attachments.size > 0) {
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)
           if (attachment && attachment.contentType?.startsWith('video')) {
-            const filePath = path.join(__dirname, attachment.name)
-            const writer = fs.createWriteStream(filePath)
+            if (!existsSync(tmp_folder)) mkdirSync(tmp_folder)
+            const filePath = join(tmp_folder, attachment.name)
+            const writer = createWriteStream(filePath)
 
             const response = await axios({
               url: attachment.url,
@@ -39,29 +42,31 @@ export default {
             })
 
             if (!attachment.name.endsWith('.mov')) {
-              const convertedFilePath = path.join(__dirname, attachment.name.replace(/\.[^/.]+$/, '.mov'))
+              const channel = interaction.channel
+              await interaction.delete()
+              const convertedFilePath = join(tmp_folder, attachment.name.replace(/\.[^/.]+$/, '.mov'))
               ffmpeg(filePath)
                 .setFfmpegPath(String(require('@ffmpeg-installer/ffmpeg').path))
                 .output(convertedFilePath)
-                .on('end', function () {
-                  fs.unlinkSync(filePath)
-                  const convertedFile = fs.readFileSync(convertedFilePath)
-                  interaction.channel.send({
+                .on('end', async function () {
+                  unlinkSync(filePath)
+                  const convertedFile = readFileSync(convertedFilePath)
+                  await channel.send({
                     files: [{
                       attachment: convertedFile,
                       name: attachment.name.replace(/\.[^/.]+$/, '.mov')
                     }]
-                  }).then(() => {
+                  }).then(async () => {
                     for (let j = 0; j < reactions.length; j++) {
-                      interaction.react(reactions[j]).catch((error: any) => {})
+                      await interaction.react(reactions[j]).catch((error: any) => {})
                     }
                   }).catch((error: any) => {})
                 })
                 .run()
             } else {
-              fs.unlinkSync(filePath)
+              unlinkSync(filePath)
               for (let j = 0; j < reactions.length; j++) {
-                interaction.react(reactions[j]).catch((error: any) => {})
+                await interaction.react(reactions[j]).catch((error: any) => {})
               }
             }
           }

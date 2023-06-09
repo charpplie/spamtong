@@ -8,7 +8,8 @@ import { REST, Routes } from 'discord.js'
 import { readdir, lstat } from 'fs/promises'
 import { join } from 'path'
 
-export async function ppSlashCommandHandler(client: CustomClient, dirs: string[] = ['commands']): Promise<void> {
+export async function SlashCommandHandler(client: CustomClient, dir: string) {
+  const slashCommandsDir = dir
   const slashCommands: SlashCommandBuilder[] = []
 
   async function readSlashCommands(directoryPath: string) {
@@ -39,16 +40,12 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
 
       const command: SlashCommand = commandFile.default
       const { name } = command.data
-      client.slashCommands.set(name, command)
+      client.commands.set(name, command)
       slashCommands.push(command.data)
     }
   }
 
-  for (const dir of dirs) {
-    const slashCommandsDir = join(__dirname, dir)
-
-    await readSlashCommands(slashCommandsDir)
-  }
+  await readSlashCommands(slashCommandsDir)
 
   try {
     const rest = new REST({ version: '10' }).setToken(String(process.env.token))
@@ -58,7 +55,7 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
     if (!interaction.isCommand()) return
 
-    const command = client.slashCommands.get(interaction.commandName)
+    const command = client.commands.get(interaction.commandName)
     if (!command) return
 
     const { cooldowns } = client
@@ -114,9 +111,7 @@ export async function ppSlashCommandHandler(client: CustomClient, dirs: string[]
   })
 }
 
-export async function EventHandler(client: CustomClient, dir: string = 'events'): Promise<void> {
-  const eventsDir: string = join(__dirname, dir)
-
+export async function EventHandler(client: CustomClient, dir: string) {
   async function readEvents(dir: string) {
     const files: string[] = (await readdir(dir))
 
@@ -141,5 +136,5 @@ export async function EventHandler(client: CustomClient, dir: string = 'events')
     }
   }
 
-  await readEvents(eventsDir)
+  await readEvents(dir)
 }

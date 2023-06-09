@@ -1,8 +1,9 @@
 import 'dotenv/config'
 
-import { GatewayIntentBits } from 'discord.js'
-import { CustomClient } from './comx'
-import { EventHandler } from './cmdx'
+import { Collection, GatewayIntentBits } from 'discord.js'
+import { CustomClient, SlashCommand } from './comx'
+import { EventHandler, SlashCommandHandler } from './cmdx'
+import { join } from 'path'
 
 const client = new CustomClient({
   intents: [
@@ -14,8 +15,12 @@ const client = new CustomClient({
   ],
 })
 
+client.commands = new Collection<string, SlashCommand>()
+client.cooldowns = new Collection<string, number>()
+
 ;(async () => {
-  EventHandler(client)
+  SlashCommandHandler(client, join(__dirname, 'commands'))
+  EventHandler(client, join(__dirname, 'events'))
 })()
 
 client.login(process.env.token)

@@ -13,6 +13,6 @@ export interface Event {
 }
 
 export class CustomClient extends Client {
-  public slashCommands!: Readonly<Collection<string, SlashCommand>>
+  public commands!: Readonly<Collection<string, SlashCommand>>
   public cooldowns!: Readonly<Collection<string, number>>
 }
