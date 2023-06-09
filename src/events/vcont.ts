@@ -1,9 +1,10 @@
 import { Events } from 'discord.js'
 import { Event } from '../comx'
-import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync, chmod } from 'fs'
+import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
 import axios from 'axios'
+import os from 'os'
 
 const reactions = [
   '1️⃣',
@@ -42,11 +43,16 @@ export default {
             })
 
             if (!attachment.name.endsWith('.mov')) {
+              let ffmpegPath = '/usr/bin/ffmpeg'
+              if (os.type() === 'Windows_NT') {
+                ffmpegPath = String(require('@ffmpeg-installer/ffmpeg').path)
+                console.log('bweb')
+              }
               const channel = interaction.channel
               await interaction.delete()
               const convertedFilePath = join(tmp_folder, attachment.name.replace(/\.[^/.]+$/, '.mov'))
               ffmpeg(filePath)
-                .setFfmpegPath('/usr/bin/ffmpeg')
+                .setFfmpegPath(ffmpegPath)
                 .output(convertedFilePath)
                 .on('end', async function () {
                   unlinkSync(filePath)
