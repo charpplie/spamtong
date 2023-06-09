@@ -4,5 +4,5 @@ RANDOM=$$
 
 mkdir output
 
-echo "$VERSION" > output/version
+echo "cat VERSION" > output/version
 echo "$RANDOM" > output/spamtong+
