@@ -1,6 +1,6 @@
 import { Events } from 'discord.js'
 import { Event } from '../comx'
-import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
+import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync, chmod } from 'fs'
 import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
 import axios from 'axios'
@@ -46,7 +46,7 @@ export default {
               await interaction.delete()
               const convertedFilePath = join(tmp_folder, attachment.name.replace(/\.[^/.]+$/, '.mov'))
               ffmpeg(filePath)
-                .setFfmpegPath('/usr/share/ffmpeg/')
+                .setFfmpegPath('/usr/bin/')
                 .output(convertedFilePath)
                 .on('end', async function () {
                   unlinkSync(filePath)
