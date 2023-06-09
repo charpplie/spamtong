@@ -1,7 +1,6 @@
-import 'dotenv/config'
-
 import { ActivityType, Events } from 'discord.js'
 import { CustomClient, Event } from '../comx'
+import { readFile } from 'fs/promises'
 import axios from 'axios'
 
 async function getLatestCommitId(): Promise<string> {
@@ -29,7 +28,7 @@ export default {
 
     if (build_version && build_version !== 'undefined') {
       client.user?.setActivity({
-        name: `build ${build_version} | se ${process.env.VERSION}`,
+        name: `build ${build_version} | se ${(await readFile(`${__dirname}/../../VERSION`)).toString()}`,
         type: ActivityType.Playing,
       })
     }

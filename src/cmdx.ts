@@ -1,5 +1,3 @@
-import 'dotenv/config'
-
 import { CustomClient, SlashCommand, Event } from './comx'
 import { SlashCommandBuilder, Interaction, Collection, Events } from 'discord.js'
 
@@ -48,8 +46,8 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
   await readSlashCommands(slashCommandsDir)
 
   try {
-    const rest = new REST({ version: '10' }).setToken(String(process.env.token))
-    await rest.put(Routes.applicationCommands(String(process.env.appid)), { body: slashCommands })
+    const rest = new REST({ version: '10' }).setToken(String(process.argv[2]))
+    await rest.put(Routes.applicationCommands(String(process.argv[3])), { body: slashCommands })
   } catch (error) { console.error(`Error loading slash command: ${error}`) }
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {

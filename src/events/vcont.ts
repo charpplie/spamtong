@@ -19,7 +19,7 @@ export default {
   name: Events.MessageCreate,
   once: false,
   callback: async (interaction) => {
-    if (interaction.channel.id === '1058064189610020914') {
+    if (interaction.channel.id === '1004117985830649976') {
       if (interaction.attachments.size > 0) {
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)

@@ -1,5 +1,3 @@
-import 'dotenv/config'
-
 import { Collection, GatewayIntentBits } from 'discord.js'
 import { CustomClient, SlashCommand } from './comx'
 import { EventHandler, SlashCommandHandler } from './cmdx'
@@ -23,5 +21,5 @@ client.cooldowns = new Collection<string, number>()
   EventHandler(client, join(__dirname, 'events'))
 })()
 
-client.login(process.env.token)
+client.login(process.argv[2])
 client.users.send('783443296382746672', 'Ok!')
