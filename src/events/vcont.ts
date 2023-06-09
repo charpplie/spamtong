@@ -46,7 +46,7 @@ export default {
               await interaction.delete()
               const convertedFilePath = join(tmp_folder, attachment.name.replace(/\.[^/.]+$/, '.mov'))
               ffmpeg(filePath)
-                .setFfmpegPath(String(require('@ffmpeg-installer/ffmpeg').path))
+                .setFfmpegPath('/usr/share/ffmpeg/')
                 .output(convertedFilePath)
                 .on('end', async function () {
                   unlinkSync(filePath)
