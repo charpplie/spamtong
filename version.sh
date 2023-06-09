@@ -2,5 +2,7 @@
 
 RANDOM=$$
 
-echo "cat VERSION" > output/version
+mkdir output
+
+echo "$VERSION" > output/version
 echo "$RANDOM" > output/spamtong+
