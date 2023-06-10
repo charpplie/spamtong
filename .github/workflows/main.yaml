@@ -1,9 +1,6 @@
 name: Main
 
-on: 
-  push:
-    branches:
-      - master
+on: [push]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -15,23 +12,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Update version in local repo
-        run: |
-          chmod +x version.sh
-          ./version.sh
-
-      - name: Push version to Tracking repo
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API }}
-        with:
-          source-directory: 'output'
-          destination-github-username: 'charpplie'
-          destination-repository-name: 'SpamtongTracking'
-          user-email: maksohuman@gmail.com
-          target-branch: master
-
       - uses: actions/setup-node@v3
 
       - run: npm install

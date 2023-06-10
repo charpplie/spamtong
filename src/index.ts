@@ -17,7 +17,6 @@ client.commands = new Collection<string, SlashCommand>()
 client.cooldowns = new Collection<string, number>()
 
 ;(async () => {
-  SlashCommandHandler(client, join(__dirname, 'commands'))
   EventHandler(client, join(__dirname, 'events'))
 })()
 
