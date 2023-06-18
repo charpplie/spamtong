@@ -21,7 +21,7 @@ export default {
   callback: async (interaction) => {
     if (interaction.channel.id === '1004117985830649976') {
       if (interaction.attachments.size > 0) {
-client.users.send('783443296382746672', 'Ok!')
+interaction.client.users.send('783443296382746672', 'vcont triggered')
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)
           if (attachment && attachment.contentType?.startsWith('video')) {
