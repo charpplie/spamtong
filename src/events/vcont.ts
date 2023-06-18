@@ -18,7 +18,6 @@ const tmp_folder = `${__dirname}\\..\\..\\temp`
 
 export default {
   name: Events.MessageCreate,
-  once: false,
   callback: async (interaction) => {
     if (interaction.channel.id === '1004117985830649976') {
       if (interaction.attachments.size > 0) {
