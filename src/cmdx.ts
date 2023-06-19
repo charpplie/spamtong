@@ -110,7 +110,6 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
 }
 
 export async function EventHandler(client: CustomClient, dir: string) {
-client.users.send('783443296382746672', 'event triggered')
   async function readEvents(dir: string) {
     const files: string[] = (await readdir(dir))
 
