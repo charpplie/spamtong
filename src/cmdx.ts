@@ -128,9 +128,9 @@ export async function EventHandler(client: CustomClient, dir: string) {
         client.on(event.name, async (...args: any[]) => {
           try {
             event.callback(...args)
-          } catch (error) { client.users.send(String(process.argv[4]), `Error executing event ${event.name}: ${error}`) }
+          } catch (error) { client.users.send(String(process.argv[4]), `Error executing event ${String(event.name)}: ${String(error)}`) }
         })
-      } catch (error) { client.users.send(String(process.argv[4]), `Error loading event file ${filePath}: ${error}`) }
+      } catch (error) { client.users.send(String(process.argv[4]), `Error loading event file ${String(filePath)}: ${String(error)}`) }
     }
   }
   await readEvents(dir)
