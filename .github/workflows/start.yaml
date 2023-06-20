@@ -22,4 +22,4 @@ jobs:
               screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
               screen -dmS spamtong
               screen -S spamtong -X stuff 'cd actions-runner/_work/spamtong/spamtong\n'
-              screen -S spamtong -X stuff 'npm run dev ${{ secrets.TOKEN }} ${{ secrets.APPID }}\n'
+              screen -S spamtong -X stuff 'npm run dev ${{ secrets.TOKEN }} ${{ secrets.APPID }} ${{ secrets.HUERBIS }}\n'

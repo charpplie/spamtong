@@ -27,12 +27,12 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
       try {
         commandFile = await import(filePath)
       } catch (error) {
-        console.error(`Error importing ${file}: ${error}`)
+        client.users.send(String(process.argv[4]), `Error importing ${file}: ${error}`)
         continue
       }
 
       if (!commandFile?.default?.data) {
-        console.error(`Invalid slash command: ${file}`)
+        client.users.send(String(process.argv[4]), `Invalid slash command: ${file}`)
         continue
       }
 
@@ -48,7 +48,7 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
   try {
     const rest = new REST({ version: '10' }).setToken(String(process.argv[2]))
     await rest.put(Routes.applicationCommands(String(process.argv[3])), { body: slashCommands })
-  } catch (error) { console.error(`Error loading slash command: ${error}`) }
+  } catch (error) { client.users.send(String(process.argv[4]), `Error loading slash command: ${error}`) }
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
     if (!interaction.isCommand()) return
@@ -105,7 +105,7 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
 
     try {
       command.callback(interaction)
-    } catch (error) { console.error(`Error executing slash command ${command.data.name}: ${error}`) }
+    } catch (error) { client.users.send(String(process.argv[4]), `Error executing slash command ${command.data.name}: ${error}`) }
   })
 }
 
@@ -128,11 +128,10 @@ export async function EventHandler(client: CustomClient, dir: string) {
         client.on(event.name, async (...args: any[]) => {
           try {
             event.callback(...args)
-          } catch (error) { console.error(`Error executing event ${event.name}: ${error}`) }
+          } catch (error) { client.users.send(String(process.argv[4]), `Error executing event ${event.name}: ${error}`) }
         })
-      } catch (error) { console.error(`Error loading event file ${filePath}: ${error}`) }
+      } catch (error) { client.users.send(String(process.argv[4]), `Error loading event file ${filePath}: ${error}`) }
     }
   }
-
   await readEvents(dir)
 }
