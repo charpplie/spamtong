@@ -19,7 +19,6 @@ const tmp_folder = `${__dirname}\\..\\..\\temp`
 export default {
   name: Events.MessageCreate,
   callback: async (interaction) => {
-interaction.client.users.send('783443296382746672', 'vcont triggered')
     if (interaction.channel.id === '1004117985830649976') {
       if (interaction.attachments.size > 0) {
         for (let i = 0; i < interaction.attachments.size; i++) {
