@@ -1,5 +1,4 @@
-import { Events } from 'discord.js'
-import { Event } from '../comx'
+import { Event, Events } from '../comx'
 import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
@@ -19,7 +18,7 @@ const tmp_folder = `${__dirname}\\..\\..\\temp`
 export default {
   name: Events.MessageCreate,
   callback: async (interaction) => {
-    if (interaction.channel.id === '1004117985830649976') {
+    if (interaction.channel.id === '1168131163123093544' || interaction.channel.id == '1172652787843207200') {
       if (interaction.attachments.size > 0) {
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)
@@ -45,9 +44,10 @@ export default {
               let ffmpegPath = '/usr/bin/ffmpeg'
               if (os.type() === 'Windows_NT') {
                 ffmpegPath = String(require('@ffmpeg-installer/ffmpeg').path)
-                console.log('bweb')
               }
               const channel = interaction.channel
+              let author = interaction.member.user.username
+              if (interaction.member.nickname) author = interaction.member.nickname
               await interaction.delete()
               const convertedFilePath = join(tmp_folder, attachment.name.replace(/\.[^/.]+$/, '.mov'))
               ffmpeg(filePath)
@@ -57,6 +57,7 @@ export default {
                   unlinkSync(filePath)
                   const convertedFile = readFileSync(convertedFilePath)
                   await channel.send({
+                    content: `${author}:`,
                     files: [{
                       attachment: convertedFile,
                       name: attachment.name.replace(/\.[^/.]+$/, '.mov')

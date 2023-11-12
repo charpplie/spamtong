@@ -1,10 +1,11 @@
-import { SlashCommandBuilder, CommandInteraction, Client, Collection } from 'discord.js'
+import { CommandInteraction, Client, Collection } from 'discord.js'
 
 export interface SlashCommand {
-  data: SlashCommandBuilder | any
+  name: string
+  description: string
   callback: (interaction: CommandInteraction) => void,
-  cooldown?: string,
-  isOwnerOnly?: boolean | false
+  // cooldown?: string,
+  // isOwnerOnly?: boolean | false
 }
 
 export interface Event {
@@ -14,5 +15,82 @@ export interface Event {
 
 export class CustomClient extends Client {
   public commands!: Readonly<Collection<string, SlashCommand>>
-  public cooldowns!: Readonly<Collection<string, number>>
+  // public cooldowns!: Readonly<Collection<string, number>>
+}
+
+export enum Events {
+  ApplicationCommandPermissionsUpdate = 'applicationCommandPermissionsUpdate',
+  AutoModerationActionExecution = 'autoModerationActionExecution',
+  AutoModerationRuleCreate = 'autoModerationRuleCreate',
+  AutoModerationRuleDelete = 'autoModerationRuleDelete',
+  AutoModerationRuleUpdate = 'autoModerationRuleUpdate',
+  CacheSweep = 'cacheSweep',
+  ChannelCreate = 'channelCreate',
+  ChannelDelete = 'channelDelete',
+  ChannelPinsUpdate = 'channelPinsUpdate',
+  ChannelUpdate = 'channelUpdate',
+  ClientReady = 'ready',
+  Debug = 'debug',
+  Error = 'error',
+  GuildAuditLogEntryCreate = 'guildAuditLogEntryCreate',
+  GuildBanAdd = 'guildBanAdd',
+  GuildBanRemove = 'guildBanRemove',
+  GuildCreate = 'guildCreate',
+  GuildDelete = 'guildDelete',
+  GuildEmojiCreate = 'emojiCreate',
+  GuildEmojiDelete = 'emojiDelete',
+  GuildEmojiUpdate = 'emojiUpdate',
+  GuildIntegrationsUpdate = 'guildIntegrationsUpdate',
+  GuildMemberAdd = 'guildMemberAdd',
+  GuildMemberAvailable = 'guildMemberAvailable',
+  GuildMemberRemove = 'guildMemberRemove',
+  GuildMembersChunk = 'guildMembersChunk',
+  GuildMemberUpdate = 'guildMemberUpdate',
+  GuildRoleCreate = 'roleCreate',
+  GuildRoleDelete = 'roleDelete',
+  GuildRoleUpdate = 'roleUpdate',
+  GuildScheduledEventCreate = 'guildScheduledEventCreate',
+  GuildScheduledEventDelete = 'guildScheduledEventDelete',
+  GuildScheduledEventUpdate = 'guildScheduledEventUpdate',
+  GuildScheduledEventUserAdd = 'guildScheduledEventUserAdd',
+  GuildScheduledEventUserRemove = 'guildScheduledEventUserRemove',
+  GuildStickerCreate = 'stickerCreate',
+  GuildStickerDelete = 'stickerDelete',
+  GuildStickerUpdate = 'stickerUpdate',
+  GuildUnavailable = 'guildUnavailable',
+  GuildUpdate = 'guildUpdate',
+  InteractionCreate = 'interactionCreate',
+  Invalidated = 'invalidated',
+  InviteCreate = 'inviteCreate',
+  InviteDelete = 'inviteDelete',
+  MessageBulkDelete = 'messageDeleteBulk',
+  MessageCreate = 'messageCreate',
+  MessageDelete = 'messageDelete',
+  MessageReactionAdd = 'messageReactionAdd',
+  MessageReactionRemove = 'messageReactionRemove',
+  MessageReactionRemoveAll = 'messageReactionRemoveAll',
+  MessageReactionRemoveEmoji = 'messageReactionRemoveEmoji',
+  MessageUpdate = 'messageUpdate',
+  PresenceUpdate = 'presenceUpdate',
+  Raw = 'raw',
+  ShardDisconnect = 'shardDisconnect',
+  ShardError = 'shardError',
+  ShardReady = 'shardReady',
+  ShardReconnecting = 'shardReconnecting',
+  ShardResume = 'shardResume',
+  StageInstanceCreate = 'stageInstanceCreate',
+  StageInstanceDelete = 'stageInstanceDelete',
+  StageInstanceUpdate = 'stageInstanceUpdate',
+  ThreadCreate = 'threadCreate',
+  ThreadDelete = 'threadDelete',
+  ThreadListSync = 'threadListSync',
+  ThreadMembersUpdate = 'threadMembersUpdate',
+  ThreadMemberUpdate = 'threadMemberUpdate',
+  ThreadUpdate = 'threadUpdate',
+  TypingStart = 'typingStart',
+  UserUpdate = 'userUpdate',
+  VoiceServerUpdate = 'voiceServerUpdate',
+  VoiceStateUpdate = 'voiceStateUpdate',
+  Warn = 'warn',
+  WebhooksUpdate = 'webhookUpdate',
 }
