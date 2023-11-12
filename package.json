@@ -6,7 +6,9 @@
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "axios": "^1.4.0",
     "discord.js": "^14.9.0",
-    "fluent-ffmpeg": "^2.1.2"
+    "fluent-ffmpeg": "^2.1.2",
+    "lowdb": "^6.1.1",
+    "vk-io": "^4.8.3"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.24",
