@@ -1,10 +1,11 @@
 name: Main
 
 on:
-  schedule:
-    - cron: '0 */5 * * *'
   workflow_dispatch:
-
+  workflow_run:
+    workflows: ["script-workflow"]
+    types:
+      - completed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -23,4 +24,13 @@ jobs:
       - name: Start Spamtong
         run: |
           npm run dev
-          node -e "setTimeout(() => { console.log('End Node.js Script'); process.exit(); }, 20)"
+
+      - run: sleep 1m
+
+      - name: Trigger new workflow run
+        run: |
+          curl -X POST \
+          -H "Authorization: token ${{ secrets.TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/main.yml/dispatches \
+          -d '{"ref":"main"}'
