@@ -39,6 +39,6 @@ client.commands = new Collection<string, SlashCommand>()
 })()
 
 client.login(config.token)
-// client.on('ready', () => {client.users.send(String(config.ownId), `Successfully logged in as ${client.user?.tag} at ${(new Date()).toUTCString()}`)})
+client.on('ready', () => {client.users.send(String(config.ownId), `Successfully logged in as ${client.user?.tag} at ${(new Date()).toUTCString()}`)})
 
 export default config

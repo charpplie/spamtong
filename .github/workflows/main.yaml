@@ -23,4 +23,4 @@ jobs:
       - name: Start Spamtong
         run: |
           npm run dev
-          node -e "setTimeout(() => { console.log('End Node.js Script'); process.exit(); }, 18000000)"
+          node -e "setTimeout(() => { console.log('End Node.js Script'); process.exit(); }, 20)"
