@@ -1,11 +1,6 @@
 name: Main
 
-on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["script-workflow"]
-    types:
-      - completed
+on: [push]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -13,7 +8,7 @@ concurrency:
 
 jobs:
   prodbuild:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v3
@@ -21,16 +16,14 @@ jobs:
 
       - run: npm install
 
-      - name: Start Spamtong
-        run: |
-          npm run dev
-
-      - run: sleep 1m
-
-      - name: Trigger new workflow run
-        run: |
-          curl -X POST \
-          -H "Authorization: token ${{ secrets.TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/${{ github.repository }}/actions/workflows/main.yml/dispatches \
-          -d '{"ref":"main"}'
+      - name: Run Spamtong on self-hosted runner via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+            host:     ${{ secrets.HOST      }}
+            username: ${{ secrets.USERNAME  }}
+            password: ${{ secrets.PASSWD    }}
+            script: |
+              screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
+              screen -dmS spamtong
+              screen -S spamtong -X stuff 'cd actions-runner/_work/spamtong/spamtong\n'
+              screen -S spamtong -X stuff 'npm run dev\n'
