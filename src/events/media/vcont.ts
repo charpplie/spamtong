@@ -1,4 +1,4 @@
-import { Event, Events } from '../comx'
+import { Event, Events } from '../../comx'
 import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
@@ -13,12 +13,15 @@ const reactions = [
   '5️⃣',
 ]
 
-const tmp_folder = `${__dirname}\\..\\..\\temp`
+const tmp_folder = './temp'
+
+const MAIN_CHANNEL = '1168131163123093544'
+const TEST_CHANNEL = '1172652787843207200'
 
 export default {
   name: Events.MessageCreate,
   callback: async (interaction) => {
-    if (interaction.channel.id === '1168131163123093544' || interaction.channel.id == '1172652787843207200') {
+    if (interaction.channel.id === MAIN_CHANNEL || interaction.channel.id == TEST_CHANNEL) {
       if (interaction.attachments.size > 0) {
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)
@@ -69,8 +72,8 @@ export default {
                   }).catch((error: any) => {})
                 })
                 .run()
+              unlinkSync(convertedFilePath)
             } else {
-              unlinkSync(filePath)
               for (let j = 0; j < reactions.length; j++) {
                 await interaction.react(reactions[j]).catch((error: any) => {})
               }

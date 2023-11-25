@@ -1,21 +1,22 @@
 import { CommandInteraction, Client, Collection } from 'discord.js'
 
 export interface SlashCommand {
-  name: string
-  description: string
+  name: string,
+  description: string,
   callback: (interaction: CommandInteraction) => void,
-  // cooldown?: string,
-  // isOwnerOnly?: boolean | false
+  cooldown?: string,
+  isOwnerOnly?: boolean | false,
 }
 
 export interface Event {
   name: string,
   callback: (...args: any) => void,
+  once?: boolean | false
 }
 
 export class CustomClient extends Client {
   public commands!: Readonly<Collection<string, SlashCommand>>
-  // public cooldowns!: Readonly<Collection<string, number>>
+  public cooldowns!: Readonly<Collection<string, number>>
 }
 
 export enum Events {

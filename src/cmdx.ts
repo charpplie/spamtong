@@ -1,9 +1,5 @@
-import { CustomClient, SlashCommand, Event } from './comx'
-import { SlashCommandBuilder, Interaction, Collection, Events } from 'discord.js'
-import config from '.'
-
-import { REST, Routes } from 'discord.js'
-
+import { SlashCommandBuilder, Interaction, REST, Routes, Collection } from 'discord.js'
+import { CustomClient, SlashCommand, Event, Events } from './comx'
 import { readdir, lstat } from 'fs/promises'
 import { join } from 'path'
 
@@ -28,12 +24,12 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
       try {
         commandFile = await import(filePath)
       } catch (error) {
-        client.users.send(String(config.ownId), `Error importing ${file}: ${error}`)
+        client.users.send(String(process.env.owner), `Error importing ${file}: ${error}`)
         continue
       }
 
       if (!commandFile?.default?.name && !commandFile?.default?.description) {
-        client.users.send(String(config.ownId), `Invalid slash command: ${file}`)
+        client.users.send(String(process.env.owner), `Invalid slash command: ${file}`)
         continue
       }
 
@@ -47,9 +43,9 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
   await readSlashCommands(slashCommandsDir)
 
   try {
-    const rest = new REST({ version: '10' }).setToken(String(config.token))
-    await rest.put(Routes.applicationCommands(String(config.appId)), { body: slashCommands })
-  } catch (error) { client.users.send(String(config.ownId), `Error loading slash command: ${error}`) }
+    const rest = new REST({ version: '10' }).setToken(String(process.env.token))
+    await rest.put(Routes.applicationGuildCommands(String(process.env.appId), '1150427580734906368'), { body: slashCommands })
+  } catch (error) { client.users.send(String(process.env.ownId), `Error loading slash command: ${error}`) }
 
   client.on(Events.InteractionCreate, async (interaction: Interaction) => {
     if (!interaction.isCommand()) return
@@ -102,37 +98,46 @@ export async function SlashCommandHandler(client: CustomClient, dir: string) {
     // timestamps.set(interaction.user.id, now)
     // setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount)
 
-    // if (command.isOwnerOnly && interaction.user.id != '783443296382746672') return
+    // if (command.isOwnerOnly && interaction.user.id != config.owner) return
 
     try {
       command.callback(interaction)
-    } catch (error) { client.users.send(String(config.ownId), `Error executing slash command ${command.name}: ${error}`) }
+    } catch (error) { client.users.send(String(process.env.owner), `Error executing slash command ${command.name}: ${error}`) }
   })
 }
 
 export async function EventHandler(client: CustomClient, dir: string) {
   async function readEvents(dir: string) {
-    const files: string[] = (await readdir(dir))
+    const files: string[] = await readdir(dir)
 
-    for (const file of files) {
+    await Promise.all(files.map(async (file) => {
       const filePath = join(dir, file)
       const fileStat = await lstat(filePath)
 
       if (fileStat.isDirectory()) {
         await readEvents(filePath)
-        continue
+        return
       }
 
       try {
-        const event: Event = (await import(`${filePath}`)).default
-
-        client.on(event.name, async (...args: any[]) => {
-          try {
-            event.callback(...args)
-          } catch (error) { client.users.send(String(config.ownId), `Error executing event ${String(event.name)}: ${String(error)}`) }
-        })
-      } catch (error) { client.users.send(String(config.ownId), `Error loading event file ${String(filePath)}: ${String(error)}`) }
-    }
+        const event: Event = (await import(filePath)).default
+        if (event.once) {
+          client.once(event.name, async (...args: any[]) => {
+            try { event.callback(...args) } catch (error) { await handleEventError(client, event, error) }
+          })
+        } else {
+          client.on(event.name, async (...args: any[]) => {
+            try { event.callback(...args) } catch (error) { await handleEventError(client, event, error) }
+          })
+        }
+      } catch (error) { await handleEventError(client, filePath, error) }
+    }))
   }
+
+  async function handleEventError(client: CustomClient, eventData: string | Event, error: any) {
+    const errMsg = `Error ${eventData instanceof Event ? 'executing' : 'loading'} event ${eventData}: ${error}`
+    client.users.send(String(process.env.owner), errMsg)
+  }
+
   await readEvents(dir)
 }
