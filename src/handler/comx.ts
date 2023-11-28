@@ -1,15 +1,20 @@
-import { Client, CommandInteraction, Collection } from 'discord.js'
+import { APIApplicationCommandOptionChoice, Client, CommandInteraction, Collection, LocalizationMap } from 'discord.js'
 
 export type OptionType = 'STRING' | 'INTEGER' | 'NUMBER' | 'BOOLEAN' | 'USER' | 'CHANNEL' | 'ROLE' | 'MENTIONABLE' | 'ATTACHMENT' | 'SUBCOMMAND' | 'SUBCOMMAND_GROUP'
 
 export interface SlashCommand {
   name: string,
+  name_localizations?: LocalizationMap
   description: string,
+  description_localizations?: LocalizationMap,
   options?: {
     name: string,
     description: string,
     type: OptionType,
     required?: boolean,
+    choices?: APIApplicationCommandOptionChoice<string | number>[],
+    minValue?: number,
+    maxValue?: number
   }[]
   guilds?: string[]
   isOwnerOnly?: boolean | false

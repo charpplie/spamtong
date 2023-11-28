@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, Interaction, REST, Routes, Collection } from 'discord.js'
+import { APIApplicationCommandOptionChoice, SlashCommandBuilder, Interaction, REST, Routes, Collection } from 'discord.js'
 import { CustomClient, SlashCommand, Event, Events } from '@/comx'
 import { readdir, lstat } from 'fs/promises'
 import { g_Logger } from 'logger'
@@ -38,9 +38,18 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
       client.commands.set(command.name, command)
 
       const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
+
+      if (command.name_localizations) {
+        data.setNameLocalizations(command.name_localizations)
+      }
+
+      if (command.description_localizations) {
+        data.setDescriptionLocalizations(command.description_localizations)
+      }
+
       if (command.options) {
         command.options.forEach((option) => {
-          const { name, description, type, required } = option
+          const { name, description, type, required, choices, minValue, maxValue } = option
           switch (type) {
             case 'STRING':
               data.addStringOption(optionData =>
@@ -48,23 +57,86 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
                   .setName(name)
                   .setDescription(description)
                   .setRequired(required || false)
+                  .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : []))
               )
               break
             case 'INTEGER':
-              data.addIntegerOption(optionData =>
-                optionData
-                  .setName(name)
-                  .setDescription(description)
-                  .setRequired(required || false)
-              )
+              if (minValue !== undefined && maxValue !== undefined) {
+                data.addIntegerOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                    .setMinValue(minValue)
+                    .setMaxValue(maxValue)
+                )
+              } else if (minValue !== undefined) {
+                data.addIntegerOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                    .setMinValue(minValue)
+                )
+              } else if (maxValue !== undefined) {
+                data.addIntegerOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                    .setMaxValue(maxValue)
+                )
+              } else {
+                data.addIntegerOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                )
+              }
               break
             case 'NUMBER':
-              data.addNumberOption(optionData =>
-                optionData
-                  .setName(name)
-                  .setDescription(description)
-                  .setRequired(required || false)
-              )
+              if (minValue !== undefined && maxValue !== undefined) {
+                data.addNumberOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                    .setMinValue(minValue)
+                    .setMaxValue(maxValue)
+                )
+              } else if (minValue !== undefined) {
+                data.addNumberOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                    .setMinValue(minValue)
+                )
+              } else if (maxValue !== undefined) {
+                data.addNumberOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                    .setMaxValue(maxValue)
+                )
+              } else {
+                data.addNumberOption(optionData =>
+                  optionData
+                    .setName(name)
+                    .setDescription(description)
+                    .setRequired(required || false)
+                    .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
+                )
+              }
               break
             case 'BOOLEAN':
               data.addBooleanOption(optionData =>
