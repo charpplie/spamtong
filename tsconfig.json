@@ -1,5 +1,13 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
+    "paths": {
+      "logger": ["./src/index.ts"],
+      "@/*": ["./src/handler/*"],
+      "@sys/*": ["./src/events/sys/*"]
+    },
     "target": "ESNext",
     "module": "CommonJS",
     "esModuleInterop": true,
@@ -11,5 +19,7 @@
     "strictPropertyInitialization": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

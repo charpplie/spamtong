@@ -1,17 +1,27 @@
-import { CommandInteraction, Client, Collection } from 'discord.js'
+import { Client, CommandInteraction, Collection } from 'discord.js'
+
+export type OptionType = 'STRING' | 'INTEGER' | 'NUMBER' | 'BOOLEAN' | 'USER' | 'CHANNEL' | 'ROLE' | 'MENTIONABLE' | 'ATTACHMENT' | 'SUBCOMMAND' | 'SUBCOMMAND_GROUP'
 
 export interface SlashCommand {
   name: string,
   description: string,
+  options?: {
+    name: string,
+    description: string,
+    type: OptionType,
+    required?: boolean,
+  }[]
+  guilds?: string[]
+  isOwnerOnly?: boolean | false
+  allowedUsers?: string[],
+  cooldown?: string
   callback: (interaction: CommandInteraction) => void,
-  cooldown?: string,
-  isOwnerOnly?: boolean | false,
 }
 
 export interface Event {
   name: string,
-  callback: (...args: any) => void,
   once?: boolean | false
+  callback: (...args: any) => void,
 }
 
 export class CustomClient extends Client {

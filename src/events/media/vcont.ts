@@ -1,4 +1,4 @@
-import { Event, Events } from '../../comx'
+import { Event, Events } from '@/comx'
 import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'

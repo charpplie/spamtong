@@ -1,27 +1,27 @@
-import { Event, Events } from '../../comx'
-import { Sequelize, DataTypes, Dialect } from 'sequelize'
+import { Event, Events } from '@/comx'
+import { Sequelize, DataTypes } from 'sequelize'
 
-const sequelize = new Sequelize(`${process.env.db_database}`, `${process.env.db_username}`, `${process.env.db_password}`, {
-  host: `${process.env.db_host}`,
-  dialect: `${process.env.db_dialect as Dialect}`,
+const sequelize = new Sequelize('spambase', 'spamtong', 'spamword', {
+  host: 'localhost',
+  dialect: 'sqlite',
   logging: false,
-  storage: `${process.env.icont_dbpath}`,
+  storage: 'db/icont.sqlite',
 })
 
 export const IContModel = sequelize.define('model', {
-  [`${process.env.icont_photoid}`]: {
+  photo_id: {
     type: DataTypes.STRING,
     unique: true,
     primaryKey: true
   },
-  [`${process.env.icont_msgid}`]: {
+  msg_id: {
     type: DataTypes.STRING,
     unique: true,
     primaryKey: true
   },
-  [`${process.env.icont_users}`]: DataTypes.TEXT,
-  [`${process.env.icont_userrates}`]: DataTypes.JSON,
-  [`${process.env.icont_rates}`]: {
+  users: DataTypes.TEXT,
+  user_rates: DataTypes.JSON,
+  rates: {
     type: DataTypes.NUMBER,
     allowNull: true
   }

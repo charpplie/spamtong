@@ -1,5 +1,24 @@
-import { Event, Events } from '../../../comx'
-import { ITEmojiModel } from '../../sys/temoji_db'
+import { Event, Events } from '@/comx'
+import { ITEmojiModel } from '@sys/temoji_db'
+import { ITimerModel } from '@sys/temoji_tdb'
+
+export async function updateLastTriggeredAt(id: string): Promise<Date | null> {
+  try {
+    let timer = await ITimerModel.findOne({ where: { id: id }})
+
+    if (!timer) {
+      timer = await ITimerModel.create({
+        id: id,
+        lastTriggeredAt: new Date()
+      })
+    }
+
+    return (await timer.get('lastTriggeredAt')) as Date
+  } catch (error) {
+    console.error('Error updating timer model:', error)
+    return null
+  }
+}
 
 export function countEmojis(message: string, emojiId: string): number {
   const regex = new RegExp(`<a?:\\w+:${emojiId}>`, 'g')
@@ -18,9 +37,9 @@ export default {
       if (countEmojis(interaction.content, emojis_ids[i])) {
         const emoji = await ITEmojiModel.findOne({ where: { emoji: emojis[i] }})
         if (emoji) {
-          emoji.increment(`${process.env.temoji_daily}`)
-          emoji.increment(`${process.env.temoji_weekly}`)
-          emoji.increment(`${process.env.temoji_monthly}`)
+          emoji.increment('daily_usage')
+          emoji.increment('weekly_usage')
+          emoji.increment('monthly_usage')
         }
       }
     }
