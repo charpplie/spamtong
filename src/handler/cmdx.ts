@@ -4,6 +4,10 @@ import { readdir, lstat } from 'fs/promises'
 import { g_Logger } from 'logger'
 import { join } from 'path'
 
+interface IGuildCommands {
+  [guild: string]: SlashCommandBuilder[]
+}
+
 export async function SlashCommandHandler(client: CustomClient, commandsDir: string) {
   const slashCommandsGlobal: SlashCommandBuilder[] = []
   const slashCommandsGuilds: SlashCommandBuilder[] = []
@@ -222,12 +226,25 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
     }
 
     if (slashCommandsGuilds) {
-      slashCommandsGuilds.forEach(com => {
+      const guildCommands: IGuildCommands = {}
+
+      slashCommandsGuilds.forEach(async (com) => {
         const command = client.commands.get(com.name)
-        command?.guilds?.forEach(async (guild) => {
-          await rest.put(Routes.applicationGuildCommands(String(process.env.appId), guild), { body: [com], })
-        })
+
+        if (command && command.guilds) {
+          command.guilds.forEach(async (guild) => {
+            if (!guildCommands[guild]) {
+              guildCommands[guild] = []
+            }
+
+            guildCommands[guild].push(com)
+          })
+        }
       })
+
+      for (const guild in guildCommands) {
+        await rest.put(Routes.applicationGuildCommands(String(process.env.appId), guild), { body: guildCommands[guild], })
+      }
     }
   } catch (error) {
     g_Logger.error(`Error loading slash command: ${error}`)
