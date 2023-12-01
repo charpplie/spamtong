@@ -1,28 +1,49 @@
-import { SlashCommand } from '@/comx'
+//#region Imports
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Interaction } from 'discord.js'
+import { writeFileSync, readFileSync, unlinkSync, createWriteStream, existsSync, mkdirSync, write } from 'fs'
 import { gql, GraphQLClient } from 'graphql-request'
 import { createCanvas, loadImage } from 'canvas'
-import { writeFileSync, readFileSync, unlink, unlinkSync } from 'fs'
-import axios from 'axios'
+import { SlashCommand } from '@/comx'
 import { join } from 'path'
+import axios from 'axios'
+//#endregion Imports
 
-async function generateImageWithTextAndBackground(header: string, early: string, mid: string, late: string, backgroundPath: string, outputPath: string): Promise<void> {
-  const canvas = createCanvas(800, 600)
-  const context = canvas.getContext('2d')
+//#region Utils
+function formatTime(seconds: number): string {
+  const minutes: number = Math.floor(seconds / 60)
+  const remainingSeconds: number = seconds % 60
 
-  const background = await loadImage(backgroundPath)
-  context.drawImage(background, 0, 0, canvas.width, canvas.height)
+  const formattedMinutes: string = minutes < 10 ? `0${minutes}` : `${minutes}`
+  const formattedSeconds: string = remainingSeconds < 10 ? `0${remainingSeconds}` : `${remainingSeconds}`
 
-  context.font = '24px Arial'
-  context.fillStyle = 'white'
-  context.fillText(header, 225, 75)
-  context.font = '18px Arial'
-  context.fillText(early, 50, 125)
-  context.fillText(mid, 300, 125)
-  context.fillText(late, 550, 125)
+  return `${formattedMinutes}:${formattedSeconds}`
+}
 
-  const buffer = canvas.toBuffer('image/png')
-  writeFileSync(outputPath, buffer)
+function indexOfMinNegativeValue(array: any[]): number {
+  let maxNegativeIndex: number = 0
+  let maxNegativeValue: number = 0
+
+  for (let i = 0; i < array.length; i++) {
+    const element = array[i].time
+    if (element < 0 && (maxNegativeValue === 0 || element > maxNegativeValue)) {
+      maxNegativeValue = element
+      maxNegativeIndex = i
+    }
+  }
+
+  return maxNegativeIndex
+}
+
+function generateRandomText(length: number): string {
+  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let randomText = ''
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length)
+    randomText += characters.charAt(randomIndex)
+  }
+
+  return randomText
 }
 
 async function uploadToImgur(accessToken: string, filename: string) {
@@ -39,19 +60,289 @@ async function uploadToImgur(accessToken: string, filename: string) {
         },
       }
     )
-
     return response.data.data.link
   } catch (error) {
-    console.error('Error uploading to Imgur:', error)
+    console.error(`Error uploading to Imgur: ${error}`)
     throw error
   }
 }
+//#endregion Utils
 
-interface IDotaHeroes {
+//#region Graphic functions
+async function drawOnImage(imagePath: string, text: string, outputPath: string) {
+  const image = await loadImage(imagePath)
+  const canvas = createCanvas(image.width, image.height)
+  const ctx = canvas.getContext('2d')
+
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+
+  ctx.font = '24px Arial'
+  ctx.fillStyle = 'white'
+  ctx.fillText(text, canvas.width - 25, canvas.height - 5)
+
+  const buffer = canvas.toBuffer('image/png')
+  writeFileSync(outputPath, buffer)
+}
+
+async function generateItemBuildEarlyGameImage(main: string, header: string, regen: string, regen_items: IDotaItemCons, items: IDotaItem, items10text: string, items10: IDotaItem, networth10: string, runestext: string, runes: IDotaItemCons, outputPath: string) {
+  let paths = []
+  let con_paths = []
+  let items10_paths = []
+  let runes_paths = []
+  if (Object.entries(items).length - 1 > 0) {
+    for (const id in items) {
+      if (items.hasOwnProperty(id) && id !== 'time') {
+        const value: any = items[id]
+        if (value !== null) {
+          const image = DOTA_ITEM_IMAGE + `${ITEM_NAMES[value.itemId].replace(/item_/gi, '')}.png`
+
+          const filePath = join(__dirname, `image/${id}${generateRandomText(12)}.png`)
+          const writer = createWriteStream(filePath)
+
+          const response = await axios({
+            url: image,
+            method: 'GET',
+            responseType: 'stream',
+          })
+
+          response.data.pipe(writer)
+
+          await new Promise((resolve, reject) => {
+            writer.on('finish', resolve)
+            writer.on('error', reject)
+          })
+
+          paths.push(filePath)
+
+          if (value.charges > 0) {
+            if (value.itemId === 44) {
+              const charge = value.charges / 3
+              if (charge > 1) {
+                await drawOnImage(filePath, `x${charge}`, filePath)
+              }
+            } else {
+              if (value.charges > 1) {
+                await drawOnImage(filePath, `x${value.charges}`, filePath)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (Object.entries(regen_items).length > 0) {
+    for (const id in regen_items) {
+      if (regen_items.hasOwnProperty(id) && regen_items[id] !== 0) {
+        const value: any = regen_items[id]
+        if (value !== null && ITEMS[id]) {
+          const image = DOTA_ITEM_IMAGE + `${ITEM_NAMES[id].replace(/item_/gi, '')}.png`
+
+          const filePath = join(__dirname, `image/${id}${generateRandomText(12)}.png`)
+          const writer = createWriteStream(filePath)
+
+          const response = await axios({
+            url: image,
+            method: 'GET',
+            responseType: 'stream',
+          })
+
+          response.data.pipe(writer)
+
+          await new Promise((resolve, reject) => {
+            writer.on('finish', resolve)
+            writer.on('error', reject)
+          })
+
+          con_paths.push(filePath)
+
+          await drawOnImage(filePath, `x${regen_items[id]}`, filePath)
+        }
+      }
+    }
+  }
+
+  if (Object.entries(items10).length - 1 > 0) {
+    for (const id in items10) {
+      if (items10.hasOwnProperty(id) && id !== 'time') {
+        const value: any = items10[id]
+        if (value !== null) {
+          const image = DOTA_ITEM_IMAGE + `${value.replace(/item_/gi, '')}.png`
+
+          const filePath = join(__dirname, `image/${id}${generateRandomText(12)}.png`)
+          const writer = createWriteStream(filePath)
+
+          const response = await axios({
+            url: image,
+            method: 'GET',
+            responseType: 'stream',
+          })
+
+          response.data.pipe(writer)
+
+          await new Promise((resolve, reject) => {
+            writer.on('finish', resolve)
+            writer.on('error', reject)
+          })
+
+          items10_paths.push(filePath)
+        }
+      }
+    }
+  }
+
+  if (Object.entries(runes).length - 1 > 0) {
+    let i = 0
+    for (const id in runes) {
+      if (runes.hasOwnProperty(id)) {
+        const value: any = runes[id]
+        if (value !== null) {
+          const rune = Object.keys(runes)[i]
+          i++
+          const image = DOTA_RUNE_IMAGE + `${rune}.png`
+
+          const filePath = join(__dirname, `image/${id}${generateRandomText(12)}.png`)
+          const writer = createWriteStream(filePath)
+
+          const response = await axios({
+            url: image,
+            method: 'GET',
+            responseType: 'stream',
+          })
+
+          response.data.pipe(writer)
+
+          await new Promise((resolve, reject) => {
+            writer.on('finish', resolve)
+            writer.on('error', reject)
+          })
+
+          runes_paths.push(filePath)
+
+          await drawOnImage(filePath, `x${value}`, filePath)
+        }
+      }
+    }
+  }
+
+  const canvas = createCanvas(800, 600)
+  const ctx = canvas.getContext('2d')
+
+  const background = await loadImage(BG_PATH)
+  ctx.drawImage(background, 0, 0, canvas.width, canvas.height)
+
+  const inv = await loadImage(INV_PATH)
+  ctx.drawImage(inv, 50, 105, inv.width * 1.115, inv.height * 1.115)
+  ctx.drawImage(inv, 50, 335, inv.width * 1.115, inv.height * 1.115)
+
+  const gold = await loadImage(GOLD_PATH)
+  ctx.drawImage(gold, 52, 485, gold.width / 2.35, gold.height / 2.35)
+
+  const pos: IPos = {
+    item0: { x: 56, y: 113},
+    item1: { x: 154, y: 113},
+    item2: { x: 252, y: 113},
+    item3: { x: 56, y: 185},
+    item4: { x: 154, y: 185},
+    item5: { x: 252, y: 185},
+  }
+
+  for (let i = 0; i < paths.length; i++) {
+    const item = await loadImage(paths[i])
+    ctx.drawImage(item, pos[`item${i}`].x, pos[`item${i}`].y, item.width, item.height)
+  }
+
+  const cons_pos: IPos = {
+    pos0: { x: 400, y: 113},
+    pos1: { x: 500, y: 113},
+    pos2: { x: 600, y: 113},
+    pos3: { x: 700, y: 113},
+    pos4: { x: 400, y: 185},
+    pos5: { x: 500, y: 185},
+    pos6: { x: 600, y: 185},
+    pos7: { x: 700, y: 185},
+    pos8: { x: 400, y: 257},
+    pos9: { x: 500, y: 257},
+    pos10: { x: 600, y: 257},
+    pos11: { x: 700, y: 257},
+  }
+
+  for (let i = 0; i < con_paths.length; i++) {
+    const item = await loadImage(con_paths[i])
+    ctx.drawImage(item, cons_pos[`pos${i}`].x, cons_pos[`pos${i}`].y, item.width, item.height)
+  }
+
+  const pos10: IPos = {
+    item0: { x: 56, y: 343},
+    item1: { x: 154, y: 343},
+    item2: { x: 252, y: 343},
+    item3: { x: 56, y: 415},
+    item4: { x: 154, y: 415},
+    item5: { x: 252, y: 415},
+  }
+
+  for (let i = 0; i < items10_paths.length; i++) {
+    const item = await loadImage(items10_paths[i])
+    ctx.drawImage(item, pos10[`item${i}`].x, pos10[`item${i}`].y, item.width, item.height)
+  }
+
+  const runesp: IPos = {
+    pos0: { x: 505, y: 325},
+    pos1: { x: 605, y: 325},
+    pos2: { x: 505, y: 385},
+    pos3: { x: 605, y: 385},
+    pos4: { x: 505, y: 445},
+    pos5: { x: 605, y: 445},
+    pos6: { x: 505, y: 505},
+    pos7: { x: 605, y: 505},
+    pos8: { x: 505, y: 565},
+  }
+
+  for (let i = 0; i < runes_paths.length; i++) {
+    const item = await loadImage(runes_paths[i])
+    ctx.drawImage(item, runesp[`pos${i}`].x, runesp[`pos${i}`].y, item.width * 1.75, item.height * 1.75)
+  }
+
+  ctx.font = '24px Arial'
+  ctx.fillStyle = 'white'
+  ctx.fillText(header, 124, 95)
+  ctx.fillText(main, 205, 35)
+  ctx.fillText(regen, 556, 95)
+  ctx.fillText(items10text, 102, 325)
+  ctx.fillText(runestext, 556, 325)
+  ctx.font = '18px Arial'
+  ctx.fillStyle = 'rgb(244,215,103)'
+  ctx.fillText(networth10, 98, 502)
+
+  const buffer = canvas.toBuffer('image/png')
+  writeFileSync(outputPath, buffer)
+  paths.forEach(path => unlinkSync(path))
+  con_paths.forEach(path => unlinkSync(path))
+  items10_paths.forEach(path => unlinkSync(path))
+  runes_paths.forEach(path => unlinkSync(path))
+}
+//#endregion Graphic functions
+
+//#region Interfaces
+interface IPos {
+  [key: string]: { x: number, y: number }
+}
+
+interface IDotaHero {
   [id: number]: string
 }
 
-const HEROES: IDotaHeroes = {
+interface IDotaItem {
+  [id: string]: string
+}
+
+interface IDotaItemCons {
+  [id: string]: number
+}
+//#endregion Interfaces
+
+//#region Dota Constants
+const HEROES: IDotaHero = {
   [1]: 'Anti-Mage',
   [2]: 'Axe',
   [3]: 'Bane',
@@ -178,7 +469,7 @@ const HEROES: IDotaHeroes = {
   [138]: 'Muerta',
 }
 
-const NPCS: IDotaHeroes = {
+const NPCS: IDotaHero = {
   [1]: 'antimage',
   [2]: 'axe',
   [3]: 'bane',
@@ -305,11 +596,7 @@ const NPCS: IDotaHeroes = {
   [138]: 'muerta',
 }
 
-interface IDotaItems {
-  [id: number]: string
-}
-
-const ITEMS: IDotaItems = {
+const ITEMS: IDotaItem = {
   [1]: 'Blink Dagger',
   [2]: 'Blades of Attack',
   [3]: 'Broadsword',
@@ -805,22 +1092,500 @@ const ITEMS: IDotaItems = {
   [4302]: 'Forebearer\'s Fortune',
 }
 
-function formatTime(seconds: number): string {
-  const minutes: number = Math.floor(seconds / 60)
-  const remainingSeconds: number = seconds % 60
-
-  const formattedMinutes: string = minutes < 10 ? `0${minutes}` : `${minutes}`
-  const formattedSeconds: string = remainingSeconds < 10 ? `0${remainingSeconds}` : `${remainingSeconds}`
-
-  return `${formattedMinutes}:${formattedSeconds}`
-}
-
-interface IDotaItemsFormat {
-  [time: string]: string
-}
-
-interface IGameStages {
-  [stage: string]: IDotaItemsFormat
+const ITEM_NAMES: IDotaItem = {
+  [1]: 'item_blink',
+  [2]: 'item_blades_of_attack',
+  [3]: 'item_broadsword',
+  [4]: 'item_chainmail',
+  [5]: 'item_claymore',
+  [6]: 'item_helm_of_iron_will',
+  [7]: 'item_javelin',
+  [8]: 'item_mithril_hammer',
+  [9]: 'item_platemail',
+  [10]: 'item_quarterstaff',
+  [11]: 'item_quelling_blade',
+  [12]: 'item_ring_of_protection',
+  [13]: 'item_gauntlets',
+  [14]: 'item_slippers',
+  [15]: 'item_mantle',
+  [16]: 'item_branches',
+  [17]: 'item_belt_of_strength',
+  [18]: 'item_boots_of_elves',
+  [19]: 'item_robe',
+  [20]: 'item_circlet',
+  [21]: 'item_ogre_axe',
+  [22]: 'item_blade_of_alacrity',
+  [23]: 'item_staff_of_wizardry',
+  [24]: 'item_ultimate_orb',
+  [25]: 'item_gloves',
+  [26]: 'item_lifesteal',
+  [27]: 'item_ring_of_regen',
+  [28]: 'item_sobi_mask',
+  [29]: 'item_boots',
+  [30]: 'item_gem',
+  [31]: 'item_cloak',
+  [32]: 'item_talisman_of_evasion',
+  [33]: 'item_cheese',
+  [34]: 'item_magic_stick',
+  [35]: 'item_recipe_magic_wand',
+  [36]: 'item_magic_wand',
+  [37]: 'item_ghost',
+  [38]: 'item_clarity',
+  [39]: 'item_flask',
+  [40]: 'item_dust',
+  [41]: 'item_bottle',
+  [42]: 'item_ward_observer',
+  [43]: 'item_ward_sentry',
+  [44]: 'item_tango',
+  [45]: 'item_courier',
+  [46]: 'item_tpscroll',
+  [47]: 'item_recipe_travel_boots',
+  [48]: 'item_travel_boots',
+  [49]: 'item_recipe_phase_boots',
+  [50]: 'item_phase_boots',
+  [51]: 'item_demon_edge',
+  [52]: 'item_eagle',
+  [53]: 'item_reaver',
+  [54]: 'item_relic',
+  [55]: 'item_hyperstone',
+  [56]: 'item_ring_of_health',
+  [57]: 'item_void_stone',
+  [58]: 'item_mystic_staff',
+  [59]: 'item_energy_booster',
+  [60]: 'item_point_booster',
+  [61]: 'item_vitality_booster',
+  [62]: 'item_recipe_power_treads',
+  [63]: 'item_power_treads',
+  [64]: 'item_recipe_hand_of_midas',
+  [65]: 'item_hand_of_midas',
+  [66]: 'item_recipe_oblivion_staff',
+  [67]: 'item_oblivion_staff',
+  [68]: 'item_recipe_pers',
+  [69]: 'item_pers',
+  [70]: 'item_recipe_poor_mans_shield',
+  [71]: 'item_poor_mans_shield',
+  [72]: 'item_recipe_bracer',
+  [73]: 'item_bracer',
+  [74]: 'item_recipe_wraith_band',
+  [75]: 'item_wraith_band',
+  [76]: 'item_recipe_null_talisman',
+  [77]: 'item_null_talisman',
+  [78]: 'item_recipe_mekansm',
+  [79]: 'item_mekansm',
+  [80]: 'item_recipe_vladmir',
+  [81]: 'item_vladmir',
+  [84]: 'item_flying_courier',
+  [85]: 'item_recipe_buckler',
+  [86]: 'item_buckler',
+  [87]: 'item_recipe_ring_of_basilius',
+  [88]: 'item_ring_of_basilius',
+  [89]: 'item_recipe_pipe',
+  [90]: 'item_pipe',
+  [91]: 'item_recipe_urn_of_shadows',
+  [92]: 'item_urn_of_shadows',
+  [93]: 'item_recipe_headdress',
+  [94]: 'item_headdress',
+  [95]: 'item_recipe_sheepstick',
+  [96]: 'item_sheepstick',
+  [97]: 'item_recipe_orchid',
+  [98]: 'item_orchid',
+  [99]: 'item_recipe_cyclone',
+  [100]: 'item_cyclone',
+  [101]: 'item_recipe_force_staff',
+  [102]: 'item_force_staff',
+  [103]: 'item_recipe_dagon',
+  [104]: 'item_dagon',
+  [105]: 'item_recipe_necronomicon',
+  [106]: 'item_necronomicon',
+  [107]: 'item_recipe_ultimate_scepter',
+  [108]: 'item_ultimate_scepter',
+  [109]: 'item_recipe_refresher',
+  [110]: 'item_refresher',
+  [111]: 'item_recipe_assault',
+  [112]: 'item_assault',
+  [113]: 'item_recipe_heart',
+  [114]: 'item_heart',
+  [115]: 'item_recipe_black_king_bar',
+  [116]: 'item_black_king_bar',
+  [117]: 'item_aegis',
+  [118]: 'item_recipe_shivas_guard',
+  [119]: 'item_shivas_guard',
+  [120]: 'item_recipe_bloodstone',
+  [121]: 'item_bloodstone',
+  [122]: 'item_recipe_sphere',
+  [123]: 'item_sphere',
+  [124]: 'item_recipe_vanguard',
+  [125]: 'item_vanguard',
+  [126]: 'item_recipe_blade_mail',
+  [127]: 'item_blade_mail',
+  [128]: 'item_recipe_soul_booster',
+  [129]: 'item_soul_booster',
+  [130]: 'item_recipe_hood_of_defiance',
+  [131]: 'item_hood_of_defiance',
+  [132]: 'item_recipe_rapier',
+  [133]: 'item_rapier',
+  [134]: 'item_recipe_monkey_king_bar',
+  [135]: 'item_monkey_king_bar',
+  [136]: 'item_recipe_radiance',
+  [137]: 'item_radiance',
+  [138]: 'item_recipe_butterfly',
+  [139]: 'item_butterfly',
+  [140]: 'item_recipe_greater_crit',
+  [141]: 'item_greater_crit',
+  [142]: 'item_recipe_basher',
+  [143]: 'item_basher',
+  [144]: 'item_recipe_bfury',
+  [145]: 'item_bfury',
+  [146]: 'item_recipe_manta',
+  [147]: 'item_manta',
+  [148]: 'item_recipe_lesser_crit',
+  [149]: 'item_lesser_crit',
+  [150]: 'item_recipe_armlet',
+  [151]: 'item_armlet',
+  [152]: 'item_invis_sword',
+  [153]: 'item_recipe_sange_and_yasha',
+  [154]: 'item_sange_and_yasha',
+  [155]: 'item_recipe_satanic',
+  [156]: 'item_satanic',
+  [157]: 'item_recipe_mjollnir',
+  [158]: 'item_mjollnir',
+  [159]: 'item_recipe_skadi',
+  [160]: 'item_skadi',
+  [161]: 'item_recipe_sange',
+  [162]: 'item_sange',
+  [163]: 'item_recipe_helm_of_the_dominator',
+  [164]: 'item_helm_of_the_dominator',
+  [165]: 'item_recipe_maelstrom',
+  [166]: 'item_maelstrom',
+  [167]: 'item_recipe_desolator',
+  [168]: 'item_desolator',
+  [169]: 'item_recipe_yasha',
+  [170]: 'item_yasha',
+  [171]: 'item_recipe_mask_of_madness',
+  [172]: 'item_mask_of_madness',
+  [173]: 'item_recipe_diffusal_blade',
+  [174]: 'item_diffusal_blade',
+  [175]: 'item_recipe_ethereal_blade',
+  [176]: 'item_ethereal_blade',
+  [177]: 'item_recipe_soul_ring',
+  [178]: 'item_soul_ring',
+  [179]: 'item_recipe_arcane_boots',
+  [180]: 'item_arcane_boots',
+  [181]: 'item_orb_of_venom',
+  [182]: 'item_stout_shield',
+  [183]: 'item_recipe_invis_sword',
+  [184]: 'item_recipe_ancient_janggo',
+  [185]: 'item_ancient_janggo',
+  [186]: 'item_recipe_medallion_of_courage',
+  [187]: 'item_medallion_of_courage',
+  [188]: 'item_smoke_of_deceit',
+  [189]: 'item_recipe_veil_of_discord',
+  [190]: 'item_veil_of_discord',
+  [191]: 'item_recipe_necronomicon_2',
+  [192]: 'item_recipe_necronomicon_3',
+  [193]: 'item_necronomicon_2',
+  [194]: 'item_necronomicon_3',
+  [195]: 'item_recipe_diffusal_blade_2',
+  [196]: 'item_diffusal_blade_2',
+  [197]: 'item_recipe_dagon_2',
+  [198]: 'item_recipe_dagon_3',
+  [199]: 'item_recipe_dagon_4',
+  [200]: 'item_recipe_dagon_5',
+  [201]: 'item_dagon_2',
+  [202]: 'item_dagon_3',
+  [203]: 'item_dagon_4',
+  [204]: 'item_dagon_5',
+  [205]: 'item_recipe_rod_of_atos',
+  [206]: 'item_rod_of_atos',
+  [207]: 'item_recipe_abyssal_blade',
+  [208]: 'item_abyssal_blade',
+  [209]: 'item_recipe_heavens_halberd',
+  [210]: 'item_heavens_halberd',
+  [211]: 'item_recipe_ring_of_aquila',
+  [212]: 'item_ring_of_aquila',
+  [213]: 'item_recipe_tranquil_boots',
+  [214]: 'item_tranquil_boots',
+  [215]: 'item_shadow_amulet',
+  [216]: 'item_enchanted_mango',
+  [217]: 'item_recipe_ward_dispenser',
+  [218]: 'item_ward_dispenser',
+  [219]: 'item_recipe_travel_boots_2',
+  [220]: 'item_travel_boots_2',
+  [221]: 'item_recipe_lotus_orb',
+  [222]: 'item_recipe_meteor_hammer',
+  [223]: 'item_meteor_hammer',
+  [224]: 'item_recipe_nullifier',
+  [225]: 'item_nullifier',
+  [226]: 'item_lotus_orb',
+  [227]: 'item_recipe_solar_crest',
+  [228]: 'item_recipe_octarine_core',
+  [229]: 'item_solar_crest',
+  [230]: 'item_recipe_guardian_greaves',
+  [231]: 'item_guardian_greaves',
+  [232]: 'item_aether_lens',
+  [233]: 'item_recipe_aether_lens',
+  [234]: 'item_recipe_dragon_lance',
+  [235]: 'item_octarine_core',
+  [236]: 'item_dragon_lance',
+  [237]: 'item_faerie_fire',
+  [238]: 'item_recipe_iron_talon',
+  [239]: 'item_iron_talon',
+  [240]: 'item_blight_stone',
+  [241]: 'item_tango_single',
+  [242]: 'item_crimson_guard',
+  [243]: 'item_recipe_crimson_guard',
+  [244]: 'item_wind_lace',
+  [245]: 'item_recipe_bloodthorn',
+  [246]: 'item_recipe_moon_shard',
+  [247]: 'item_moon_shard',
+  [248]: 'item_recipe_silver_edge',
+  [249]: 'item_silver_edge',
+  [250]: 'item_bloodthorn',
+  [251]: 'item_recipe_echo_sabre',
+  [252]: 'item_echo_sabre',
+  [253]: 'item_recipe_glimmer_cape',
+  [254]: 'item_glimmer_cape',
+  [255]: 'item_recipe_aeon_disk',
+  [256]: 'item_aeon_disk',
+  [257]: 'item_tome_of_knowledge',
+  [258]: 'item_recipe_kaya',
+  [259]: 'item_kaya',
+  [260]: 'item_refresher_shard',
+  [261]: 'item_crown',
+  [262]: 'item_recipe_hurricane_pike',
+  [263]: 'item_hurricane_pike',
+  [265]: 'item_infused_raindrop',
+  [266]: 'item_recipe_spirit_vessel',
+  [267]: 'item_spirit_vessel',
+  [268]: 'item_recipe_holy_locket',
+  [269]: 'item_holy_locket',
+  [270]: 'item_recipe_ultimate_scepter_2',
+  [271]: 'item_ultimate_scepter_2',
+  [272]: 'item_recipe_kaya_and_sange',
+  [273]: 'item_kaya_and_sange',
+  [274]: 'item_recipe_yasha_and_kaya',
+  [275]: 'item_recipe_trident',
+  [276]: 'item_combo_breaker',
+  [277]: 'item_yasha_and_kaya',
+  [279]: 'item_ring_of_tarrasque',
+  [286]: 'item_flying_courier',
+  [287]: 'item_keen_optic',
+  [288]: 'item_grove_bow',
+  [289]: 'item_quickening_charm',
+  [290]: 'item_philosophers_stone',
+  [291]: 'item_force_boots',
+  [292]: 'item_desolator_2',
+  [293]: 'item_phoenix_ash',
+  [294]: 'item_seer_stone',
+  [295]: 'item_greater_mango',
+  [297]: 'item_vampire_fangs',
+  [298]: 'item_craggy_coat',
+  [299]: 'item_greater_faerie_fire',
+  [300]: 'item_timeless_relic',
+  [301]: 'item_mirror_shield',
+  [302]: 'item_elixer',
+  [303]: 'item_recipe_ironwood_tree',
+  [304]: 'item_ironwood_tree',
+  [305]: 'item_royal_jelly',
+  [306]: 'item_pupils_gift',
+  [307]: 'item_tome_of_aghanim',
+  [308]: 'item_repair_kit',
+  [309]: 'item_mind_breaker',
+  [310]: 'item_third_eye',
+  [311]: 'item_spell_prism',
+  [312]: 'item_horizon',
+  [313]: 'item_fusion_rune',
+  [317]: 'item_recipe_fallen_sky',
+  [325]: 'item_princes_knife',
+  [326]: 'item_spider_legs',
+  [327]: 'item_helm_of_the_undying',
+  [328]: 'item_mango_tree',
+  [329]: 'item_recipe_vambrace',
+  [330]: 'item_witless_shako',
+  [331]: 'item_vambrace',
+  [334]: 'item_imp_claw',
+  [335]: 'item_flicker',
+  [336]: 'item_spy_gadget',
+  [349]: 'item_arcane_ring',
+  [354]: 'item_ocean_heart',
+  [355]: 'item_broom_handle',
+  [356]: 'item_trusty_shovel',
+  [357]: 'item_nether_shawl',
+  [358]: 'item_dragon_scale',
+  [359]: 'item_essence_ring',
+  [360]: 'item_clumsy_net',
+  [361]: 'item_enchanted_quiver',
+  [362]: 'item_ninja_gear',
+  [363]: 'item_illusionsts_cape',
+  [364]: 'item_havoc_hammer',
+  [365]: 'item_panic_button',
+  [366]: 'item_apex',
+  [367]: 'item_ballista',
+  [368]: 'item_woodland_striders',
+  [370]: 'item_demonicon',
+  [371]: 'item_fallen_sky',
+  [372]: 'item_pirate_hat',
+  [373]: 'item_dimensional_doorway',
+  [374]: 'item_ex_machina',
+  [375]: 'item_faded_broach',
+  [376]: 'item_paladin_sword',
+  [377]: 'item_minotaur_horn',
+  [378]: 'item_orb_of_destruction',
+  [379]: 'item_the_leveller',
+  [381]: 'item_titan_sliver',
+  [473]: 'item_voodoo_mask',
+  [485]: 'item_blitz_knuckles',
+  [533]: 'item_recipe_witch_blade',
+  [534]: 'item_witch_blade',
+  [565]: 'item_chipped_vest',
+  [566]: 'item_wizard_glass',
+  [569]: 'item_orb_of_corrosion',
+  [570]: 'item_gloves_of_travel',
+  [571]: 'item_trickster_cloak',
+  [573]: 'item_elven_tunic',
+  [574]: 'item_cloak_of_flames',
+  [575]: 'item_venom_gland',
+  [576]: 'item_gladiator_helm',
+  [577]: 'item_possessed_mask',
+  [578]: 'item_ancient_perseverance',
+  [582]: 'item_oakheart',
+  [585]: 'item_stormcrafter',
+  [588]: 'item_overflowing_elixir',
+  [589]: 'item_mysterious_hat',
+  [593]: 'item_fluffy_hat',
+  [596]: 'item_falcon_blade',
+  [597]: 'item_recipe_mage_slayer',
+  [598]: 'item_mage_slayer',
+  [599]: 'item_recipe_falcon_blade',
+  [600]: 'item_overwhelming_blink',
+  [603]: 'item_swift_blink',
+  [604]: 'item_arcane_blink',
+  [606]: 'item_recipe_arcane_blink',
+  [607]: 'item_recipe_swift_blink',
+  [608]: 'item_recipe_overwhelming_blink',
+  [609]: 'item_aghanims_shard',
+  [610]: 'item_wind_waker',
+  [612]: 'item_recipe_wind_waker',
+  [633]: 'item_recipe_helm_of_the_overlord',
+  [635]: 'item_helm_of_the_overlord',
+  [637]: 'item_star_mace',
+  [638]: 'item_penta_edged_sword',
+  [640]: 'item_recipe_orb_of_corrosion',
+  [653]: 'item_recipe_grandmasters_glaive',
+  [655]: 'item_grandmasters_glaive',
+  [674]: 'item_warhammer',
+  [675]: 'item_psychic_headband',
+  [676]: 'item_ceremonial_robe',
+  [677]: 'item_book_of_shadows',
+  [678]: 'item_giants_ring',
+  [679]: 'item_vengeances_shadow',
+  [680]: 'item_bullwhip',
+  [686]: 'item_quicksilver_amulet',
+  [691]: 'item_recipe_eternal_shroud',
+  [692]: 'item_eternal_shroud',
+  [725]: 'item_aghanims_shard_roshan',
+  [727]: 'item_ultimate_scepter_roshan',
+  [731]: 'item_satchel',
+  [824]: 'item_assassins_dagger',
+  [825]: 'item_ascetic_cap',
+  [826]: 'item_sample_picker',
+  [827]: 'item_icarus_wings',
+  [828]: 'item_misericorde',
+  [829]: 'item_force_field',
+  [833]: 'item_recipe_tenderizer',
+  [834]: 'item_black_powder_bag',
+  [835]: 'item_paintball',
+  [836]: 'item_light_robes',
+  [837]: 'item_heavy_blade',
+  [838]: 'item_unstable_wand',
+  [839]: 'item_fortitude_ring',
+  [840]: 'item_pogo_stick',
+  [849]: 'item_mechanical_arm',
+  [859]: 'item_recipe_voidwalker_scythe',
+  [904]: 'item_voidwalker_scythe',
+  [906]: 'item_tenderizer',
+  [907]: 'item_recipe_wraith_pact',
+  [908]: 'item_wraith_pact',
+  [910]: 'item_recipe_revenants_brooch',
+  [911]: 'item_revenants_brooch',
+  [928]: 'item_recipe_eagle_eye',
+  [929]: 'item_eagle_eye',
+  [930]: 'item_recipe_boots_of_bearing',
+  [931]: 'item_boots_of_bearing',
+  [938]: 'item_slime_vial',
+  [939]: 'item_harpoon',
+  [940]: 'item_wand_of_the_brine',
+  [945]: 'item_seeds_of_serenity',
+  [946]: 'item_lance_of_pursuit',
+  [947]: 'item_occult_bracelet',
+  [948]: 'item_tome_of_omniscience',
+  [949]: 'item_ogre_seal_totem',
+  [950]: 'item_defiant_shell',
+  [964]: 'item_diffusal_blade_2',
+  [965]: 'item_recipe_diffusal_blade_2',
+  [968]: 'item_arcane_scout',
+  [969]: 'item_barricade',
+  [990]: 'item_eye_of_the_vizier',
+  [998]: 'item_manacles_of_power',
+  [1000]: 'item_bottomless_chalice',
+  [1017]: 'item_wand_of_sanctitude',
+  [1021]: 'item_river_painter',
+  [1022]: 'item_river_painter2',
+  [1023]: 'item_river_painter3',
+  [1024]: 'item_river_painter4',
+  [1025]: 'item_river_painter5',
+  [1026]: 'item_river_painter6',
+  [1027]: 'item_river_painter7',
+  [1028]: 'item_mutation_tombstone',
+  [1029]: 'item_super_blink',
+  [1030]: 'item_pocket_tower',
+  [1032]: 'item_pocket_roshan',
+  [1076]: 'item_specialists_array',
+  [1077]: 'item_dagger_of_ristul',
+  [1090]: 'item_muertas_gun',
+  [1091]: 'item_samurai_tabi',
+  [1092]: 'item_recipe_hermes_sandals',
+  [1093]: 'item_hermes_sandals',
+  [1094]: 'item_recipe_lunar_crest',
+  [1095]: 'item_lunar_crest',
+  [1096]: 'item_recipe_disperser',
+  [1097]: 'item_disperser',
+  [1098]: 'item_recipe_samurai_tabi',
+  [1099]: 'item_recipe_witches_switch',
+  [1100]: 'item_witches_switch',
+  [1101]: 'item_recipe_harpoon',
+  [1106]: 'item_recipe_phylactery',
+  [1107]: 'item_phylactery',
+  [1122]: 'item_diadem',
+  [1123]: 'item_blood_grenade',
+  [1124]: 'item_spark_of_courage',
+  [1125]: 'item_cornucopia',
+  [1127]: 'item_recipe_pavise',
+  [1128]: 'item_pavise',
+  [1154]: 'item_royale_with_cheese',
+  [1466]: 'item_gungir',
+  [1565]: 'item_recipe_gungir',
+  [2091]: 'item_tier1_token',
+  [2092]: 'item_tier2_token',
+  [2093]: 'item_tier3_token',
+  [2094]: 'item_tier4_token',
+  [2095]: 'item_tier5_token',
+  [2096]: 'item_vindicators_axe',
+  [2097]: 'item_duelist_gloves',
+  [2098]: 'item_horizons_equilibrium',
+  [2099]: 'item_blighted_spirit',
+  [2190]: 'item_dandelion_amulet',
+  [2191]: 'item_turtle_shell',
+  [2192]: 'item_martyrs_plate',
+  [2193]: 'item_gossamer_cape',
+  [4204]: 'item_famango',
+  [4205]: 'item_great_famango',
+  [4206]: 'item_greater_famango',
+  [4207]: 'item_recipe_great_famango',
+  [4208]: 'item_recipe_greater_famango',
+  [4300]: 'item_ofrenda',
+  [4301]: 'item_ofrenda_shovel',
+  [4302]: 'item_ofrenda_pledge',
 }
 
 const BLACKLIST_ITEMS = [
@@ -829,10 +1594,23 @@ const BLACKLIST_ITEMS = [
   'Great Healing Lotus',
   'Greater Healing Lotus'
 ]
+//#endregion Dota Constants
 
-const BG_PATH = 'src/commands/dota2/bg.jpg'
+//#region Constants
+const BG_PATH  = 'src/commands/dota2/image/bg.jpg'
+const INV_PATH = 'src/commands/dota2/image/inv.png'
+const GOLD_PATH = 'src/commands/dota2/image/gold.png'
+const ENDPOINT = 'https://api.stratz.com/graphql'
+const graphQLClient = new GraphQLClient(ENDPOINT, { headers: { authorization: `Bearer ${process.env.stratz}` }})
+const DOTA_ITEM_IMAGE = 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/items/'
+const DOTA_ABILITY_IMAGE = 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/abilities/'
+const DOTA_TALENT_TREE_IMAGE = 'https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/icons/talents.svg'
+const DOTA_RUNE_IMAGE = 'https://cdn.stratz.com/images/dota2/runes/'
+//#endregion Constants
 
+//#region Command
 export default {
+//#region Command data
   name: 'hero',
   description: 'IB&SB',
   options: [
@@ -841,8 +1619,6 @@ export default {
       description: 'The hero id. You can it get using the /get-heroes command',
       type: 'INTEGER',
       required: true,
-      minValue: 0,
-      maxValue: 32767,
     },
     {
       name: 'position',
@@ -862,16 +1638,12 @@ export default {
       description: 'The hero id to include in this query',
       type: 'INTEGER',
       required: false,
-      minValue: 0,
-      maxValue: 32767,
     },
     {
       name: 'against-hero',
       description: 'The hero id to include in this query',
       type: 'INTEGER',
       required: false,
-      minValue: 0,
-      maxValue: 32767,
     },
     {
       name: 'is-pro',
@@ -883,73 +1655,168 @@ export default {
       name: 'skip',
       description: 'The amount of data to skip before collecting your query',
       type: 'INTEGER',
-      required: false
-    }
+      required: false,
+    },
   ],
   guilds: ['1150427580734906368'],
-  // isOwnerOnly: true,
-  cooldown: '1m',
+  isOwnerOnly: true,
+  // cooldown: '1m',
+//#endregion Command data
   callback: async (interaction) => {
+//#region Init
     await interaction.deferReply({ ephemeral: true })
-    const msgId = interaction.id
+    if (!existsSync(join(__dirname, 'image/'))) mkdirSync(join(__dirname, 'image/'))
 
-    const ENDPOINT      = 'https://api.stratz.com/graphql'
-    const graphQLClient = new GraphQLClient(ENDPOINT, { headers: { authorization: `Bearer ${process.env.stratz}` }})
+    const hero        = interaction.options.get('hero')?.value as number
+    const pos         = interaction.options.get('position')?.value as string
+    const withHero    = interaction.options.get('with-hero')?.value as number
+    const againstHero = interaction.options.get('against-hero')?.value as number
+    const isPro       = interaction.options.get('is-pro')?.value as boolean
+    const skip        = interaction.options.get('skip')?.value as number ?? 0
 
-    const heroId      = interaction.options.get('hero')?.value
-    const pos         = interaction.options.get('position')?.value
-    const withHero    = interaction.options.get('with-hero')?.value
-    const againstHero = interaction.options.get('against-hero')?.value
-    const isPro       = interaction.options.get('is-pro')?.value
-    const skip        = interaction.options.get('skip')?.value ?? 0
-    const heroIcon    = `https://cdn.stratz.com/images/dota2/heroes/${NPCS[heroId as number]}_vert.png`
-    const heroGif     = `https://cdn.cloudflare.steamstatic.com/apps/dota2/videos/dota_react/heroes/renders/${NPCS[heroId as number]}.png`
-
-    if (!HEROES[heroId as number]) {
+    if (!HEROES[hero]) {
       await interaction.editReply({ content: '<:poel:1168156790245040169>' })
       return
     }
 
-    let HERO_GUIDE_ARGS = `heroId: ${heroId}, positionId: ${pos}`
-    if (withHero)     HERO_GUIDE_ARGS += `, withHeroId: ${withHero}`
-    if (againstHero)  HERO_GUIDE_ARGS += `, againstHeroId: ${againstHero}`
-    if (isPro)        HERO_GUIDE_ARGS += `, isPro: ${isPro}`
+    const heroIcon    = `https://cdn.stratz.com/images/dota2/heroes/${NPCS[hero]}_vert.png`
+    const heroImg     = `https://cdn.cloudflare.steamstatic.com/apps/dota2/videos/dota_react/heroes/renders/${NPCS[hero]}.png`
 
-    const MC_ON_POS_GQL = gql`{ heroStats { guide(heroId: ${heroId}, positionId: ${pos}) { matchCount }}}`
-    const MC_ON_POS_DATA: any = await graphQLClient.request(MC_ON_POS_GQL)
-    if (MC_ON_POS_DATA.heroStats.guide.length <= 0) {
+    if (withHero && !HEROES[withHero]) {
+      await interaction.editReply({ content: '<:poel:1168156790245040169>' })
+      return
+    }
+
+    if (againstHero && !HEROES[againstHero]) {
+      await interaction.editReply({ content: '<:poel:1168156790245040169>' })
+      return
+    }
+
+    let HERO_GUIDE_ARGS = `heroId: ${hero}, positionId: ${pos}`
+    if (withHero) HERO_GUIDE_ARGS    += `, withHeroId: ${withHero}`
+    if (againstHero) HERO_GUIDE_ARGS += `, againstHeroId: ${againstHero}`
+    if (isPro) HERO_GUIDE_ARGS       += `, isPro: ${isPro}`
+
+    const MAIN_GQL = gql`{ heroStats { guide(${HERO_GUIDE_ARGS}) { matchCount guides(take: 1, skip: ${skip}) { steamAccountId }}}}`
+    const MAIN_DATA: any = await graphQLClient.request(MAIN_GQL)
+
+    if (MAIN_DATA.heroStats.guide.length <= 0) {
       await interaction.editReply({ content: `<:poel:1168156790245040169>` })
       return
     }
 
-    const STEAM_ID_GQL = gql`{ heroStats { guide(${HERO_GUIDE_ARGS}) { guides(take: 1, skip: ${skip}) { steamAccountId }}}}`
-    const STEAM_ID_DATA: any = await graphQLClient.request(STEAM_ID_GQL)
-    if (STEAM_ID_DATA.heroStats.guide[0].guides === null) {
+    if (MAIN_DATA.heroStats.guide[0].guides === null) {
       await interaction.editReply({ content: '<:poel:1168156790245040169>' })
       return
     }
 
-    const steamId = STEAM_ID_DATA.heroStats.guide[0].guides[0].steamAccountId
-    const HERO_GUIDES_GQL = gql`{ heroStats { guide(${HERO_GUIDE_ARGS}) { guides(take: 1, skip: ${skip}) { match { durationSeconds id players(steamAccountId: ${steamId}) { position kills deaths assists imp goldPerMinute experiencePerMinute numLastHits numDenies heroDamage towerDamage heroHealing playbackData { purchaseEvents { time itemId }}}}}}}}`
-    const HERO_GUIDES_DATA: any = await graphQLClient.request(HERO_GUIDES_GQL)
+    const steamId = MAIN_DATA.heroStats.guide[0].guides[0].steamAccountId
+    const HERO_GUIDE_GQL = gql`{ heroStats { guide(${HERO_GUIDE_ARGS}) { guides(take: 1, skip: ${skip}) { match { durationSeconds id players(steamAccountId: ${steamId}) { kills deaths assists imp goldPerMinute experiencePerMinute numLastHits numDenies heroDamage towerDamage heroHealing playbackData { runeEvents { time rune action } playerUpdateGoldEvents { time networth } itemUsedEvents { time itemId attacker target} healEvents { time byItem} inventoryEvents { time item0 { itemId charges } item1 { itemId charges } item2 { itemId charges } item3 { itemId charges } item4 { itemId charges } item5 { itemId charges }} purchaseEvents { time itemId }}}}}}}}`
+    const HERO_GUIDE_DATA: any = await graphQLClient.request(HERO_GUIDE_GQL)
 
-    let items: IGameStages = {
-      early: {},
-      mid: {},
-      late: {}
-    }
-    for (let i = 0; i < HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents.length; i++) {
-      const minutes = parseInt(formatTime(HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents[i].time).split(':')[0], 10)
+    const playerData = HERO_GUIDE_DATA.heroStats.guide[0].guides[0].match.players[0]
+    const matchData = HERO_GUIDE_DATA.heroStats.guide[0].guides[0].match
+//#endregion Init
+
+//#region generalStatisticsPage
+    const generalStatisticsPage = new EmbedBuilder()
+      .setColor('DarkPurple')
+      .setFooter({ text: `Data provided by STRATZ.com`, iconURL: `https://stratz.com/images/stratz_knowledge_graph_logo.png` })
+      .setTitle(`Guide for ${HEROES[hero]}`)
+      .setThumbnail(heroIcon)
+      .setDescription('General statistics')
+      .setImage(heroImg)
+      .addFields(
+        { name: 'KDA',      value: `${playerData.kills}/${playerData.deaths}/${playerData.assists}`, inline: true},
+        { name: 'GPMXPM',   value: `${playerData.goldPerMinute}/${playerData.experiencePerMinute}`, inline: true },
+        { name: 'LH/DN',    value: `${playerData.numLastHits}/${playerData.numDenies}`, inline: true },
+        { name: 'HeroDmg',  value: `${playerData.heroDamage}`, inline: true },
+        { name: 'TowerDmg', value: `${playerData.towerDamage}`, inline: true },
+        { name: 'Healing',  value: `${playerData.heroHealing}`, inline: true },
+        { name: 'Playtime', value: `${formatTime(matchData.durationSeconds)}`, inline: true },
+        { name: 'Impact',   value: `${playerData.imp}`, inline: true },
+        { name: 'Match',    value: `[Click me](https://stratz.com/matches/${matchData.id})`, inline: true }
+      )
+//#endregion generalStatisticsPage
+
+//#region itemBuildEarlyPage
+    const starting_items_index = indexOfMinNegativeValue(playerData.playbackData.inventoryEvents)
+    let consumables: IDotaItemCons = {}
+    for (let i = 0; i < Object.entries(playerData.playbackData.healEvents).length; i++) {
+      const minutes = parseInt(formatTime(playerData.playbackData.healEvents[i].time).split(':')[0], 10)
       if (minutes < 10) {
-        items.early[formatTime(HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents[i].time)] = ITEMS[HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents[i].itemId]
-      } else if (minutes >= 10 && minutes < 30) {
-        items.mid[formatTime(HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents[i].time)] = ITEMS[HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents[i].itemId]
+        if (consumables[`${playerData.playbackData.healEvents[i].byItem}`] === undefined) consumables[`${playerData.playbackData.healEvents[i].byItem}`] = 1
+        else consumables[`${playerData.playbackData.healEvents[i].byItem}`]++
       } else {
-        items.late[formatTime(HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents[i].time)] = ITEMS[HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].playbackData.purchaseEvents[i].itemId]
+        break
+      }
+    }
+    for (let i = 0; i < Object.entries(playerData.playbackData.itemUsedEvents).length; i++) {
+      const minutes = parseInt(formatTime(playerData.playbackData.itemUsedEvents[i].time).split(':')[0], 10)
+      if (minutes < 10) {
+        if (playerData.playbackData.itemUsedEvents[i].attacker != playerData.playbackData.itemUsedEvents[i].target) continue
+        if (playerData.playbackData.itemUsedEvents[i].itemId == '38' || playerData.playbackData.itemUsedEvents[i].itemId == '216') {
+          if (consumables[`${playerData.playbackData.itemUsedEvents[i].itemId}`] === undefined) consumables[`${playerData.playbackData.itemUsedEvents[i].itemId}`] = 1
+          else consumables[`${playerData.playbackData.itemUsedEvents[i].itemId}`]++
+        } else {
+          break
+        }
+      } else {
+        break
       }
     }
 
+    let items10: IDotaItem = {}
+    let networth10 = ''
+    for (let i = 0; i < Object.entries(playerData.playbackData.inventoryEvents).length; i++) {
+      const minutes = parseInt(formatTime(playerData.playbackData.inventoryEvents[i].time).split(':')[0], 10)
+      if (minutes < 10) {} else {
+        for (const id in playerData.playbackData.inventoryEvents[i]) {
+          if (playerData.playbackData.inventoryEvents[i].hasOwnProperty(id) && id !== 'time') {
+            const value: any = playerData.playbackData.inventoryEvents[i][id]
+            if (value !== null) items10[`${id}`] = `${ITEM_NAMES[value.itemId]}`
+          }
+        }
+        break
+      }
+    }
+    for (let i = 0; i < Object.entries(playerData.playbackData.playerUpdateGoldEvents).length; i++) {
+      const minutes = parseInt(formatTime(playerData.playbackData.playerUpdateGoldEvents[i].time).split(':')[0], 10)
+      if (minutes < 10) {} else {
+        networth10 = playerData.playbackData.playerUpdateGoldEvents[i].networth
+        break
+      }
+    }
+
+    let runes: IDotaItemCons = {}
+    for (let i = 0; i < Object.entries(playerData.playbackData.runeEvents).length; i++) {
+      const minutes = parseInt(formatTime(playerData.playbackData.runeEvents[i].time).split(':')[0], 10)
+      if (minutes < 10) {
+        if (playerData.playbackData.runeEvents[i].action == 'PICKUP') {
+          if (runes[`${String(playerData.playbackData.runeEvents[i].rune).toLowerCase()}`] == undefined) runes[`${String(playerData.playbackData.runeEvents[i].rune).toLowerCase()}`] = 1
+          else runes[`${String(playerData.playbackData.runeEvents[i].rune).toLowerCase()}`]++
+        }
+      } else {
+        break
+      }
+    }
+
+    const ibegFilePath = join(__dirname, `image/${interaction.id}.png`)
+    await generateItemBuildEarlyGameImage(`Early Game and Laning for ${HEROES[hero]}`, 'Starting items', 'Regen', consumables, playerData.playbackData.inventoryEvents[starting_items_index], 'Items at 10 minute', items10, networth10, 'Runes', runes, ibegFilePath)
+    // const ibegUrl = await uploadToImgur(`${process.env.imgur}`, ibegFilePath)
+    const itemBuildEarlyPage = new EmbedBuilder()
+      .setColor('DarkPurple')
+      .setFooter({ text: `Data provided by STRATZ.com`, iconURL: `https://stratz.com/images/stratz_knowledge_graph_logo.png` })
+      .setTitle(`Guide for ${HEROES[hero]}`)
+      .setThumbnail(heroIcon)
+      .setDescription(`Item Build Early Game for ${HEROES[hero]}`)
+      // .setImage(ibegUrl)
+//#endregion itemBuildEarlyPage
+
+//#region Pagination
     const embeds: EmbedBuilder[] = []
+    embeds.push(generalStatisticsPage, itemBuildEarlyPage)
+
     const pages = {} as { [key: string]: number }
 
     const getRow = (id: string) => {
@@ -970,66 +1837,12 @@ export default {
           .setLabel('▶️')
           .setDisabled(pages[id] === embeds.length - 1)
       )
-    
+
       return row
     }
 
     const id = interaction.user.id
     pages[id] = pages[id] || 0
-
-    const firstPage = new EmbedBuilder()
-      .setColor('DarkPurple')
-      .setFooter({ text: `Data provided by STRATZ.com`, iconURL: `https://stratz.com/images/stratz_knowledge_graph_logo.png` })
-      .setTitle(`Guide for ${HEROES[heroId as number]}`)
-      .setThumbnail(`${heroIcon}`)
-      .setDescription('General statistics')
-      .addFields(
-        { name: 'KDA', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].kills}/${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].deaths}/${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].assists}`, inline: true},
-        { name: 'GPMXPM', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].goldPerMinute}/${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].experiencePerMinute}`, inline: true },
-        { name: 'LH/DN', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].numLastHits}/${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].numDenies}`, inline: true },
-        { name: 'HeroDmg', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].heroDamage}`, inline: true },
-        { name: 'TowerDmg', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].towerDamage}`, inline: true },
-        { name: 'Healing', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].heroHealing}`, inline: true },
-        { name: 'Playtime', value: `${formatTime(HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.durationSeconds)}`, inline: true },
-        { name: 'Impact', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.players[0].imp}`, inline: true },
-        { name: 'Match ID', value: `${HERO_GUIDES_DATA.heroStats.guide[0].guides[0].match.id}`, inline: true }
-      )
-      .setImage(`${heroGif}`)
-
-    let early = 'Early game:\n'
-    let mid = 'Mid game:\n'
-    let late = 'Late game: \n'
-    for (let i = 0; i < Object.entries(items.early).length; i++) {
-      if (BLACKLIST_ITEMS.includes(`${Object.entries(items.early)[i][1]}`) || Object.entries(items.early)[i][1].toString().endsWith('Recipe')) { continue }
-      early += `${Object.entries(items.early)[i].toString().replaceAll(/,/gi, ' ')}\n`
-    }
-    for (let i = 0; i < Object.entries(items.mid).length; i++) {
-      if (BLACKLIST_ITEMS.includes(`${Object.entries(items.mid)[i][1]}`) || Object.entries(items.mid)[i][1].toString().endsWith('Recipe')) { continue }
-      mid += `${Object.entries(items.mid)[i].toString().replaceAll(/,/gi, ' ')}\n`
-    }
-    for (let i = 0; i < Object.entries(items.late).length; i++) {
-      if (BLACKLIST_ITEMS.includes(`${Object.entries(items.late)[i][1]}`) || Object.entries(items.late)[i][1].toString().endsWith('Recipe')) { continue }
-      late += `${Object.entries(items.late)[i].toString().replaceAll(/,/gi, ' ')}\n`
-    }
-    const filePathFull = join(__dirname, `img${interaction.id}.png`)
-    await generateImageWithTextAndBackground(`Full Item Build for ${HEROES[heroId as number]}`, early, mid, late, BG_PATH, filePathFull)
-    const urlFull = await uploadToImgur(`${process.env.imgur}`, filePathFull)
-    const secondPage = new EmbedBuilder()
-      .setColor('DarkPurple')
-      .setFooter({ text: `Data provided by STRATZ.com`, iconURL: `https://stratz.com/images/stratz_knowledge_graph_logo.png` })
-      .setTitle(`Guide for ${HEROES[heroId as number]}`)
-      .setThumbnail(`${heroIcon}`)
-      .setDescription('Item Build')
-      .setImage(urlFull)
-
-    const thirdPage = new EmbedBuilder()
-      .setColor('DarkPurple')
-      .setFooter({ text: `Data provided by STRATZ.com`, iconURL: `https://stratz.com/images/stratz_knowledge_graph_logo.png` })
-      .setTitle(`Guide for ${HEROES[heroId as number]}`)
-      .setThumbnail(`${heroIcon}`)
-      .setDescription('Skill Build')
-
-    embeds.push(firstPage, secondPage, thirdPage)
 
     const embed = embeds[pages[id]]
     const filter = (i: Interaction) => i.user.id === interaction.user.id
@@ -1041,25 +1854,29 @@ export default {
     })
 
     const collector = interaction.channel?.createMessageComponentCollector({ filter, time })
-
     if (!collector) return
 
-    collector.on('collect', (btn) => {
-      if (!btn) return
-      if (btn.message.interaction?.id != msgId) return
+    collector.on('collect', (button) => {
+      if (!button) return
+      if (button.message.interaction?.id != interaction.id) return
 
-      btn.deferUpdate()
+      button.deferUpdate()
 
-      if (btn.customId !== 'prev_embed' && btn.customId !== 'next_embed') return
+      if (button.customId !== 'prev_embed' && button.customId !== 'next_embed') return
 
-      if (btn.customId === 'prev_embed' && pages[id] > 0) --pages[id]
-      else if (btn.customId === 'next_embed' && pages[id] < embeds.length - 1) ++pages[id]
+      if (button.customId === 'prev_embed' && pages[id] > 0) --pages[id]
+      else if (button.customId === 'next_embed' && pages[id] < embeds.length - 1) ++pages[id]
 
       interaction.editReply({
         embeds: [embeds[pages[id]]],
         components: [getRow(id) as any]
       })
     })
-    unlinkSync(filePathFull)
-  }
+//#endregion Pagination
+
+//#region Remove some files
+    unlinkSync(ibegFilePath)
+//#endregion Remove some files
+  },
 } as SlashCommand
+//#endregion Command

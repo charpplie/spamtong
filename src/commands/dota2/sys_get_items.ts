@@ -7,10 +7,15 @@ export default {
   description: 'GET LOST',
   options: [
     {
-      name: 'ids-only',
+      name: 'type',
       description: 'Selfdescriptive',
-      type: 'BOOLEAN',
-      required: false
+      type: 'STRING',
+      required: true,
+      choices: [
+        { name: 'ids',     value: 'ids' },
+        { name: 'names',   value: 'names'},
+        { name: 'default', value: 'default'},
+      ]
     }
   ],
   guilds: ['1150427580734906368'],
@@ -20,8 +25,7 @@ export default {
     await interaction.deferReply({
       ephemeral: true
     })
-
-    const idsOnly = interaction.options.get('ids-only')?.value
+    const type = interaction.options.get('type')?.value
 
     const ENDPOINT      = 'https://api.stratz.com/graphql'
     const graphQLClient = new GraphQLClient(ENDPOINT, { headers: { authorization: `Bearer ${process.env.stratz}` }})
@@ -31,6 +35,7 @@ export default {
       constants {
         items(language: ENGLISH) {
           displayName
+          name
           id
         }
       }
@@ -42,18 +47,25 @@ export default {
     let items = ''
 
     for (let i = 0; i < ITEMS_DATA.constants.items.length; i++) {
-      if (idsOnly) {
-        items = items + `${ITEMS_DATA.constants.items[i].id},\n`
-      } else {
-        items = items + `[${ITEMS_DATA.constants.items[i].id}]: \'${String(ITEMS_DATA.constants.items[i].displayName).replace('\'', '\\\'')}\',\n`
+      switch (type) {
+        case 'ids': {
+          items = items + `${ITEMS_DATA.constants.items[i].id},\n`
+          break
+        }
+        case 'names': {
+          items = items + `[${ITEMS_DATA.constants.items[i].id}]: \'${String(ITEMS_DATA.constants.items[i].name).replace('\'', '\\\'')}\',\n`
+          break
+        }
+        case 'default': {
+          items = items + `[${ITEMS_DATA.constants.items[i].id}]: \'${String(ITEMS_DATA.constants.items[i].displayName).replace('\'', '\\\'')}\',\n`
+          break
+        }
       }
     }
 
     const maxLength = 250
     const chunks = items.match(new RegExp(`.{1,${maxLength}}`, 'g')) || []
     chunks.forEach(chunk => console.log(chunk))
-    await interaction.editReply({
-      content: 'get lost'
-    })
+    await interaction.editReply({ content: 'get lost' })
   }
 } as SlashCommand
