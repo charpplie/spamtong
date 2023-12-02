@@ -1,8 +1,9 @@
 name: Main
 
-on: 
-  [push]
+on:
   workflow_dispatch:
+  push:
+    -master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
