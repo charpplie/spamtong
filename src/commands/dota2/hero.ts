@@ -4305,7 +4305,7 @@ export default {
         }
         break
       }
-    } 
+    }
     for (let i = 0; i < Object.entries(playerData.playbackData.playerUpdateGoldEvents).length; i++) {
       const minutes = parseInt(formatTime(playerData.playbackData.playerUpdateGoldEvents[i].time).split(':')[0], 10)
       if (minutes < 10) {} else {
