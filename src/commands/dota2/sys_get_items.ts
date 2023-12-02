@@ -1,7 +1,6 @@
 import { SlashCommand } from '@/comx'
 import { gql, GraphQLClient } from 'graphql-request'
 
-
 export default {
   name: 'get-items',
   description: 'GET LOST',
