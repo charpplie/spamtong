@@ -33,7 +33,7 @@ export default {
       if(resp.data?.data[0].data.url) col_meta.url = resp.data?.data[0].data.url
       if (col_meta.name == col_meta_name_) continue
       col_meta_name_ = col_meta.name
-      if (col_meta.url.includes('http')) { channel.send(`@everyone\n\nCollection: ${col_meta.name}\n\nDescription: ${col_meta.desc}\n\nURL: ${col_meta.url}`) }
+      if (col_meta.url.includes('http')) { channel.send(`Collection: ${col_meta.name}\n\nDescription: ${col_meta.desc}\n\nURL: ${col_meta.url}`) }
       await Sleep(120000)
     }
   }
