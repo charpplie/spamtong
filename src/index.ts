@@ -7,9 +7,9 @@ import { join } from 'path'
 class DLogger {
   private static instance: DLogger | null = null
   private client: CustomClient
-  private owner: string
+  private ownerId: string
 
-  private constructor(token: string, owner: string) {
+  private constructor(token: string, ownerId: string) {
     this.client = new CustomClient({
       intents: [
         GatewayIntentBits.Guilds,
@@ -20,19 +20,19 @@ class DLogger {
       ]
     })
 
-    this.owner = owner
+    this.ownerId = ownerId
 
     this.client.commands = new Collection<string, SlashCommand>()
     this.client.cooldowns = new Collection<string, number>()
 
-    EventHandler(this.client, join(__dirname, 'events'))
-    SlashCommandHandler(this.client, join(__dirname, 'commands'))
+    EventHandler(this.client, join(__dirname, `${process.env.app_events}`))
+    SlashCommandHandler(this.client, join(__dirname, `${process.env.app_commands}`))
 
     this.client.login(token)
   }
 
   private log(message: string, level: string) {
-    const user = this.client.users.cache.get(this.owner)
+    const user = this.client.users.cache.get(this.ownerId)
     if (user) user.send(`[${level}]: ${message}`)
   }
 
@@ -48,10 +48,11 @@ class DLogger {
     this.log(message, 'ERROR')
   }
 
-  public static getInstance(token: string, owner: string): DLogger {
+  public static getInstance(token: string, ownerId: string): DLogger {
     if (!DLogger.instance) {
-      DLogger.instance = new DLogger(token, owner)
+      DLogger.instance = new DLogger(token, ownerId)
     }
+
     return DLogger.instance
   }
 }

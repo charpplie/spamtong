@@ -13,21 +13,15 @@ const reactions = [
   '5️⃣',
 ]
 
-const tmp_folder = './temp'
-
-const MAIN_CHANNEL = '1168131163123093544'
-const TEST_CHANNEL = '1172652787843207200'
-
 export default {
   name: Events.MessageCreate,
   callback: async (interaction) => {
-    if (interaction.channel.id === MAIN_CHANNEL || interaction.channel.id == TEST_CHANNEL) {
+    if (interaction.channel.id === `${process.env.vcont_channel}`) {
       if (interaction.attachments.size > 0) {
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)
           if (attachment && attachment.contentType?.startsWith('video')) {
-            if (!existsSync(tmp_folder)) mkdirSync(tmp_folder)
-            const filePath = join(tmp_folder, attachment.name)
+            const filePath = join(__dirname, attachment.name)
             const writer = createWriteStream(filePath)
 
             const response = await axios({
@@ -52,7 +46,7 @@ export default {
               let author = interaction.member.user.username
               if (interaction.member.nickname) author = interaction.member.nickname
               await interaction.delete()
-              const convertedFilePath = join(tmp_folder, attachment.name.replace(/\.[^/.]+$/, '.mov'))
+              const convertedFilePath = join(__dirname, attachment.name.replace(/\.[^/.]+$/, '.mov'))
               ffmpeg(filePath)
                 .setFfmpegPath(ffmpegPath)
                 .output(convertedFilePath)
