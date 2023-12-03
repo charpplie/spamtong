@@ -2,6 +2,7 @@ import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder
 import { Event, Events, CustomClient } from '@/comx'
 import { IContModel } from '@sys/icont_db'
 import { VK } from 'vk-io'
+import { g_Logger } from 'logger'
 
 const reacts = [
   '1️⃣',
@@ -193,72 +194,79 @@ export default {
     })
 
     async function main() {
-      const response = await vk.api.photos.get({
-        owner_id: NIKITA,
-        album_id: SAVEDPHOTOS,
-        rev: 1,
-      })
-
-      let lastId
-      const lastPhoto = await IContModel.findOne({
-        order: [['createdAt', 'DESC']]
-      })
-
-      if (lastPhoto) {
-        lastId = lastPhoto.get('photo_id')
-      } else {
-        lastId = 0
-      }
-
-      let new_photos: number[] = []
-      let j = 0
-      if (lastId) {
-        while (response.items[j].id != lastId) {
-          if (response.items[j].id == lastId) break
-          new_photos.push(Number(response.items[j].id))
-          j++
-        }
-      } else {
-        for (let k = 0; k < response.items.length; k++) {
-          new_photos.push(Number(response.items[k].id))
-        }
-      }
-
-      new_photos = new_photos.reverse()
-
-      for (let i = 0; i < new_photos.length; i++) {
-        const r = await vk.api.photos.get({
+      try {
+        const response = await vk.api.photos.get({
           owner_id: NIKITA,
           album_id: SAVEDPHOTOS,
-          photo_ids: `${new_photos[i]}`,
           rev: 1,
         })
 
-        const url = r.items[0].sizes?.slice(-1)[0].url
-
-        await channel.send({
-          embeds: [
-            new EmbedBuilder()
-            .setColor('DarkPurple')
-            .setAuthor({ name: authorName, iconURL: authorIcon, url: `https://vk.com/id${NIKITA}`})
-            .setTitle(`Новая сохранёнка для ценителей Гигаскусства!`)
-            .setImage(`${url}`)
-            .addFields(
-              { name: 'Rating', value: '0.0', inline: true},
-              { name: 'Total rates', value: '0', inline: true}
-            )
-            .setFooter({ text: `${process.env.footer}`, iconURL: `${process.env.icon}`})
-          ],
-          components: [row as any]
-        }).then(async (reply) => {
-          await IContModel.create({
-            lastId: `${new_photos[i]}`,
-            photo_id: `${new_photos[i]}`,
-            msg_id: `${reply.id}`,
-          })
+        let lastId
+        const lastPhoto = await IContModel.findOne({
+          order: [['createdAt', 'DESC']]
         })
 
-        await Sleep(1500)
+        if (lastPhoto) {
+          lastId = lastPhoto.get('photo_id')
+        } else {
+          lastId = 0
+        }
+
+        let new_photos: number[] = []
+        let j = 0
+        if (lastId) {
+          while (response.items[j].id != lastId) {
+            if (response.items[j].id == lastId) break
+            new_photos.push(Number(response.items[j].id))
+            j++
+          }
+        } else {
+          for (let k = 0; k < response.items.length; k++) {
+            new_photos.push(Number(response.items[k].id))
+          }
+        }
+
+        new_photos = new_photos.reverse()
+
+        for (let i = 0; i < new_photos.length; i++) {
+          const r = await vk.api.photos.get({
+            owner_id: NIKITA,
+            album_id: SAVEDPHOTOS,
+            photo_ids: `${new_photos[i]}`,
+            rev: 1,
+          })
+
+          const url = r.items[0].sizes?.slice(-1)[0].url
+
+          await channel.send({
+            embeds: [
+              new EmbedBuilder()
+              .setColor('DarkPurple')
+              .setAuthor({ name: authorName, iconURL: authorIcon, url: `https://vk.com/id${NIKITA}`})
+              .setTitle(`Новая сохранёнка для ценителей Гигаскусства!`)
+              .setImage(`${url}`)
+              .addFields(
+                { name: 'Rating', value: '0.0', inline: true},
+                { name: 'Total rates', value: '0', inline: true}
+              )
+              .setFooter({ text: `${process.env.footer}`, iconURL: `${process.env.icon}`})
+            ],
+            components: [row as any]
+          }).then(async (reply) => {
+            await IContModel.create({
+              lastId: `${new_photos[i]}`,
+              photo_id: `${new_photos[i]}`,
+              msg_id: `${reply.id}`,
+            })
+          })
+
+          await Sleep(1500)
+        }
+      } catch (why) {
+        g_Logger.error('icont error')
+        console.error(why)
+        await Sleep(30000)
+        await main()
       }
     }
 
