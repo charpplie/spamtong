@@ -1,3 +1,4 @@
+import { cmdx_locale } from 'locale'
 import { APIApplicationCommandOptionChoice, SlashCommandBuilder, Interaction, REST, Routes, Collection } from 'discord.js'
 import { CustomClient, SlashCommand, Event, Events } from '@/comx'
 import { readdir, lstat } from 'fs/promises'
@@ -285,7 +286,7 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
       if (now < expirationTime) {
         const expiredTimestamp = Math.round(expirationTime / 1000)
         interaction.reply({
-          content: `Please be patient! You are on a cooldown for ${command.name}. You can use it again <t:${expiredTimestamp}:R>`,
+          content: cmdx_locale[interaction.locale] ? cmdx_locale[interaction.locale].replace('${command.name}', command.name).replace('${expiredTimestamp}', String(expiredTimestamp)) : cmdx_locale['en-US'].replace('${command.name}', command.name).replace('${expiredTimestamp}', String(expiredTimestamp)),
           ephemeral: true,
         })
         return

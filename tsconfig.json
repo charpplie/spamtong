@@ -6,7 +6,9 @@
     "paths": {
       "logger": ["./src/index.ts"],
       "@/*":    ["./src/handler/*"],
-      "@sys/*": ["./src/events/sys/*"]
+      "@sys/*": ["./src/events/sys/*"],
+      "utils":  ["./src/handler/utils.ts"],
+      "locale": ["./src/locales.ts"]
     },
     "target": "ESNext",
     "module": "CommonJS",

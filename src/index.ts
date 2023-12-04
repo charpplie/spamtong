@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { Collection, GatewayIntentBits } from 'discord.js'
 import { EventHandler, SlashCommandHandler } from '@/cmdx'
 import { CustomClient, SlashCommand } from '@/comx'
+import { Sleep } from 'utils'
 import { join } from 'path'
 
 class DLogger {
@@ -27,6 +28,15 @@ class DLogger {
 
     EventHandler(this.client, join(__dirname, `${process.env.app_events}`))
     SlashCommandHandler(this.client, join(__dirname, `${process.env.app_commands}`))
+
+    this.client.on('shardError', async (error: any) => {
+      console.error(`ShardError: ${error}`)
+      console.log('Retry in 15 seconds...')
+      this.client.destroy()
+      await Sleep(15000)
+      console.log('Reconnecting...')
+      this.client.login(token)
+    })
 
     this.client.login(token)
   }
