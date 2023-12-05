@@ -4,6 +4,7 @@ import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
 import axios from 'axios'
 import os from 'os'
+import { generateRandomText } from '@/utils'
 
 const reactions = [
   '1️⃣',
@@ -21,7 +22,7 @@ export default {
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)
           if (attachment && attachment.contentType?.startsWith('video')) {
-            const filePath = join(__dirname, attachment.name)
+            const filePath = join(__dirname, `${interaction.id}${attachment.name}`)
             console.log(filePath)
             const writer = createWriteStream(filePath)
 
@@ -47,7 +48,7 @@ export default {
               let author = interaction.member.user.username
               if (interaction.member.nickname) author = interaction.member.nickname
               await interaction.delete()
-              const convertedFilePath = join(__dirname, attachment.name.replace(/\.[^/.]+$/, '.mov'))
+              const convertedFilePath = join(__dirname, `${interaction.id}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
               console.log(convertedFilePath)
               ffmpeg(filePath)
                 .setFfmpegPath(ffmpegPath)
