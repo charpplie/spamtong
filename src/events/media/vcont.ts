@@ -22,6 +22,7 @@ export default {
           const attachment = interaction.attachments.at(i)
           if (attachment && attachment.contentType?.startsWith('video')) {
             const filePath = join(__dirname, attachment.name)
+            console.log(filePath)
             const writer = createWriteStream(filePath)
 
             const response = await axios({
@@ -47,6 +48,7 @@ export default {
               if (interaction.member.nickname) author = interaction.member.nickname
               await interaction.delete()
               const convertedFilePath = join(__dirname, attachment.name.replace(/\.[^/.]+$/, '.mov'))
+              console.log(convertedFilePath)
               ffmpeg(filePath)
                 .setFfmpegPath(ffmpegPath)
                 .output(convertedFilePath)
@@ -63,10 +65,10 @@ export default {
                     for (let j = 0; j < reactions.length; j++) {
                       await interaction.react(reactions[j]).catch((error: any) => {})
                     }
+                    unlinkSync(convertedFilePath)
                   }).catch((error: any) => {})
                 })
                 .run()
-              unlinkSync(convertedFilePath)
             } else {
               for (let j = 0; j < reactions.length; j++) {
                 await interaction.react(reactions[j]).catch((error: any) => {})
