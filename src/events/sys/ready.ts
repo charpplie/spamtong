@@ -1,8 +1,5 @@
-import { CustomClient, Event, Events } from '@/comx'
-import { ActivityType } from 'discord.js'
+import { Event, Events } from '@/comx'
 import { g_Logger } from 'logger'
-
-let startTime: number
 
 export default {
   name: Events.ClientReady,
