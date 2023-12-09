@@ -1,4 +1,4 @@
-import { Event, Events } from '@/comx'
+import { Event } from '@/comx'
 import { Sequelize, DataTypes } from 'sequelize'
 
 const sequelize = new Sequelize('spambase', 'spamtong', 'spamword', {
@@ -16,7 +16,8 @@ export const ITEmojiModel = sequelize.define('model', {
 })
 
 export default {
-  name: Events.ClientReady,
+  name: 'ready',
+  once: true,
   callback: async (client) => {
     ITEmojiModel.sync().then(async () => {
       const guild = client.guilds.cache.get(`${process.env.temoji_guild}`)
@@ -33,5 +34,4 @@ export default {
       }
     })
   },
-  once: true
 } as Event

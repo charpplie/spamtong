@@ -1,4 +1,4 @@
-import { Event, Events } from '@/comx'
+import { Event } from '@/comx'
 import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
 import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
@@ -15,7 +15,7 @@ const reactions = [
 ]
 
 export default {
-  name: Events.MessageCreate,
+  name: 'messageCreate',
   callback: async (interaction) => {
     if (interaction.channel.id === `${process.env.vcont_channel}`) {
       if (interaction.attachments.size > 0) {

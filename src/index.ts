@@ -1,8 +1,7 @@
 import 'dotenv/config'
 import { Collection, GatewayIntentBits } from 'discord.js'
-import { EventHandler, SlashCommandHandler } from '@/cmdx'
+import { SlashCommandHandler, EventHandler } from '@/cmdx'
 import { CustomClient, SlashCommand } from '@/comx'
-import { Sleep } from 'utils'
 import { join } from 'path'
 
 class DLogger {
@@ -58,4 +57,4 @@ class DLogger {
   }
 }
 
-export const g_Logger = DLogger.getInstance(`${process.env.token}`, `${process.env.owner}`)
+export const Logger = DLogger.getInstance(`${process.env.token}`, `${process.env.owner}`)

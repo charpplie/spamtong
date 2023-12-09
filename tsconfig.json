@@ -4,11 +4,10 @@
   },
   "compilerOptions": {
     "paths": {
+      "@/*":    ["./src/public/*"],
       "logger": ["./src/index.ts"],
-      "@/*":    ["./src/handler/*"],
+      "locale": ["./src/locales.ts"],
       "@sys/*": ["./src/events/sys/*"],
-      "utils":  ["./src/handler/utils.ts"],
-      "locale": ["./src/locales.ts"]
     },
     "target": "ESNext",
     "module": "CommonJS",

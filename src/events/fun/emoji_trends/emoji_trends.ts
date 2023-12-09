@@ -1,5 +1,5 @@
-import { Event, Events } from '@/comx'
-import { ITEmojiModel } from '@sys/temoji_db'
+import { Event } from '@/comx'
+import { ITEmojiModel } from '@sys/emoji_trends'
 
 export function countEmojis(message: string, emojiId: string): number {
   const regex = new RegExp(`<a?:\\w+:${emojiId}>`, 'g')
@@ -9,8 +9,9 @@ export function countEmojis(message: string, emojiId: string): number {
 }
 
 export default {
-  name: Events.MessageCreate,
+  name: 'messageCreate',
   callback: async (interaction) => {
+    console.log('a')
     const guild = interaction.client.guilds.cache.get(`${process.env.temoji_guild}`)
     const emojis = guild.emojis.cache.map((e: any) => { return `${e}` })
     const emojis_ids = guild.emojis.cache.map((e: any) => { return `${e.id}` })

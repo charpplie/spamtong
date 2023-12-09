@@ -1,7 +1,7 @@
-import { Event, Events } from '@/comx'
+import { Event } from '@/comx'
 
 export default {
-  name: Events.MessageCreate,
+  name: 'messageCreate',
   callback: async (interaction) => {
     const chance = Math.floor(Math.random() * 100)
     if (chance < 23) {

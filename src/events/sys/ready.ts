@@ -1,11 +1,11 @@
-import { Event, Events } from '@/comx'
-import { g_Logger } from 'logger'
+import { Event } from '@/comx'
+import { Logger } from 'logger'
 
 export default {
-  name: Events.ClientReady,
+  name: 'ready',
   once: true,
   callback: async (client) => {
-    g_Logger.info('Ok!')
+    Logger.info('Ok!')
     client.user.setPresence({
       activities: [{ name: 'Dota 2' }],
       status: 'online',

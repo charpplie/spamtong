@@ -1,8 +1,8 @@
 import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder } from 'discord.js'
-import { Event, Events, CustomClient } from '@/comx'
-import { IContModel } from '@sys/icont_db'
+import { Event, CustomClient } from '@/comx'
+import { IContModel } from '@sys/icont'
 import { VK } from 'vk-io'
-import { g_Logger } from 'logger'
+import { Logger } from 'logger'
 
 const reacts = [
   '1️⃣',
@@ -62,7 +62,7 @@ const SAVEDPHOTOS = '-15'
 const RATE_COEF = 0.7
 
 export default {
-  name: Events.ClientReady,
+  name: 'ready',
   callback: async (client: CustomClient) => {
     const guild = client.guilds.cache.get(GUILD)
     const channel = guild?.channels.cache.get(CHANNEL) as TextChannel
@@ -263,7 +263,7 @@ export default {
           await Sleep(1500)
         }
       } catch (why) {
-        g_Logger.error('icont error')
+        Logger.error('icont error')
         console.error(why)
         await Sleep(30000)
         await main()

@@ -1,4 +1,4 @@
-import { Event, Events } from '@/comx'
+import { Event } from '@/comx'
 import { Sequelize, DataTypes } from 'sequelize'
 
 const sequelize = new Sequelize('spambase', 'spamtong', 'spamword', {
@@ -28,9 +28,9 @@ export const IContModel = sequelize.define('model', {
 })
 
 export default {
-  name: Events.ClientReady,
+  name: 'ready',
+  once: true,
   callback: async () => {
     IContModel.sync()
   },
-  once: true
 } as Event
