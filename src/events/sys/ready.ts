@@ -27,7 +27,8 @@ const games = [
   'Artifact',
   'Dota Underlords',
   'Half-Life: Alyx',
-  'Counter-Strike 2'
+  'Counter-Strike 2',
+  "Neon Prime",
 ]
 
 export default {
@@ -36,9 +37,13 @@ export default {
   callback: async (client) => {
     Logger.info('Ok!')
     while (true) {
-      const gameId = Math.floor(Math.random() * games.length)
-      client.user.setActivity(games[gameId], { type: 0 })
-      await Sleep(2500)
+      try {
+        const gameId = Math.floor(Math.random() * games.length)
+        client.user.setActivity(games[gameId], { type: 0 })
+        await Sleep(2500)
+      } catch (error) {
+        Logger.error(`${error}`)
+      }
     }
   }
 } as Event

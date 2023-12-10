@@ -11,7 +11,6 @@ export function countEmojis(message: string, emojiId: string): number {
 export default {
   name: 'messageCreate',
   callback: async (interaction) => {
-    console.log('a')
     const guild = interaction.client.guilds.cache.get(`${process.env.temoji_guild}`)
     const emojis = guild.emojis.cache.map((e: any) => { return `${e}` })
     const emojis_ids = guild.emojis.cache.map((e: any) => { return `${e.id}` })
