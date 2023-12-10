@@ -6,7 +6,7 @@ import { createCanvas, loadImage } from 'canvas'
 import { SlashCommand } from '@/comx'
 import { join } from 'path'
 import axios from 'axios'
-import { g_Logger } from 'logger'
+import { Logger } from 'logger'
 //#endregion Imports
 
 //#region Utils
@@ -63,7 +63,7 @@ async function uploadToImgur(accessToken: string, filename: string) {
     )
     return response.data.data.link
   } catch (error) {
-    g_Logger.error(`Error uploading to Imgur: ${error}`)
+    Logger.error(`Error uploading to Imgur: ${error}`)
     throw error
   }
 }
