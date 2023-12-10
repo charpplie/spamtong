@@ -1,6 +1,7 @@
-name: Main
+name: Main Manual
 
-on: [push]
+on:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -11,7 +12,7 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Run Spamtong on self-hosted runner via SSH
         uses: appleboy/ssh-action@v0.1.10
@@ -24,4 +25,7 @@ jobs:
               screen -dmS spamtong
               screen -S spamtong -X stuff 'cd runner/_work/spamtong/spamtong\n'
               screen -S spamtong -X stuff 'npm install\n'
+              screen -S spamtong -X stuff 'npm link typescript\n'
+              screen -S spamtong -X stuff 'npm link discord.js\n'
+              screen -S spamtong -X stuff 'npm link fs/promises\n'
               screen -S spamtong -X stuff 'npm run dev\n'
