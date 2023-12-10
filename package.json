@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts --trace-deprecation"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -8,7 +8,7 @@
     "@types/node": "^20.10.1",
     "axios": "^1.6.2",
     "canvas": "^2.11.2",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.9.0",
     "dotenv": "^16.3.1",
     "fluent-ffmpeg": "^2.1.2",
     "graphql": "^16.8.1",
