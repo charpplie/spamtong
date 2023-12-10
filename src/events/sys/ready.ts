@@ -35,7 +35,7 @@ export default {
   name: 'ready',
   once: true,
   callback: async (client) => {
-    Logger.info('Ok!')
+    Logger.info('Ok!!')
     while (true) {
       try {
         const gameId = Math.floor(Math.random() * games.length)
