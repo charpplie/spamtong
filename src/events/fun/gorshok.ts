@@ -1,7 +1,8 @@
 import { Event } from '@/comx'
 
 export default {
-  name: 'messageCreate',
+  name: 'gorshok',
+  type: 'messageCreate',
   callback: async (interaction) => {
     if (interaction.user.id == '912326828574773299') return
     const chance = Math.floor(Math.random() * 100)

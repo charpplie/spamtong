@@ -15,7 +15,8 @@ const reactions = [
 ]
 
 export default {
-  name: 'messageCreate',
+  name: 'vcont',
+  type: 'messageCreate',
   callback: async (interaction) => {
     if (interaction.channel.id === `${process.env.vcont_channel}`) {
       if (interaction.attachments.size > 0) {

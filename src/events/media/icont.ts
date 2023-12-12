@@ -1,6 +1,6 @@
 import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder } from 'discord.js'
 import { Event, CustomClient } from '@/comx'
-import { IContModel } from '@sys/icont'
+import { IContModel } from '@models/icont'
 import { VK } from 'vk-io'
 import { Logger } from 'logger'
 
@@ -60,7 +60,8 @@ const SAVEDPHOTOS = '-15'
 const RATE_COEF = 0.7
 
 export default {
-  name: 'ready',
+  name: 'icont',
+  type: 'ready',
   callback: async (client: CustomClient) => {
     const guild = client.guilds.cache.get(`${process.env.icont_guild}`)
     const channel = guild?.channels.cache.get(`${process.env.icont_channel}`) as TextChannel

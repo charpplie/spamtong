@@ -3,6 +3,7 @@ import { Logger } from 'logger'
 
 export default {
   name: 'ready',
+  type: 'ready',
   once: true,
   callback: async (client) => {
     Logger.info('Ok!')
