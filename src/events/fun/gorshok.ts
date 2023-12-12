@@ -4,7 +4,7 @@ export default {
   name: 'gorshok',
   type: 'messageCreate',
   callback: async (interaction) => {
-    if (interaction.user.id == '912326828574773299') return
+    if (interaction.user.member.id == '912326828574773299') return
     const chance = Math.floor(Math.random() * 100)
     if (chance < 17) {
       const guild = interaction.client.guilds.cache.get(`${process.env.gorshok_guild}`)
