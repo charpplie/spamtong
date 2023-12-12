@@ -7,7 +7,7 @@
       "@/*":    ["./src/public/*"],
       "logger": ["./src/index.ts"],
       "locale": ["./src/locales.ts"],
-      "@sys/*": ["./src/events/sys/*"],
+      "@models/*": ["./src/events/sys/models/*"],
     },
     "target": "ESNext",
     "module": "CommonJS",

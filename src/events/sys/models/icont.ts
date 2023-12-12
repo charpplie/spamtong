@@ -24,11 +24,12 @@ export const IContModel = sequelize.define('model', {
   rates: {
     type: DataTypes.NUMBER,
     allowNull: true
-  }
+  },
 })
 
 export default {
-  name: 'ready',
+  name: 'icont_db',
+  type: 'ready',
   once: true,
   callback: async () => {
     IContModel.sync()

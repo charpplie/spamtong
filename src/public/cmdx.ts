@@ -298,7 +298,7 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
     if (command.allowedUsers && !command.allowedUsers.includes(interaction.user.id)) return
 
     try {
-      command.callback(interaction)
+      command.callback(interaction, client)
     } catch (error) {
       Logger.error(`Error executing slash command ${command.name}: ${error}`)
     }
@@ -321,12 +321,13 @@ export async function EventHandler(client: CustomClient, eventsDir: string) {
 
         try {
           const event: Event = (await import(filePath)).default
+          client.events.set(event.name, event)
           if (event.once) {
-            client.once(event.name as string, async (...args: any[]) => {
+            client.once(event.type as string, async (...args: any[]) => {
               try { event.callback(...args) } catch (error) { await handleEventError(event, error) }
             })
           } else {
-            client.on(event.name as string, async (...args: any[]) => {
+            client.on(event.type as string, async (...args: any[]) => {
               try { event.callback(...args) } catch (error) { await handleEventError(event, error) }
             })
           }

@@ -12,11 +12,12 @@ export const ITEmojiModel = sequelize.define('model', {
   emoji: DataTypes.STRING,
   daily_usage: DataTypes.NUMBER,
   weekly_usage: DataTypes.NUMBER,
-  monthly_usage: DataTypes.NUMBER
+  monthly_usage: DataTypes.NUMBER,
 })
 
 export default {
-  name: 'ready',
+  name: 'emoji_trends_db',
+  type: 'ready',
   once: true,
   callback: async (client) => {
     ITEmojiModel.sync().then(async () => {

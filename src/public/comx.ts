@@ -26,16 +26,18 @@ export interface SlashCommand {
   isOwnerOnly?: boolean | false
   allowedUsers?: string[],
   cooldown?: string
-  callback: (interaction: CommandInteraction) => void,
+  callback: (interaction: CommandInteraction, client?: CustomClient) => void,
 }
 
 export class CustomClient extends Client {
   public commands!: Readonly<Collection<string, SlashCommand>>
+  public events!: Readonly<Collection<string, Event>>
   public cooldowns!: Readonly<Collection<string, number>>
 }
 
 export interface Event {
-  name: EventType,
+  name: string,
+  type: EventType,
   once?: boolean | false
   callback: (...args: any) => void,
 }

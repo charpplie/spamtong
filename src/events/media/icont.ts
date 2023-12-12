@@ -55,8 +55,6 @@ function calculateWeightedAverage(ratings: number[], coefficient: number): numbe
   return weightedSum / weightSum
 }
 
-const GUILD = '1150427580734906368'
-const CHANNEL = '1177374466448302180'
 const NIKITA = 255594607
 const SAVEDPHOTOS = '-15'
 const RATE_COEF = 0.7
@@ -64,8 +62,8 @@ const RATE_COEF = 0.7
 export default {
   name: 'ready',
   callback: async (client: CustomClient) => {
-    const guild = client.guilds.cache.get(GUILD)
-    const channel = guild?.channels.cache.get(CHANNEL) as TextChannel
+    const guild = client.guilds.cache.get(`${process.env.icont_guild}`)
+    const channel = guild?.channels.cache.get(`${process.env.icont_channel}`) as TextChannel
 
     const react1 = new ButtonBuilder()
       .setCustomId('react1')
@@ -111,7 +109,7 @@ export default {
 
     client.on('interactionCreate', async interaction => {
       if (interaction.isButton()) {
-        if (interaction.channel?.id != CHANNEL) return
+        if (interaction.channel?.id != channel.id) return
         const button = interaction.customId
         for (let i = 0; i < reacts.length; i++) {
           if (button == treacts[i]) {
