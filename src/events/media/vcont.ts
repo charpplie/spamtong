@@ -4,7 +4,6 @@ import { join } from 'path'
 import ffmpeg from 'fluent-ffmpeg'
 import axios from 'axios'
 import os from 'os'
-import { generateRandomText } from '@/utils'
 
 const reactions = [
   '1️⃣',
@@ -15,8 +14,7 @@ const reactions = [
 ]
 
 export default {
-  name: 'vcont',
-  type: 'messageCreate',
+  name: 'messageCreate',
   callback: async (interaction) => {
     if (interaction.channel.id === `${process.env.vcont_channel}`) {
       if (interaction.attachments.size > 0) {

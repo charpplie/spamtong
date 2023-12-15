@@ -55,16 +55,17 @@ function calculateWeightedAverage(ratings: number[], coefficient: number): numbe
   return weightedSum / weightSum
 }
 
+const GUILD = '1150427580734906368'
+const CHANNEL = '1177374466448302180'
 const NIKITA = 255594607
 const SAVEDPHOTOS = '-15'
 const RATE_COEF = 0.7
 
 export default {
-  name: 'icont',
-  type: 'ready',
+  name: 'ready',
   callback: async (client: CustomClient) => {
-    const guild = client.guilds.cache.get(`${process.env.icont_guild}`)
-    const channel = guild?.channels.cache.get(`${process.env.icont_channel}`) as TextChannel
+    const guild = client.guilds.cache.get(GUILD)
+    const channel = guild?.channels.cache.get(CHANNEL) as TextChannel
 
     const react1 = new ButtonBuilder()
       .setCustomId('react1')
@@ -106,7 +107,7 @@ export default {
       .setColor('DarkPurple')
       .setAuthor({ name: authorName, iconURL: authorIcon, url: `https://vk.com/id${NIKITA}`})
       .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
-      .setFooter({ text: `${process.env.footer}`, iconURL: `${process.env.icon}`})
+      .setFooter({ text: `${process.env.copyright}`, iconURL: `${client.users.cache.get(`${process.env.owner}`)?.avatarURL({ forceStatic: true })}`})
 
     client.on('interactionCreate', async interaction => {
       if (interaction.isButton()) {
@@ -248,7 +249,7 @@ export default {
                 { name: 'Rating', value: '0.0', inline: true},
                 { name: 'Total rates', value: '0', inline: true}
               )
-              .setFooter({ text: `${process.env.footer}`, iconURL: `${process.env.icon}`})
+              .setFooter({ text: `${process.env.copyright}`, iconURL: `${client.users.cache.get(`${process.env.owner}`)?.avatarURL({ forceStatic: true })}`})
             ],
             components: [row as any]
           }).then(async (reply) => {

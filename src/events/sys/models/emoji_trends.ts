@@ -15,13 +15,14 @@ export const ITEmojiModel = sequelize.define('model', {
   monthly_usage: DataTypes.NUMBER,
 })
 
+const GUILD = '1150427580734906368'
+
 export default {
-  name: 'emoji_trends_db',
-  type: 'ready',
+  name: 'ready',
   once: true,
   callback: async (client) => {
     ITEmojiModel.sync().then(async () => {
-      const guild = client.guilds.cache.get(`${process.env.temoji_guild}`)
+      const guild = client.guilds.cache.get(GUILD)
       const emojis = guild.emojis.cache.map((e: any) => { return `${e}` })
       for (let i = 0; i < emojis.length; i++) {
         if (!(await ITEmojiModel.findOne({ where: { emoji: emojis[i] }}))) {

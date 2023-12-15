@@ -28,8 +28,7 @@ export const IContModel = sequelize.define('model', {
 })
 
 export default {
-  name: 'icont_db',
-  type: 'ready',
+  name: 'ready',
   once: true,
   callback: async () => {
     IContModel.sync()

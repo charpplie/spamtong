@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { Collection, GatewayIntentBits } from 'discord.js'
 import { SlashCommandHandler, EventHandler } from '@/cmdx'
-import { CustomClient, SlashCommand, Event } from '@/comx'
+import { CustomClient, SlashCommand } from '@/comx'
 import { join } from 'path'
 
 class DLogger {
@@ -23,11 +23,10 @@ class DLogger {
     this.ownerId = ownerId
 
     this.client.commands = new Collection<string, SlashCommand>()
-    this.client.events = new Collection<string, Event>()
     this.client.cooldowns = new Collection<string, number>()
 
-    EventHandler(this.client, join(__dirname, `${process.env.app_events}`))
-    SlashCommandHandler(this.client, join(__dirname, `${process.env.app_commands}`))
+    EventHandler(this.client, join(__dirname, `${process.env.events}`))
+    // SlashCommandHandler(this.client, join(__dirname, `${process.env.commands}`))
 
     this.client.login(token)
   }

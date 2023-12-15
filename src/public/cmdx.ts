@@ -1,4 +1,4 @@
-import { APIApplicationCommandOptionChoice, SlashCommandBuilder, Interaction, REST, Routes, Collection } from 'discord.js'
+import { APIApplicationCommandOptionChoice, SlashCommandBuilder, Interaction, REST, Routes, Collection, CommandInteraction } from 'discord.js'
 import { CustomClient, SlashCommand, Event } from '@/comx'
 import { readdir, lstat } from 'fs/promises'
 import { Logger } from 'logger'
@@ -42,14 +42,6 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
         client.commands.set(command.name, command)
 
         const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
-
-        if (command.name_localizations) {
-          data.setNameLocalizations(command.name_localizations)
-        }
-
-        if (command.description_localizations) {
-          data.setDescriptionLocalizations(command.description_localizations)
-        }
 
         if (command.options) {
           command.options.forEach((option) => {
@@ -256,6 +248,8 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
     const command = client.commands.get(interaction.commandName)
     if (!command) return
 
+    if (command.users && !command.users.includes(interaction.user.id)) return
+
     const { cooldowns } = client
     if (!cooldowns.has(command.name)) {
       cooldowns.set(command.name, new Collection<string, number>() as any)
@@ -294,14 +288,7 @@ export async function SlashCommandHandler(client: CustomClient, commandsDir: str
     timestamps.set(interaction.user.id, now)
     setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount)
 
-    if (command.isOwnerOnly && interaction.user.id != process.env.owner) return
-    if (command.allowedUsers && !command.allowedUsers.includes(interaction.user.id)) return
-
-    try {
-      command.callback(interaction, client)
-    } catch (error) {
-      Logger.error(`Error executing slash command ${command.name}: ${error}`)
-    }
+    command.callback(interaction)
   })
 }
 
@@ -321,26 +308,12 @@ export async function EventHandler(client: CustomClient, eventsDir: string) {
 
         try {
           const event: Event = (await import(filePath)).default
-          client.events.set(event.name, event)
-          if (event.once) {
-            client.once(event.type as string, async (...args: any[]) => {
-              try { event.callback(...args) } catch (error) { await handleEventError(event, error) }
-            })
-          } else {
-            client.on(event.type as string, async (...args: any[]) => {
-              try { event.callback(...args) } catch (error) { await handleEventError(event, error) }
-            })
-          }
-        } catch (error) {
-          await handleEventError(filePath, error)
-        }
+          if (event.once) client.once(event.name as string, async (...args: any[]) => { event.callback(...args) })
+          else client.on(event.name as string, async (...args: any[]) => { event.callback(...args) })
+        } catch (error) { Logger.error(`Error executing event ${filePath}: ${error}`) }
       })
     )
   }
 
   await readEvents(eventsDir)
-
-  async function handleEventError(eventData: string | Event, error: any) {
-    Logger.error(`Error ${eventData instanceof Event ? 'executing' : 'loading'} event ${eventData}: ${error}`)
-   }
 }

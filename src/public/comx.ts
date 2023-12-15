@@ -1,45 +1,39 @@
 import {
   APIApplicationCommandOptionChoice,
-  Client,
-  Collection,
   CommandInteraction,
-  LocalizationMap,
+  Collection,
+  Client,
 } from 'discord.js'
-
-type OptionType = 'STRING' | 'INTEGER' | 'NUMBER' | 'BOOLEAN' | 'USER' | 'CHANNEL' | 'ROLE' | 'MENTIONABLE' | 'ATTACHMENT' | 'SUBCOMMAND' | 'SUBCOMMAND_GROUP'
 
 export interface SlashCommand {
   name: string,
   description: string,
-  name_localizations?: LocalizationMap
-  description_localizations?: LocalizationMap,
   options?: {
     name: string,
     description: string,
     type: OptionType,
-    required?: boolean,
+    required?: boolean | false,
     choices?: APIApplicationCommandOptionChoice<string | number>[],
     minValue?: number,
-    maxValue?: number
-  }[]
-  guilds?: string[]
-  isOwnerOnly?: boolean | false
-  allowedUsers?: string[],
-  cooldown?: string
-  callback: (interaction: CommandInteraction, client?: CustomClient) => void,
+    maxValue?: number,
+  }[],
+  guilds?: string[],
+  users?: string[],
+  cooldown?: string,
+  callback: (interaction: CommandInteraction) => void,
 }
+
+type OptionType = | 'STRING' | 'INTEGER' | 'NUMBER' | 'BOOLEAN' | 'USER' | 'CHANNEL' | 'ROLE' | 'MENTIONABLE' | 'ATTACHMENT' | 'SUBCOMMAND' | 'SUBCOMMAND_GROUP'
 
 export class CustomClient extends Client {
   public commands!: Readonly<Collection<string, SlashCommand>>
-  public events!: Readonly<Collection<string, Event>>
   public cooldowns!: Readonly<Collection<string, number>>
 }
 
 export interface Event {
-  name: string,
-  type: EventType,
-  once?: boolean | false
-  callback: (...args: any) => void,
+  name: EventType,
+  once?: boolean | false,
+  callback: (...args: any[]) => void,
 }
 
 type EventType =

@@ -8,11 +8,12 @@ export function countEmojis(message: string, emojiId: string): number {
   return matches ? matches.length : 0
 }
 
+const GUILD = '1150427580734906368'
+
 export default {
-  name: 'emoji_trends',
-  type: 'messageCreate',
+  name: 'messageCreate',
   callback: async (interaction) => {
-    const guild = interaction.client.guilds.cache.get(`${process.env.temoji_guild}`)
+    const guild = interaction.client.guilds.cache.get(GUILD)
     const emojis = guild.emojis.cache.map((e: any) => { return `${e}` })
     const emojis_ids = guild.emojis.cache.map((e: any) => { return `${e.id}` })
     for (let i = 0; i < emojis.length; i++) {
