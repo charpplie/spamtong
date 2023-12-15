@@ -16,7 +16,7 @@ const reactions = [
 export default {
   name: 'messageCreate',
   callback: async (interaction) => {
-    if (interaction.channel.id === `${process.env.vcont_channel}`) {
+    if (interaction.channel.id === `1181427849303965768`) {
       if (interaction.attachments.size > 0) {
         for (let i = 0; i < interaction.attachments.size; i++) {
           const attachment = interaction.attachments.at(i)
