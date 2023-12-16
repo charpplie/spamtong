@@ -1,9 +1,11 @@
 import { Event } from '@/comx'
-import { existsSync, mkdirSync, createWriteStream, unlinkSync, readFileSync } from 'fs'
-import { join } from 'path'
+import { generateRandomText } from '@/utils'
+import { createWriteStream, unlinkSync, readFileSync } from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
+import { join } from 'path'
 import axios from 'axios'
 import os from 'os'
+import { Logger } from 'logger'
 
 const reactions = [
   '1️⃣',
@@ -13,66 +15,65 @@ const reactions = [
   '5️⃣',
 ]
 
+const CHANNELS = ['1181427849303965768']
+
 export default {
   name: 'messageCreate',
   callback: async (interaction) => {
-    if (interaction.channel.id === `1181427849303965768`) {
-      if (interaction.attachments.size > 0) {
-        for (let i = 0; i < interaction.attachments.size; i++) {
-          const attachment = interaction.attachments.at(i)
-          if (attachment && attachment.contentType?.startsWith('video')) {
-            const filePath = join(__dirname, `${interaction.id}${attachment.name}`)
-            const writer = createWriteStream(filePath)
+    if (interaction.member.user.id === `${process.env.appId}`) return
+    if (!CHANNELS.includes(interaction.channel.id)) return
 
-            const response = await axios({
-              url: attachment.url,
-              method: 'GET',
-              responseType: 'stream'
-            })
+    if (interaction.attachments.size > 0) {
+      const _channel = interaction.channel
+      const _author = interaction.member.nickname ? interaction.member.nickname : interaction.member.user.username
+      const _text = interaction.content ? interaction.content : ''
+      const _interaction = interaction
+      await interaction.delete()
+      for (let i = 0; i < _interaction.attachments.size; i++) {
+        const attachment = _interaction.attachments.at(i)
+        if (attachment && attachment.contentType?.startsWith('video')) {
+          const filePath = join(__dirname, `${_interaction.id}${generateRandomText(6)}${attachment.name}`)
+          const writer = createWriteStream(filePath)
 
-            response.data.pipe(writer)
+          const response = await axios({
+            url: attachment.url,
+            method: 'GET',
+            responseType: 'stream'
+          })
 
-            await new Promise((resolve, reject) => {
-              writer.on('finish', resolve)
-              writer.on('error', reject)
-            })
+          response.data.pipe(writer)
 
-            if (!attachment.name.endsWith('.mov')) {
-              let ffmpegPath = '/usr/bin/ffmpeg'
-              if (os.type() === 'Windows_NT') {
-                ffmpegPath = String(require('@ffmpeg-installer/ffmpeg').path)
-              }
-              const channel = interaction.channel
-              let author = interaction.member.user.username
-              if (interaction.member.nickname) author = interaction.member.nickname
-              await interaction.delete()
-              const convertedFilePath = join(__dirname, `${interaction.id}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
-              ffmpeg(filePath)
-                .setFfmpegPath(ffmpegPath)
-                .output(convertedFilePath)
-                .on('end', async function () {
-                  unlinkSync(filePath)
-                  const convertedFile = readFileSync(convertedFilePath)
-                  await channel.send({
-                    content: `${author}:`,
-                    files: [{
-                      attachment: convertedFile,
-                      name: attachment.name.replace(/\.[^/.]+$/, '.mov')
-                    }]
-                  }).then(async () => {
-                    for (let j = 0; j < reactions.length; j++) {
-                      await interaction.react(reactions[j]).catch((error: any) => {})
-                    }
-                    unlinkSync(convertedFilePath)
-                  }).catch((error: any) => {})
+          await new Promise((resolve, reject) => {
+            writer.on('finish', resolve)
+            writer.on('error', reject)
+          })
+
+          const ffmpegPath = os.type() === 'Windows_NT' ? String(require('@ffmpeg-installer/ffmpeg').path) : '/usr/bin/ffmpeg'
+          const convertedFilePath = join(__dirname, `${_interaction.id}${generateRandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
+          ffmpeg(filePath)
+            .setFfmpegPath(ffmpegPath)
+            .output(convertedFilePath)
+            .on('end', async function () {
+              unlinkSync(filePath)
+              const convertedFile = readFileSync(convertedFilePath)
+              await _channel.send({
+                content: `${_author}: ${_text}`,
+                files: [{
+                  attachment: convertedFile,
+                  name: attachment.name.replace(/\.[^/.]+$/, '.mov')
+                }]
+              }).then(async (interaction: any) => {
+                for (let j = 0; j < reactions.length; j++) {
+                  await interaction.react(reactions[j]).catch((error: any) => {
+                    Logger.error(error)
                 })
-                .run()
-            } else {
-              for (let j = 0; j < reactions.length; j++) {
-                await interaction.react(reactions[j]).catch((error: any) => {})
-              }
-            }
-          }
+                }
+                unlinkSync(convertedFilePath)
+              }).catch((error: any) => {
+                Logger.error(error)
+              })
+            })
+            .run()
         }
       }
     }

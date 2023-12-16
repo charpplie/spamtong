@@ -19,6 +19,7 @@ let guilds: IGuildPseudoRandom = {}
 export default {
   name: 'messageCreate',
   callback: async (interaction) => {
+    if (interaction.member.user.id === `${process.env.appId}`) return
     if (!GUILDS.includes(interaction.guild.id)) return
 
     GUILDS.forEach(_guild => {
