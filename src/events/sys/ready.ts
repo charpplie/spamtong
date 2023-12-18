@@ -1,16 +1,20 @@
-import { Event } from '@/comx'
-import { Logger } from 'logger'
+import { Event, Events } from 'comx'
+import { ActivityType } from 'discord.js'
+import { Sleep } from 'utils'
 
 export default {
-  name: 'ready',
+  name: Events.ClientReady,
+  once: true,
   callback: async (client) => {
-    Logger.info('Ok!')
-    client.user.setPresence({
-      status: 'dnd',
-      activities: [{
-        name: 'Neon Prime',
-        type: 3,
-      }]
-    })
+    while (true) {
+      client.user?.setPresence({
+        status: 'dnd',
+        activities: [{
+          name: `API Latency: ${Math.round(client.ws.ping)}`,
+          type: ActivityType.Watching,
+        }]
+      })
+      await Sleep(5000)
+    }
   }
 } as Event

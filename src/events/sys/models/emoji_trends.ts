@@ -1,4 +1,4 @@
-import { Event } from '@/comx'
+import { Event } from 'comx'
 import { Sequelize, DataTypes } from 'sequelize'
 
 const sequelize = new Sequelize('spambase', 'spamtong', 'spamword', {

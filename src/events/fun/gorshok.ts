@@ -1,4 +1,4 @@
-import { Event } from '@/comx'
+import { Event } from 'comx'
 
 interface IGuildChance {
   chance: number,

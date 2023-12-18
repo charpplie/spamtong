@@ -1,4 +1,4 @@
-import { Event } from '@/comx'
+import { Event } from 'comx'
 import { ITEmojiModel } from '@models/emoji_trends'
 
 export function countEmojis(message: string, emojiId: string): number {

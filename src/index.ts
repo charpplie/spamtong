@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { Collection, GatewayIntentBits } from 'discord.js'
-import { SlashCommandHandler, EventHandler } from '@/cmdx'
-import { CustomClient, SlashCommand } from '@/comx'
+import { SlashCommandHandler, EventHandler } from 'cmdx'
+import { CustomClient, SlashCommand } from 'comx'
 import { join } from 'path'
 
 class DLogger {

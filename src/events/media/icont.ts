@@ -1,5 +1,5 @@
 import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder } from 'discord.js'
-import { Event, CustomClient } from '@/comx'
+import { Event, CustomClient } from 'comx'
 import { IContModel } from '@models/icont'
 import { VK } from 'vk-io'
 import { Logger } from 'logger'
