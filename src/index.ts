@@ -26,7 +26,7 @@ class DLogger {
     this.client.cooldowns = new Collection<string, number>()
 
     EventHandler(this.client, join(__dirname, `${process.env.events}`))
-    // SlashCommandHandler(this.client, join(__dirname, `${process.env.commands}`))
+    SlashCommandHandler(this.client, join(__dirname, `${process.env.commands}`))
 
     this.client.login(token)
   }
