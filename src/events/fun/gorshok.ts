@@ -10,7 +10,7 @@ interface IGuildPseudoRandom {
   [guild: string]: IGuildChance,
 }
 
-const GUILDS = ['1150427580734906368']
+const GUILDS = ['1150427580734906368', '659767822448066570']
 const INIT_CHANCE = 13
 const PRD_INC = 1.85
 
