@@ -25,7 +25,7 @@ export default {
 
     GUILDS.forEach(_guild => {
       if (_guild === interaction.guild.id) {
-        const guild = interaction.client.guilds.cache.get(_guild) 
+        const guild = interaction.client.guilds.cache.get(_guild)
         const emojis = guild.emojis.cache.map((e: any) => { return `<:${e.name}:${e.id}>` })
 
         if (!guilds[`${_guild}`]) {
