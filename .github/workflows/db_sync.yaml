@@ -12,18 +12,18 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Clone previous db files
-        uses: actions/checkout@master
-        with:
-          repository: charpplie/SpamtongDatabase
-          token: ${{ secrets.TOKEN }}
-          fetch-depth: 2
+      - name: Clone previous db files
+          uses: actions/checkout@master
+          with:
+            repository: charpplie/SpamtongDatabase
+            token: ${{ secrets.TOKEN }}
+            fetch-depth: 2
 
-    - name: Create db_sync folde
-        run: |
-          chmod +x ./db_sync.sh
-          ./db_sync.sh
-        shell: bash
+      - name: Create db_sync folde
+          run: |
+            chmod +x ./db_sync.sh
+            ./db_sync.sh
+          shell: bash
 
       - name: Push to Repository
         uses: cpina/github-action-push-to-another-repository@main
