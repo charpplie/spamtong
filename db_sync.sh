@@ -1,6 +1,6 @@
 #!/bin/bash
 
-base_path="./db_sync"
+base_path="./dbsync"
 timestamp=$(date +%S)
 date_time=$(date -d "@$timestamp" "+%Y/%m/%d/")
 
