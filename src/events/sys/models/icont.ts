@@ -5,7 +5,7 @@ const sequelize = new Sequelize('spambase', 'spamtong', 'spamword', {
   host: 'localhost',
   dialect: 'sqlite',
   logging: false,
-  storage: '../../../../db/icont.sqlite',
+  storage: 'db/icont.sqlite',
 })
 
 export const IContModel = sequelize.define('model', {

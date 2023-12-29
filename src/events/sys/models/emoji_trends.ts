@@ -5,7 +5,7 @@ const sequelize = new Sequelize('spambase', 'spamtong', 'spamword', {
   host: 'localhost',
   dialect: 'sqlite',
   logging: false,
-  storage: '../../../../db/temoji.sqlite',
+  storage: 'db/temoji.sqlite',
 })
 
 export const ITEmojiModel = sequelize.define('model', {

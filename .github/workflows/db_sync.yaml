@@ -17,7 +17,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.TOKEN }}
         with:
-          source-directory: '../../../../db'
+          source-directory: 'db'
           destination-github-username: 'charpplie'
           destination-repository-name: 'SpamtongDatabase'
           user-email: maksohuman@gmail.com
