@@ -30,7 +30,7 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.TOKEN }}
         with:
           user-name: "charpplie[bot]"
-          source-directory: "db_sync"
+          source-directory: "dbsync"
           destination-github-username: "charpplie"
           destination-repository-name: "SpamtongDatabase"
           target-branch: master
