@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          clean: false
+          fetch-depth: 2
 
       - name: Run Spamtong on self-hosted runner via SSH
         uses: appleboy/ssh-action@v0.1.10
