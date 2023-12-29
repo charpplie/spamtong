@@ -6,7 +6,7 @@ year=$(date +%Y)
 month=$(date +%B)
 day=$(date +%d)
 
-new_folder_path="$base_path"
+new_folder_path="$base_path/$year/$month/$day/$timestamp/"
 
 if [ -d "$base_path" ]; then
   sudo rm -r "$base_path"
