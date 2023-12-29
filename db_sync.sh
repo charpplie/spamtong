@@ -1,10 +1,12 @@
 #!/bin/bash
 
 base_path="./dbsync"
-timestamp=$(date +%S)
-date_time=$(date -d "@$timestamp" "+%Y/%m/%d/")
+timestamp=$(date +%s)
+year=$(date +%Y)
+month=$(date +%B)
+day=$(date +%d)
 
-new_folder_path="$base_folder/$date_time/$timestamp/"
+new_folder_path="$base_folder/$year/$month/$day/"
 
 if [ -d "$base_path" ]; then
   rm -r "$base_path"
