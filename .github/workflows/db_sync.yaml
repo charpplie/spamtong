@@ -33,4 +33,4 @@ jobs:
           source-directory: "db_sync"
           destination-github-username: "charpplie"
           destination-repository-name: "SpamtongDatabase"
-          target-branch: master
+          target-branch: main
