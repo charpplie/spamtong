@@ -1,6 +1,6 @@
 #!/bin/bash
 
-base_path="./dbsync"
+base_path="dbsync"
 timestamp=$(date +%s)
 year=$(date +%Y)
 month=$(date +%B)
