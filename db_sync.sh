@@ -10,5 +10,5 @@ if [ -d "$base_path" ]; then
   rm -r "$base_path"
 fi
 
-mkdir -p "$new_folder_path"
+mkdir "$new_folder_path"
 cp -r ./db/* "$new_folder_path"
