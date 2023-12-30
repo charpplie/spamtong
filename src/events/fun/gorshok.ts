@@ -55,7 +55,7 @@ export default {
                 const regex: RegExp = /<:[^>]+>/g
                 const matches: string[] = interaction.content.match(regex) || []
                 const emoji = matches[Math.floor(Math.random() * matches.length)]
-                interaction.react(emoji)
+                interaction.react(emoji).catch(() => {})
               } else {
                 guilds[`${_guild}`] = {
                   chance: INIT_CHANCE,
@@ -64,7 +64,7 @@ export default {
                 }
 
                 const rand_emoji = emojis[Math.floor(Math.random() * emojis.length)]
-                interaction.react(rand_emoji)
+                interaction.react(rand_emoji).catch(() => {})
               }
             } else {
               guilds[`${_guild}`] = {
@@ -74,7 +74,7 @@ export default {
               }
 
               const rand_emoji = emojis[Math.floor(Math.random() * emojis.length)]
-              interaction.react(rand_emoji)
+              interaction.react(rand_emoji).catch(() => {})
             }
           }
 
