@@ -15,7 +15,7 @@ const reactions = [
   '5️⃣',
 ]
 
-const CHANNELS = ['1181427849303965768']
+const CHANNELS = ['1173213492153688098']
 
 export default {
   name: 'messageCreate',
@@ -57,18 +57,18 @@ export default {
               unlinkSync(filePath)
               const convertedFile = readFileSync(convertedFilePath)
               await _channel.send({
-                content: `${_author}: ${_text}`,
                 files: [{
                   attachment: convertedFile,
                   name: attachment.name.replace(/\.[^/.]+$/, '.mov')
                 }]
               }).then(async (interaction: any) => {
+                unlinkSync(convertedFilePath)
                 for (let j = 0; j < reactions.length; j++) {
+                  await interaction.edit(`v${interaction.id} | ${_author}: ${_text}`)
                   await interaction.react(reactions[j]).catch((error: any) => {
                     Logger.error(error)
-                })
+                  })
                 }
-                unlinkSync(convertedFilePath)
               }).catch((error: any) => {
                 Logger.error(error)
               })

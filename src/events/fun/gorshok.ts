@@ -77,8 +77,6 @@ export default {
               interaction.react(rand_emoji).catch(() => {})
             }
           }
-
-          console.log(guilds)
         }
       }
     })
