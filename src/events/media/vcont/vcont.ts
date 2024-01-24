@@ -15,7 +15,7 @@ const reactions = [
   '5️⃣',
 ]
 
-const CHANNELS = ['1173213492153688098']
+const CHANNELS = ['1181427849303965768']
 
 export default {
   name: 'messageCreate',
