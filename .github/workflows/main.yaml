@@ -20,7 +20,7 @@ jobs:
           destination-github-username: 'charpplie'
           destination-repository-name: 'SpamtongDatabase'
           user-email: maksohuman@gmail.com
-          target-branch: mast
+          target-branch: master
 
       - uses: actions/checkout@v4
 
