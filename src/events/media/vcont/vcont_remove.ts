@@ -25,6 +25,7 @@ export default {
 
     const channel = Logger.client.channels.cache.get('1173213492153688098') as TextChannel
 
-    await channel.send(`${user.username} убрал реакцию ${react._emoji.name} с видео v${react.message.id}`)
+    const emoji = react._emoji.id ? `<:${react._emoji.name}:${react._emoji.id}>` : react._emoji.name
+    await channel.send(`${user.username} убрал реакцию ${emoji} с видео v${react.message.id}`)
   }
 } as Event
