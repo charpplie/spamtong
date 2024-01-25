@@ -13,15 +13,15 @@ jobs:
 
     steps:
       - name: Push DB Files to Repository
-          uses: cpina/github-action-push-to-another-repository@main
-          env:
-            API_TOKEN_GITHUB: ${{ secrets.TOKEN }}
-          with:
-            source-directory: 'db'
-            destination-github-username: 'charpplie'
-            destination-repository-name: 'SpamtongDatabase'
-            user-email: maksohuman@gmail.com
-            target-branch: mast
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.TOKEN }}
+        with:
+          source-directory: 'db'
+          destination-github-username: 'charpplie'
+          destination-repository-name: 'SpamtongDatabase'
+          user-email: maksohuman@gmail.com
+          target-branch: mast
 
       - uses: actions/checkout@v4
 
