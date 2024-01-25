@@ -11,9 +11,25 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Push DB Files to Repository
+          uses: cpina/github-action-push-to-another-repository@main
+          env:
+            API_TOKEN_GITHUB: ${{ secrets.TOKEN }}
+          with:
+            source-directory: 'db'
+            destination-github-username: 'charpplie'
+            destination-repository-name: 'SpamtongDatabase'
+            user-email: maksohuman@gmail.com
+            target-branch: mast
+
       - uses: actions/checkout@v4
+
+      - name: Get DB Files
+        uses: actions/checkout@v4
         with:
-          clean: false
+          repository: charpplie/SpamtongDatabase
+          token: ${{ secrets.TOKEN }}
+          path: db
 
       - name: Run Spamtong on self-hosted runner via SSH
         uses: appleboy/ssh-action@v0.1.10
