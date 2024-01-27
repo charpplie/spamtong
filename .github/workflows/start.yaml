@@ -1,7 +1,6 @@
 name: Start
 
-on:
-  workflow_dispatch:
+on: [workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -10,17 +9,16 @@ concurrency:
 jobs:
   start:
     runs-on: self-hosted
-
     steps:
       - name: Start Spamtong session on self-hosted runner via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
-            host:     ${{ secrets.HOST      }}
-            username: ${{ secrets.USERNAME  }}
-            password: ${{ secrets.PASSWD    }}
-            script: |
-              screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
-              screen -dmS spamtong
-              screen -S spamtong -X stuff 'cd actions-runner/_work/spamtong/spamtong\n'
-              screen -S spamtong -X stuff 'npm install\n'
-              screen -S spamtong -X stuff 'npm run dev\n'
+          host:     ${{ secrets.HOST      }}
+          username: ${{ secrets.USERNAME  }}
+          password: ${{ secrets.PASSWD    }}
+          script: |
+            screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
+            screen -dmS spamtong
+            screen -S spamtong -X stuff 'cd actions-runner/_work/spamtong/spamtong\n'
+            screen -S spamtong -X stuff 'npm install\n'
+            screen -S spamtong -X stuff 'npm run dev\n'

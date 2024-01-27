@@ -1,7 +1,6 @@
 name: Stop
 
-on:
-  workflow_dispatch:
+on: [workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -10,13 +9,12 @@ concurrency:
 jobs:
   stop:
     runs-on: self-hosted
-
     steps:
       - name: Stop Spamtong session on self-hosted runner via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
-            host:     ${{ secrets.HOST      }}
-            username: ${{ secrets.USERNAME  }}
-            password: ${{ secrets.PASSWD    }}
-            script: |
-              screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
+          host:     ${{ secrets.HOST      }}
+          username: ${{ secrets.USERNAME  }}
+          password: ${{ secrets.PASSWD    }}
+          script: |
+            screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill

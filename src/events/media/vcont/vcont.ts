@@ -20,7 +20,7 @@ const CHANNELS = ['1181427849303965768']
 export default {
   name: 'messageCreate',
   callback: async (interaction) => {
-    if (interaction.member.user.id === `${process.env.appId}`) return
+    if (interaction.member.user.bot) return
     if (!CHANNELS.includes(interaction.channel.id)) return
 
     if (interaction.attachments.size > 0) {

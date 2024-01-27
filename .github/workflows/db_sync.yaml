@@ -1,7 +1,6 @@
 name: DB Sync
 
-on:
-  workflow_dispatch:
+on: [workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -10,7 +9,6 @@ concurrency:
 jobs:
   db-sync:
     runs-on: self-hosted
-
     steps:
       - name: Push DB Files to Repository
         uses: cpina/github-action-push-to-another-repository@main
