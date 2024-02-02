@@ -8,10 +8,9 @@ export default {
     while (true) {
       const text = generateRandomText(12)
       client.user?.setPresence({
-        status: 'dnd',
         activities: [{
-          name: text,
-          type: 0,
+          name: `🫠${text}`,
+          type: 4,
         }]
       })
       await Sleep(5000)

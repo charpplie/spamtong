@@ -10,7 +10,15 @@ class DLogger {
   public ownerId: string
   public appId: string
 
-  private constructor(token: string, ownerId: string, appId: string) {
+  private constructor(options: Options) {
+    const {
+      token,
+      owner,
+      appId,
+      commandsDir,
+      eventsDir,
+    } = options
+
     this.client = new CustomClient({
       intents: [
         GatewayIntentBits.Guilds,
@@ -27,14 +35,14 @@ class DLogger {
       ]
     })
 
-    this.ownerId = ownerId
+    this.ownerId = owner
     this.appId = appId
 
     this.client.commands = new Collection<string, SlashCommand>()
     this.client.cooldowns = new Collection<string, number>()
 
-    EventHandler(this.client, join(__dirname, `${process.env.events}`))
-    SlashCommandHandler(this.client, join(__dirname, `${process.env.commands}`))
+    EventHandler(this.client, eventsDir)
+    SlashCommandHandler(this.client, commandsDir)
 
     this.client.login(token)
   }
@@ -56,10 +64,24 @@ class DLogger {
     this.log(message, 'ERROR')
   }
 
-  public static getInstance(token: string, ownerId: string, appId: string,): DLogger {
-    if (!DLogger.instance) DLogger.instance = new DLogger(token, ownerId, appId)
+  public static getInstance(options: Options): DLogger {
+    if (!DLogger.instance) DLogger.instance = new DLogger(options)
     return DLogger.instance
   }
 }
 
-export const Logger = DLogger.getInstance(`${process.env.token}`, `${process.env.owner}`, `${process.env.appId}`)
+interface Options {
+  token: string,
+  owner: string,
+  appId: string
+  commandsDir: string,
+  eventsDir: string,
+}
+
+export const Logger = DLogger.getInstance({
+  token: `${process.env.token}`,
+  owner: `${process.env.owner}`,
+  appId: `${process.env.appId}`,
+  commandsDir: join(__dirname, `${process.env.commandsDir}`),
+  eventsDir: join(__dirname, `${process.env.eventsDir}`),
+})
