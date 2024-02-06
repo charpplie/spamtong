@@ -15,7 +15,7 @@ export default {
       const channel = guild?.channels.cache.get(CHANNEL) as TextChannel
 
       await channel.send({
-        content: `${new Date()} | ${Old.nickname} (${Old.user.username}) сменил имя на ${New.nickname}`
+        content: `${new Date()} | ${Old.nickname === null? `${Old.user.username} ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}` : `${Old.nickname} (${Old.user.username}) ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}`}`
       })
     }
   }
