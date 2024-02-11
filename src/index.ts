@@ -42,7 +42,7 @@ class DLogger {
     this.client.cooldowns = new Collection<string, number>()
 
     EventHandler(this.client, eventsDir)
-    SlashCommandHandler(this.client, commandsDir)
+    // SlashCommandHandler(this.client, commandsDir)
 
     this.client.login(token)
   }
