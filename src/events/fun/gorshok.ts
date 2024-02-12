@@ -11,8 +11,8 @@ interface IGuildPseudoRandom {
 }
 
 const GUILDS = ['1150427580734906368', '659767822448066570']
-const INIT_CHANCE = 13
-const PRD_INC = 1.85
+const INIT_CHANCE = 7
+const PRD_INC = 1.25
 
 let guilds: IGuildPseudoRandom = {}
 
