@@ -5,6 +5,8 @@ import { Sleep } from 'utils'
 
 const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second-birthday-gif-16100991'
 
+let NAMP = 0
+
 export default {
   name: Events.ClientReady,
   callback: async () => {
@@ -17,7 +19,12 @@ export default {
 
       if (month === 1) {
         if (day === 22) {
-          await channel.send(`Мистер Немп? Вам [поздравления](${GIF}) от Спемтона\n`)
+          if (!NAMP) {
+            await channel.send(`Мистер Немп? Вам [поздравления](${GIF}) от Спемтона\n`)
+            NAMP = 1
+          }
+        } else {
+          NAMP = 0
         }
       }
 
