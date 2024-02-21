@@ -8,8 +8,8 @@ const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second
 export default {
   name: Events.ClientReady,
   callback: async () => {
-    const guild = Logger.client.guilds.cache.get('1185089418395123763')
-    const channel = guild?.channels.cache.get('1185089419422732371') as TextChannel
+    const guild = Logger.client.guilds.cache.get('1150427580734906368')
+    const channel = guild?.channels.cache.get('1150427581296935006') as TextChannel
 
     while (true) {
       const month = new Date().getMonth()
