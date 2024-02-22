@@ -14,7 +14,7 @@ export default {
   name: 'messageCreate',
   callback: async (interaction) => {
     const guild = interaction.client.guilds.cache.get(GUILD)
-    const emojis = guild.emojis.cache.map((e: any) => { return `${e}` })
+    const emojis = guild.emojis.cache.map((e: any) => { return `${e.animated? `<a:${e.name}:${e.id}>` : `<:${e.name}:${e.id}>` }` })
     const emojis_ids = guild.emojis.cache.map((e: any) => { return `${e.id}` })
     for (let i = 0; i < emojis.length; i++) {
       if (countEmojis(interaction.content, emojis_ids[i])) {
