@@ -102,12 +102,13 @@ export default {
 
     const authorName = `${nikita[0].first_name} ${nikita[0].last_name}`
     const authorIcon = `${nikita[0].photo_100}`
+    const ownerIcon = client.users.cache.get(`${Spamtong.owner}`)?.avatarURL({ forceStatic: true })
 
     const embed = new EmbedBuilder()
       .setColor('DarkPurple')
       .setAuthor({ name: authorName, iconURL: authorIcon, url: `https://vk.com/id${NIKITA}`})
       .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
-      .setFooter({ text: `${process.env.copyright}`, iconURL: `${client.users.cache.get(`${process.env.owner}`)?.avatarURL({ forceStatic: true })}`})
+      .setFooter({ text: `${process.env.copyright}`, iconURL: `${ownerIcon}`})
 
     client.on('interactionCreate', async interaction => {
       if (interaction.isButton()) {
@@ -249,7 +250,7 @@ export default {
                 { name: 'Rating', value: '0.0', inline: true},
                 { name: 'Total rates', value: '0', inline: true}
               )
-              .setFooter({ text: `${process.env.copyright}`, iconURL: `${client.users.cache.get(`${process.env.owner}`)?.avatarURL({ forceStatic: true })}`})
+              .setFooter({ text: `${process.env.copyright}`, iconURL: `${ownerIcon}`})
             ],
             components: [row as any]
           }).then(async (reply) => {

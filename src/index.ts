@@ -24,6 +24,7 @@ class DLogger {
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildPresences,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
       ],
@@ -80,7 +81,7 @@ interface Options {
 export const Spamtong = DLogger.getInstance({
   token: `${process.env.token}`,
   appId: `${process.env.appId}`,
-  owner: `${process.env.owner}`,
+  owner: `783443296382746672`,
   commandsDir:  join(__dirname, 'commands'),
   eventsDir:    join(__dirname, 'events'),
 })
