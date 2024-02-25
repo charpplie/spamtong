@@ -7,14 +7,14 @@ import { join } from 'path'
 class DLogger {
   private static instance: DLogger | null = null
   public client: CustomClient
-  public owner: string
   public appId: string
+  public owner: string
 
   private constructor(options: Options) {
     const {
       token,
-      owner,
       appId,
+      owner,
       commandsDir,
       eventsDir,
     } = options
@@ -23,7 +23,6 @@ class DLogger {
       intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildPresences,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
@@ -35,14 +34,14 @@ class DLogger {
       ]
     })
 
-    this.owner = owner
     this.appId = appId
+    this.owner = owner
 
     this.client.commands = new Collection<string, SlashCommand>()
     this.client.cooldowns = new Collection<string, number>()
 
     EventHandler(this.client, eventsDir)
-    SlashCommandHandler(this.client, commandsDir)
+    // SlashCommandHandler(this.client, commandsDir)
 
     this.client.login(token)
   }
@@ -72,16 +71,16 @@ class DLogger {
 
 interface Options {
   token: string,
-  owner: string,
   appId: string,
+  owner: string,
   commandsDir: string,
   eventsDir: string,
 }
 
 export const Spamtong = DLogger.getInstance({
   token: `${process.env.token}`,
-  owner: `${process.env.owner}`,
   appId: `${process.env.appId}`,
-  commandsDir: join(__dirname, `${process.env.commandsDir}`),
-  eventsDir: join(__dirname, `${process.env.eventsDir}`),
+  owner: '783443296382746672',
+  commandsDir:  join(__dirname, 'commands'),
+  eventsDir:    join(__dirname, 'events'),
 })

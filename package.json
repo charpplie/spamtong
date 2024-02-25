@@ -4,15 +4,11 @@
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "axios": "^1.4.0",
-    "canvas": "^2.11.2",
-    "discord.js": "^14.12.1",
-    "dotenv": "^16.3.1",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
     "fluent-ffmpeg": "^2.1.2",
-    "graphql": "^16.8.1",
-    "graphql-request": "^6.1.0",
     "sequelize": "^6.35.1",
-    "sqlite3": "^5.1.6",
+    "sqlite3": "^5.1.7",
     "vk-io": "^4.8.3"
   },
   "devDependencies": {
