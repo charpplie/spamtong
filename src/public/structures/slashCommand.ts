@@ -115,6 +115,7 @@ interface CooldownOptions {
   amount: number,
   multiplier: cooldownMultiplier,
   type?: CooldownType,
+  ownerBypass?: boolean | false,
 }
 
 type cooldownMultiplier =

@@ -1,7 +1,7 @@
 import { APIApplicationCommandOptionChoice, SlashCommandBuilder, REST, Routes, Collection, CommandInteraction, ChannelType, InteractionType } from 'discord.js'
 import { CustomClient, OptionAllowedChannelTypes, SlashCommand } from 'comx'
 import { readdir, lstat } from 'fs/promises'
-import { Logger } from 'logger'
+import { Spamtong } from 'index'
 import { join } from 'path'
 
 interface IGuildCommands {
@@ -29,12 +29,12 @@ export default async function SlashCommandHandler(client: CustomClient, commands
         try {
           commandFile = await import(filePath)
         } catch (error) {
-          Logger.error(`Error importing ${file}: ${error}`)
+          Spamtong.error(`Error importing ${file}: ${error}`)
           continue
         }
 
         if (!commandFile?.default?.name && !commandFile?.default?.description) {
-          Logger.error(`Invalid slash command: ${file}`)
+          Spamtong.error(`Invalid slash command: ${file}`)
           continue
         }
 
@@ -79,13 +79,13 @@ export default async function SlashCommandHandler(client: CustomClient, commands
         const command = client.commands.get(com.name)
 
         if (command && command.guilds) {
-          command.guilds.forEach(async (guild) => {
-            if (!guildCommands[guild]) {
-              guildCommands[guild] = []
-            }
+            command.guilds.forEach(async (guild) => {
+              if (!guildCommands[guild]) {
+                guildCommands[guild] = []
+              }
 
-            guildCommands[guild].push(com)
-          })
+              guildCommands[guild].push(com)
+            })
         }
       })
 
@@ -94,7 +94,7 @@ export default async function SlashCommandHandler(client: CustomClient, commands
       }
     }
   } catch (error) {
-    Logger.error(`Error loading slash command: ${error}`)
+    Spamtong.error(`Error loading slash command: ${error}`)
   }
 
   client.on('interactionCreate', async (interaction) => {
@@ -119,6 +119,8 @@ export default async function SlashCommandHandler(client: CustomClient, commands
 
 async function checkCooldowns(client: CustomClient, command: SlashCommand, interaction: CommandInteraction): Promise<boolean> {
   if (!command.cooldown) return true
+
+  if (command.cooldown.ownerBypass && interaction.user.id === Spamtong.owner) return true
 
   const { cooldowns } = client
   if (!cooldowns.has(command.name)) cooldowns.set(command.name, new Collection<string, number[]>() as any)

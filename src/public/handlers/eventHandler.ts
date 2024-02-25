@@ -1,6 +1,6 @@
 import { CustomClient, Event } from 'comx'
 import { readdir, lstat } from 'fs/promises'
-import { Logger } from 'logger'
+import { Spamtong } from 'index'
 import { join } from 'path'
 
 export default async function EventHandler(client: CustomClient, eventsDir: string) {
@@ -19,9 +19,10 @@ export default async function EventHandler(client: CustomClient, eventsDir: stri
 
         try {
           const event: Event = (await import(filePath)).default
-          if (event.once) client.once(event.name as string, async (...args: any[]) => { event.callback(...args) })
-          else client.on(event.name as string, async (...args: any[]) => { event.callback(...args) })
-        } catch (error) { Logger.error(`Error executing event ${filePath}: ${error}`) }
+          client.on(event.name as string, async (...args: any[]) => {event.callback(...args)})
+        } catch (error) {
+          Spamtong.error(`Error executing event ${filePath}: ${error}`)
+        }
       })
     )
   }

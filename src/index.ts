@@ -7,7 +7,7 @@ import { join } from 'path'
 class DLogger {
   private static instance: DLogger | null = null
   public client: CustomClient
-  public ownerId: string
+  public owner: string
   public appId: string
 
   private constructor(options: Options) {
@@ -35,20 +35,20 @@ class DLogger {
       ]
     })
 
-    this.ownerId = owner
+    this.owner = owner
     this.appId = appId
 
     this.client.commands = new Collection<string, SlashCommand>()
     this.client.cooldowns = new Collection<string, number>()
 
     EventHandler(this.client, eventsDir)
-    // SlashCommandHandler(this.client, commandsDir)
+    SlashCommandHandler(this.client, commandsDir)
 
     this.client.login(token)
   }
 
   private log(message: string, level: string) {
-    const user = this.client.users.cache.get(this.ownerId)
+    const user = this.client.users.cache.get(this.owner)
     if (user) user.send(`[${level}]: ${message}`)
   }
 
@@ -73,12 +73,12 @@ class DLogger {
 interface Options {
   token: string,
   owner: string,
-  appId: string
+  appId: string,
   commandsDir: string,
   eventsDir: string,
 }
 
-export const Logger = DLogger.getInstance({
+export const Spamtong = DLogger.getInstance({
   token: `${process.env.token}`,
   owner: `${process.env.owner}`,
   appId: `${process.env.appId}`,
