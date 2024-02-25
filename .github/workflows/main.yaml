@@ -11,6 +11,15 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    - name: Check if DB directory exists
+        run: |
+          if [ ! -d "db" ]; then
+            echo "DB directory does not exist. Cloning repository..."
+            git clone https://github.com/charpplie/SpamtongDatabase.git db
+          else
+            echo "DB directory exists."
+          fi
+
       - name: Push DB Files to Repository
         uses: cpina/github-action-push-to-another-repository@main
         env:

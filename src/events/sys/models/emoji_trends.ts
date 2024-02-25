@@ -19,7 +19,6 @@ const GUILD = '1150427580734906368'
 
 export default {
   name: 'ready',
-  once: true,
   callback: async (client) => {
     ITEmojiModel.sync().then(async () => {
       const guild = client.guilds.cache.get(GUILD)

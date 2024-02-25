@@ -17,7 +17,6 @@ export const IGuildsModel = sequelize.define('model', {
 
 export default {
   name: Events.ClientReady,
-  once: true,
   callback: async (client) => {
     const guilds = client.guilds.cache.map((guild: { id: any }) => guild.id)
   }

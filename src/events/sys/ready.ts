@@ -6,9 +6,7 @@ let startTime: number
 
 export default {
   name: Events.ClientReady,
-  once: true,
   callback: async (client) => {
-    Spamtong.info('Ok!')
     startTime = Date.now()
     updateUptime()
   }
