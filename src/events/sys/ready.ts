@@ -31,5 +31,5 @@ function updateUptime() {
     status: 'online',
   })
 
-  setTimeout(updateUptime, 10000)
+  setTimeout(updateUptime, 60000)
 }
