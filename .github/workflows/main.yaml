@@ -14,11 +14,19 @@ jobs:
       - name: Check if DB directory exists
         run: |
           if [ ! -d "db" ]; then
-            echo "DB directory does not exist. Cloning repository..."
-            git clone https://github.com/charpplie/SpamtongDatabase.git db
+            echo "DB directory does not exist. Performing checkout..."
+            mkdir db
           else
             echo "DB directory exists."
           fi
+
+      - name: Checkout DB repository
+        if: steps.check_if_db_directory_exists.outputs.db_directory_exists == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: charpplie/SpamtongDatabase
+          token: ${{ secrets.TOKEN }}
+          path: db
 
       - name: Push DB Files to Repository
         uses: cpina/github-action-push-to-another-repository@main
