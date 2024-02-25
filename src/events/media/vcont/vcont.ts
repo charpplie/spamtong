@@ -5,7 +5,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import { join } from 'path'
 import axios from 'axios'
 import os from 'os'
-import { Logger } from 'logger'
+import { Spamtong } from 'index'
 
 const reactions = [
   '1️⃣',
@@ -66,11 +66,11 @@ export default {
                 for (let j = 0; j < reactions.length; j++) {
                   await interaction.edit(`v${interaction.id} | ${_author}: ${_text}`)
                   await interaction.react(reactions[j]).catch((error: any) => {
-                    Logger.error(error)
+                    Spamtong.error(error)
                   })
                 }
               }).catch((error: any) => {
-                Logger.error(error)
+                Spamtong.error(error)
               })
             })
             .run()

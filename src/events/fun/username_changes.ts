@@ -1,6 +1,6 @@
 import { Event, Events } from 'comx'
 import { TextChannel } from 'discord.js'
-import { Logger } from 'logger'
+import { Spamtong } from 'index'
 
 const GUILD = '1150427580734906368'
 const CHANNEL = '1204439974766706698'
@@ -11,7 +11,7 @@ export default {
     if (Old.user.bot) return
 
     if (Old.nickname !== New.nickname) {
-      const guild = Logger.client.guilds.cache.get(GUILD)
+      const guild = Spamtong.client.guilds.cache.get(GUILD)
       const channel = guild?.channels.cache.get(CHANNEL) as TextChannel
 
       await channel.send({

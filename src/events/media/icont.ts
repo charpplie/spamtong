@@ -2,7 +2,7 @@ import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder
 import { Event, CustomClient } from 'comx'
 import { IContModel } from '@models/icont'
 import { VK } from 'vk-io'
-import { Logger } from 'logger'
+import { Spamtong } from 'index'
 
 const reacts = [
   '1️⃣',
@@ -263,7 +263,7 @@ export default {
           await Sleep(1500)
         }
       } catch (why) {
-        Logger.error('icont error')
+        Spamtong.error('icont error')
         console.error(why)
         await Sleep(30000)
         await main()

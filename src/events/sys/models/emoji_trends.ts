@@ -24,7 +24,6 @@ export default {
     ITEmojiModel.sync().then(async () => {
       const guild = client.guilds.cache.get(GUILD)
       const emojis = guild.emojis.cache.map((e: any) => { return `${e.animated? `<a:${e.name}:${e.id}>` : `<:${e.name}:${e.id}>` }` })
-      console.log(emojis)
       for (let i = 0; i < emojis.length; i++) {
         if (!(await ITEmojiModel.findOne({ where: { emoji: emojis[i] }}))) {
           await ITEmojiModel.create({
