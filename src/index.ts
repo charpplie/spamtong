@@ -80,7 +80,7 @@ interface Options {
 export const Spamtong = DLogger.getInstance({
   token: `${process.env.token}`,
   appId: `${process.env.appId}`,
-  owner: '783443296382746672',
+  owner: `${process.env.owner}`,
   commandsDir:  join(__dirname, 'commands'),
   eventsDir:    join(__dirname, 'events'),
 })
