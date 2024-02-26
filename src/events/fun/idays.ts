@@ -7,7 +7,7 @@ const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second
 
 let NAMP = 0
 let LUMEE = 0
-// let VELOSIBOBE = 0
+let VELOSIBOBE = 0
 let NOVUSORBIS = 0
 let STAKAN = 0
 let DEWUH = 0
