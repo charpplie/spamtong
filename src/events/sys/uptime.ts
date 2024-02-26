@@ -6,7 +6,7 @@ let startTime: number
 
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
+  callback: async () => {
     startTime = Date.now()
     updateUptime()
   }
@@ -28,5 +28,5 @@ function updateUptime() {
     status: 'online',
   })
 
-  setTimeout(updateUptime, 60000)
+  setTimeout(updateUptime, 120000)
 }

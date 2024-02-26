@@ -6,19 +6,13 @@ import { join } from 'path'
 
 class DLogger {
   private static instance: DLogger | null = null
-  public client: CustomClient
-  public appId: string
-  public owner: string
+  public client!: CustomClient
+  public appId!: string
+  public owner!: string
 
-  private constructor(options: Options) {
-    const {
-      token,
-      appId,
-      owner,
-      commandsDir,
-      eventsDir,
-    } = options
+  private constructor(token: string) { this.init(token) }
 
+  private async init(token: string) {
     this.client = new CustomClient({
       intents: [
         GatewayIntentBits.Guilds,
@@ -35,21 +29,28 @@ class DLogger {
       ]
     })
 
-    this.appId = appId
-    this.owner = owner
-
     this.client.commands = new Collection<string, SlashCommand>()
     this.client.cooldowns = new Collection<string, number>()
 
-    EventHandler(this.client, eventsDir)
-    // SlashCommandHandler(this.client, commandsDir)
+    EventHandler(this.client, join(__dirname, 'events'))
 
     this.client.login(token)
+    this.client.on('ready', async () => {
+      await this.client.application?.fetch()
+      if (this.client.application?.id) this.appId = this.client.application.id
+      if (this.client.application?.owner?.id) this.owner = this.client.application.owner.id
+      // SlashCommandHandler(this.client, join(__dirname, 'commands'))
+    })
   }
 
   private log(message: string, level: string) {
-    const user = this.client.users.cache.get(this.owner)
-    if (user) user.send(`[${level}]: ${message}`)
+    if (!this.owner) {
+      setTimeout(() => this.log(message, level), 5000)
+    }
+    else {
+      const user = this.client.users.cache.get(this.owner)
+      if (user) user.send(`[${level}]: ${message}`)
+    }
   }
 
   public info(message: string) {
@@ -64,24 +65,10 @@ class DLogger {
     this.log(message, 'ERROR')
   }
 
-  public static getInstance(options: Options): DLogger {
-    if (!DLogger.instance) DLogger.instance = new DLogger(options)
+  public static getInstance(token: string): DLogger {
+    if (!DLogger.instance) DLogger.instance = new DLogger(token)
     return DLogger.instance
   }
 }
 
-interface Options {
-  token: string,
-  appId: string,
-  owner: string,
-  commandsDir: string,
-  eventsDir: string,
-}
-
-export const Spamtong = DLogger.getInstance({
-  token: `${process.env.token}`,
-  appId: `${process.env.appId}`,
-  owner: `783443296382746672`,
-  commandsDir:  join(__dirname, 'commands'),
-  eventsDir:    join(__dirname, 'events'),
-})
+export const Spamtong = DLogger.getInstance(`${process.env.token}`)
