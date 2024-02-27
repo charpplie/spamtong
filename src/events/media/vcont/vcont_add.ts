@@ -2,14 +2,6 @@ import { Event, Events } from 'comx'
 import { TextChannel } from 'discord.js'
 import { Spamtong } from 'index'
 
-const reactions = [
-  '1️⃣',
-  '2️⃣',
-  '3️⃣',
-  '4️⃣',
-  '5️⃣',
-]
-
 const CHANNELS = ['1181427849303965768']
 
 export default {

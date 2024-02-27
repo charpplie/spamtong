@@ -69,7 +69,7 @@ export default async function SlashCommandHandler(client: CustomClient, commands
     const rest = new REST({ version: '10' }).setToken(String(process.env.token))
 
     if (slashCommandsGlobal) {
-      await rest.put(Routes.applicationCommands(String(process.env.appId)), { body: slashCommandsGlobal, })
+      await rest.put(Routes.applicationCommands(String(Spamtong.appId)), { body: slashCommandsGlobal, })
     }
 
     if (slashCommandsGuilds) {
@@ -90,7 +90,7 @@ export default async function SlashCommandHandler(client: CustomClient, commands
       })
 
       for (const guild in guildCommands) {
-        await rest.put(Routes.applicationGuildCommands(String(process.env.appId), guild), { body: guildCommands[guild], })
+        await rest.put(Routes.applicationGuildCommands(String(Spamtong.appId), guild), { body: guildCommands[guild], })
       }
     }
   } catch (error) {
@@ -102,7 +102,7 @@ export default async function SlashCommandHandler(client: CustomClient, commands
       const command = client.commands.get(interaction.commandName)
       if (!command) return
 
-      if (command.isOwnerOnly && interaction.user.id !== process.env.owner) return
+      if (command.isOwnerOnly && interaction.user.id !== Spamtong.owner) return
       if (command.allowedUsers && !command.allowedUsers.includes(interaction.user.id)) return
 
       if (await checkCooldowns(client, command, interaction)) command.callback(interaction)

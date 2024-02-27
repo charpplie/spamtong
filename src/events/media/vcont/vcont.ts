@@ -1,4 +1,4 @@
-import { Event } from 'comx'
+import { Event, Events } from 'comx'
 import { generateRandomText } from 'utils'
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
@@ -6,6 +6,7 @@ import { join } from 'path'
 import axios from 'axios'
 import os from 'os'
 import { Spamtong } from 'index'
+import { Message } from 'discord.js'
 
 const reactions = [
   '1️⃣',
@@ -18,21 +19,24 @@ const reactions = [
 const CHANNELS = ['1181427849303965768']
 
 export default {
-  name: 'messageCreate',
-  callback: async (interaction) => {
-    if (!CHANNELS.includes(interaction.channel.id)) return
-    if (interaction.member.user.bot) return
+  name: Events.MessageCreate,
+  callback: async (message: Message) => {
+    if (message.author.bot) return
+    if (!message.guild) return
+    if (!CHANNELS.includes(message.channel.id)) return
 
-    if (interaction.attachments.size > 0) {
-      const _channel = interaction.channel
-      const _author = interaction.member.nickname ? interaction.member.nickname : interaction.member.user.username
-      const _text = interaction.content ? interaction.content : ''
-      const _interaction = interaction
-      await interaction.delete()
-      for (let i = 0; i < _interaction.attachments.size; i++) {
-        const attachment = _interaction.attachments.at(i)
+    if (message.attachments.size > 0) {
+      const _guild = message.guild
+      const _channel = message.channel
+      const _user = _guild.members.cache.get(message.author.id)
+      const _author = _user?.nickname ? _user?.nickname :_user?.user.username
+      const _text = message.content ? message.content : ''
+      const _message = message
+      await message.delete()
+      for (let i = 0; i < _message.attachments.size; i++) {
+        const attachment = _message.attachments.at(i)
         if (attachment && attachment.contentType?.startsWith('video')) {
-          const filePath = join(__dirname, `${_interaction.id}${generateRandomText(6)}${attachment.name}`)
+          const filePath = join(__dirname, `${_message.id}${generateRandomText(6)}${attachment.name}`)
           const writer = createWriteStream(filePath)
 
           const response = await axios({
@@ -49,7 +53,7 @@ export default {
           })
 
           const ffmpegPath = os.type() === 'Windows_NT' ? String(require('@ffmpeg-installer/ffmpeg').path) : '/usr/bin/ffmpeg'
-          const convertedFilePath = join(__dirname, `${_interaction.id}${generateRandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
+          const convertedFilePath = join(__dirname, `${_message.id}${generateRandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
           ffmpeg(filePath)
             .setFfmpegPath(ffmpegPath)
             .output(convertedFilePath)
@@ -65,15 +69,10 @@ export default {
                 unlinkSync(convertedFilePath)
                 for (let j = 0; j < reactions.length; j++) {
                   await interaction.edit(`v${interaction.id} | ${_author}: ${_text}`)
-                  await interaction.react(reactions[j]).catch((error: any) => {
-                    Spamtong.error(error)
-                  })
+                  await interaction.react(reactions[j]).catch((error: any) => { Spamtong.error(error) })
                 }
-              }).catch((error: any) => {
-                Spamtong.error(error)
-              })
-            })
-            .run()
+              }).catch((error: any) => { Spamtong.error(error) })
+            }).run()
         }
       }
     }
