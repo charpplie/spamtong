@@ -14,16 +14,18 @@ const reactions = [
   '3️⃣',
   '4️⃣',
   '5️⃣',
+  '⭐',
 ]
 
-const CHANNELS = ['1181427849303965768']
+export const VCONT_CHANNELS = ['1181427849303965768', '1173213492153688098']
+export const VCONT_CRITICAL = '1212476779743285258'
 
 export default {
   name: Events.MessageCreate,
   callback: async (message: Message) => {
     if (message.author.bot) return
     if (!message.guild) return
-    if (!CHANNELS.includes(message.channel.id)) return
+    if (!VCONT_CHANNELS.includes(message.channel.id)) return
 
     if (message.attachments.size > 0) {
       const _guild = message.guild

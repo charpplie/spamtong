@@ -6,7 +6,7 @@ let startTime: number
 
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
+  callback: async () => {
     startTime = Date.now()
     updateUptime()
   }
