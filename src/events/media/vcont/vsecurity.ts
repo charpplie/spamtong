@@ -10,7 +10,7 @@ export default {
     while (true) {
       VCONT_CHANNELS.forEach(async (_channel) => {
         const channel = Spamtong.client.channels.cache.get(`${_channel}`) as TextChannel
-        const messages = await fetchMessages(channel, 1)
+        const messages = await fetchMessages(channel, 1000)
         messages.forEach(message => {
           if (message.member?.user.bot) {
             if (message.member.user.id === Spamtong.appId) {
