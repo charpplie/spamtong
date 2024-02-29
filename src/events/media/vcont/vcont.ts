@@ -8,7 +8,7 @@ import os from 'os'
 import { Spamtong } from 'index'
 import { Message } from 'discord.js'
 
-const reactions = [
+export const VCONT_REACTIONS = [
   '1️⃣',
   '2️⃣',
   '3️⃣',
@@ -69,9 +69,9 @@ export default {
                 }]
               }).then(async (interaction: any) => {
                 unlinkSync(convertedFilePath)
-                for (let j = 0; j < reactions.length; j++) {
+                for (let j = 0; j < VCONT_REACTIONS.length; j++) {
                   await interaction.edit(`v${interaction.id} | ${_author}: ${_text}`)
-                  await interaction.react(reactions[j]).catch((error: any) => { Spamtong.error(error) })
+                  await interaction.react(VCONT_REACTIONS[j]).catch((error: any) => { Spamtong.error(error) })
                 }
               }).catch((error: any) => { Spamtong.error(error) })
             }).run()
