@@ -17,7 +17,7 @@ const reactions = [
   '⭐',
 ]
 
-export const VCONT_CHANNELS = ['1181427849303965768', '1173213492153688098']
+export const VCONT_CHANNELS = ['1181427849303965768']
 export const VCONT_CRITICAL = '1212476779743285258'
 
 export default {
