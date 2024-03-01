@@ -264,8 +264,6 @@ export default {
           await Sleep(1500)
         }
       } catch (why) {
-        Spamtong.error('icont error')
-        console.error(why)
         await Sleep(30000)
         await main()
       }
