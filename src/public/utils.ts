@@ -16,14 +16,14 @@ export function generateRandomText(length: number): string {
 
 export async function fetchMessages(channel: TextChannel, limit: number): Promise<Message[]> {
   let out: Message[] = []
-  
+
   if (limit <= 100) {
     const messages = await channel.messages.fetch({ limit: limit })
     out.push(...messages.values())
   } else {
     let rounds = Math.ceil(limit / 100)
     let lastId: Snowflake | undefined = undefined
-    
+
     for (let x = 0; x < rounds; x++) {
       const options: { limit: number; before?: Snowflake } = {
         limit: 100
