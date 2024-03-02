@@ -1,23 +1,23 @@
 import { Event, Events } from 'comx'
 import { Message, TextChannel } from 'discord.js'
-import { Spamtong } from 'index'
 import { fetchMessages } from 'utils'
+import { Spamtong } from 'index'
 
 interface IGuildChance {
   chance: number,
-  prdInc: number,
-  numberOE: number,
+  increment: number,
+  numberOfTriggers: number,
 }
 
-interface IGuildPseudoRandom {
+interface IGuildsPseudoRandom {
   [guild: string]: IGuildChance,
 }
 
+let CGuilds: IGuildsPseudoRandom = {}
+
 const GUILDS = ['1150427580734906368']
 const INIT_CHANCE = 7
-const PRD_INC = 1.15
-
-let CGuilds: IGuildPseudoRandom = {}
+const CHANCE_INC = 1.15
 
 const EmojiRegExp: RegExp = /<:[^>]+>/g
 
@@ -26,8 +26,8 @@ const Random = ((limit = 100) => { return Math.floor(Math.random() * limit) })
 function resetGuildChances(guild: string) {
   CGuilds[`${guild}`] = {
     chance: INIT_CHANCE,
-    prdInc: PRD_INC,
-    numberOE: 1,
+    increment: CHANCE_INC,
+    numberOfTriggers: 1,
   }
 }
 
@@ -49,15 +49,13 @@ export default {
 
         if (!CGuilds[`${guild}`]) resetGuildChances(guild)
         else {
-          CGuilds[`${guild}`] = { chance: INIT_CHANCE + (CGuilds[`${guild}`].prdInc * CGuilds[`${guild}`].numberOE), prdInc: PRD_INC, numberOE: CGuilds[`${guild}`].numberOE += 1 }
-
           if (Random() <= CGuilds[`${guild}`].chance) {
             resetGuildChances(guild)
 
             const messages = await fetchMessages(message.channel as TextChannel, 3)
-            let text = ''
-            messages.forEach(msg => { text += msg.content + ' '})
             if (messages.every(msg => msg.author.id === message.author.id)) {
+              let text = ''
+              messages.forEach(msg => { text += msg.content + ' '})
               if (text.match(EmojiRegExp)) {
                 if (Random() <= 23) {
                   const matches: string[] = text.match(EmojiRegExp) || []
@@ -81,6 +79,8 @@ export default {
             message.react(rand_emoji).catch(() => {})
             return
           }
+
+          CGuilds[`${guild}`] = { chance: INIT_CHANCE + (CGuilds[`${guild}`].increment * CGuilds[`${guild}`].numberOfTriggers), increment: CHANCE_INC, numberOfTriggers: CGuilds[`${guild}`].numberOfTriggers += 1 }
         }
       })
     } catch (why) { Spamtong.error(`${why}`) }
