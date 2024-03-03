@@ -18,7 +18,7 @@ export const VCONT_REACTIONS = [
 ]
 
 export const VCONT_CHANNELS = ['1181427849303965768']
-export const VCONT_CRITICAL = '1212476779743285258'
+export const VCONT_CRITICAL = '1150427581296935006'
 
 export default {
   name: Events.MessageCreate,
