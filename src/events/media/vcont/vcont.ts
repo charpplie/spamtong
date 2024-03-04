@@ -5,8 +5,6 @@ import ffmpeg from 'fluent-ffmpeg'
 import { join } from 'path'
 import axios from 'axios'
 import os from 'os'
-import { Spamtong } from 'index'
-import { Message } from 'discord.js'
 
 export const VCONT_REACTIONS = [
   '1️⃣',
@@ -22,7 +20,7 @@ export const VCONT_CRITICAL = '1150427581296935006'
 
 export default {
   name: Events.MessageCreate,
-  callback: async (message: Message) => {
+  callback: async (client, message) => {
     if (message.author.bot) return
     if (!message.guild) return
     if (!VCONT_CHANNELS.includes(message.channel.id)) return
@@ -71,9 +69,9 @@ export default {
                 unlinkSync(convertedFilePath)
                 for (let j = 0; j < VCONT_REACTIONS.length; j++) {
                   await interaction.edit(`v${interaction.id} | ${_author}: ${_text}`)
-                  await interaction.react(VCONT_REACTIONS[j]).catch((error: any) => { Spamtong.error(error) })
+                  await interaction.react(VCONT_REACTIONS[j]).catch(() => {})
                 }
-              }).catch((error: any) => { Spamtong.error(error) })
+              }).catch(() => {})
             }).run()
         }
       }

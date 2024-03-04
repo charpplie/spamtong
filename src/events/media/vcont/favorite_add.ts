@@ -1,18 +1,17 @@
 import { Event, Events } from 'comx'
+import { IVcontFavModel } from 'models/vcont_favorites'
 import { TextChannel } from 'discord.js'
-import { IVcontFavModel } from '@models/vcont_favorites'
 import { VCONT_CHANNELS, VCONT_CRITICAL } from './vcont'
-import { Spamtong } from 'index'
 
 export default {
   name: Events.MessageReactionAdd,
-  callback: async (react, user) => {
+  callback: async (client, react, user) => {
     if (user.bot) return
     if (!VCONT_CHANNELS.includes(react.message.channelId)) return
     if (react._emoji.name !== '⭐') return
 
-    const channel = Spamtong.client.channels.cache.get(VCONT_CRITICAL) as TextChannel
-    const message = await (Spamtong.client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)
+    const channel = client.channels.cache.get(VCONT_CRITICAL) as TextChannel
+    const message = await (client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)
 
     if (!message.content.startsWith(`v${message.id}`)) return
 
@@ -22,7 +21,7 @@ export default {
     const favVid = await IVcontFavModel.findOne({ where: { user: `${user.id}`, guildId: `${message.id}`}})
     if (favVid) {
       const id = favVid.get('dmId')
-      const dmChannel = Spamtong.client.channels.cache.get(`${(await user.createDM()).id}`) as TextChannel
+      const dmChannel = client.channels.cache.get(`${(await user.createDM()).id}`) as TextChannel
       ;(await dmChannel.messages.fetch(`${id}`)).delete()
       await IVcontFavModel.destroy({ where: { user: `${user.id}`, guildId: `${message.id}`, dmId: `${id}`}})
     }

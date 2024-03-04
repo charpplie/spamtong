@@ -1,6 +1,5 @@
 import { Event, Events } from 'comx'
 import { TextChannel } from 'discord.js'
-import { Spamtong } from 'index'
 import { Sleep } from 'utils'
 
 const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second-birthday-gif-16100991'
@@ -17,8 +16,8 @@ let NEWBLOOM = 0
 
 export default {
   name: Events.ClientReady,
-  callback: async () => {
-    const guild = Spamtong.client.guilds.cache.get('1150427580734906368')
+  callback: async (client) => {
+    const guild = client.guilds.cache.get('1150427580734906368')
     const channel = guild?.channels.cache.get('1150427581296935006') as TextChannel
 
     while (true) {

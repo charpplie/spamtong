@@ -1,7 +1,6 @@
 import { Event, Events } from 'comx'
 import { Message, TextChannel } from 'discord.js'
 import { fetchMessages } from 'utils'
-import { Spamtong } from 'index'
 
 interface IGuildChance {
   chance: number,
@@ -33,7 +32,7 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: Events.MessageCreate,
-  callback: async (message: Message) => {
+  callback: async (client, message: Message) => {
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return
@@ -42,7 +41,7 @@ export default {
       GUILDS.forEach(async (guild) => {
         if (guild !== message.guild?.id) return
 
-        const _guild = Spamtong.client.guilds.cache.get(guild)
+        const _guild = client.guilds.cache.get(guild)
         if (!_guild) return
 
         const emojis = _guild.emojis.cache.map((e: any) => { return `<:${e.name}:${e.id}>` })
@@ -83,6 +82,6 @@ export default {
           CGuilds[`${guild}`] = { chance: INIT_CHANCE + (CGuilds[`${guild}`].increment * CGuilds[`${guild}`].numberOfTriggers), increment: CHANCE_INC, numberOfTriggers: CGuilds[`${guild}`].numberOfTriggers += 1 }
         }
       })
-    } catch (why) { Spamtong.error(`${why}`) }
+    } catch (why) {}
   }
 } as Event

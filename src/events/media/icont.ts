@@ -1,8 +1,8 @@
-import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder } from 'discord.js'
-import { Event, CustomClient } from 'comx'
-import { IContModel } from '@models/icont'
+import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder, Events } from 'discord.js'
+import { Event } from 'comx'
+import { IContModel } from 'models/icont'
 import { VK } from 'vk-io'
-import { Spamtong } from 'index'
+import { AppInfo } from 'index'
 
 const reacts = [
   '1️⃣',
@@ -62,8 +62,8 @@ const SAVEDPHOTOS = '-15'
 const RATE_COEF = 0.7
 
 export default {
-  name: 'ready',
-  callback: async (client: CustomClient) => {
+  name: Events.ClientReady,
+  callback: async (client) => {
     const guild = client.guilds.cache.get(GUILD)
     const channel = guild?.channels.cache.get(CHANNEL) as TextChannel
 
@@ -102,7 +102,7 @@ export default {
 
     const authorName = `${nikita[0].first_name} ${nikita[0].last_name}`
     const authorIcon = `${nikita[0].photo_100}`
-    const ownerIcon = client.users.cache.get(`${Spamtong.owner}`)?.avatarURL({ forceStatic: true })
+    const ownerIcon = client.users.cache.get(`${AppInfo.owner}`)?.avatarURL({ forceStatic: true })
 
     const embed = new EmbedBuilder()
       .setColor('DarkPurple')
@@ -110,7 +110,7 @@ export default {
       .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
       .setFooter({ text: `${process.env.copyright}`, iconURL: `${ownerIcon}`})
 
-    client.on('interactionCreate', async interaction => {
+    client.on('interactionCreate', async (interaction: any) => {
       if (interaction.isButton()) {
         if (interaction.channel?.id != channel.id) return
         const button = interaction.customId

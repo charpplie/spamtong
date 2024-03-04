@@ -1,17 +1,16 @@
 import { Event, Events } from 'comx'
 import { TextChannel } from 'discord.js'
-import { Spamtong } from 'index'
 
 const GUILD = '1150427580734906368'
 const CHANNEL = '1204439974766706698'
 
 export default {
   name: Events.UserUpdate,
-  callback: async (Old, New) => {
+  callback: async (client, Old, New) => {
     if (Old.bot) return
 
     if (Old.avatar !== New.avatar) {
-      const guild = Spamtong.client.guilds.cache.get(GUILD)
+      const guild = client.guilds.cache.get(GUILD)
       const channel = guild?.channels.cache.get(CHANNEL) as TextChannel
 
       await channel.send({

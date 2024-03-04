@@ -1,7 +1,9 @@
-import SlashCommandHandler from './handlers/slashCommandHandler'
-import EventHandler from './handlers/eventHandler'
+import { EventHandler } from './handlers/eventHandler'
+import { FeaturesHandler } from './handlers/featuresHandler'
+import { SlashCommandHandler } from './handlers/slashCommandHandler'
 
 export {
-  SlashCommandHandler,
   EventHandler,
+  FeaturesHandler,
+  SlashCommandHandler,
 }

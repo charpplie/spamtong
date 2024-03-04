@@ -1,11 +1,8 @@
-import CustomClient from './structures/client'
-import SlashCommand, { OptionAllowedChannelTypes } from './structures/slashCommand'
-import { Event, Events } from './structures/event'
+import { SlashCommand } from './structures/ISlashCommand'
+import { Event, Events } from './structures/IEvent'
 
 export {
-  CustomClient,
   SlashCommand,
   Event,
   Events,
-  OptionAllowedChannelTypes,
 }

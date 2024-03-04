@@ -1,12 +1,7 @@
-import { Event } from 'comx'
-import { Sequelize, DataTypes } from 'sequelize'
+import { defSequelize } from './!sequelize'
+import { DataTypes } from 'sequelize'
 
-const sequelize = new Sequelize('spambase', 'spamtong', 'spamword', {
-  host: 'localhost',
-  dialect: 'sqlite',
-  logging: false,
-  storage: 'db/icont.sqlite',
-})
+const sequelize = defSequelize('icont')
 
 export const IContModel = sequelize.define('model', {
   photo_id: {
@@ -27,9 +22,6 @@ export const IContModel = sequelize.define('model', {
   },
 })
 
-export default {
-  name: 'ready',
-  callback: async () => {
-    IContModel.sync()
-  },
-} as Event
+export default async () => {
+  IContModel.sync()
+}
