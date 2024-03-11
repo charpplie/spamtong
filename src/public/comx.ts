@@ -1,5 +1,5 @@
-import { SlashCommand } from './structures/ISlashCommand'
-import { Event, Events } from './structures/IEvent'
+import { SlashCommand } from './slashCommandHandler/slashCommand'
+import { Event, Events } from './eventHandler/event'
 
 export {
   SlashCommand,

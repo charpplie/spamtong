@@ -1,13 +1,11 @@
 import {
   APIApplicationCommandOptionChoice,
   AutocompleteInteraction,
+  ChannelType,
   CommandInteraction,
   LocalizationMap,
   Permissions,
 } from 'discord.js'
-
-import { CooldownOptions } from './ICooldownOptions'
-import { OptionAllowedChannelType } from './IAllowedChannelType'
 
 export interface SlashCommand {
   name: string,
@@ -51,3 +49,54 @@ type OptionType =
   | 'Attachment'
   | 'Subcommand'
   | 'SubcommandGroup'
+
+interface CooldownOptions {
+  amount: number,
+  multiplier: cooldownMultiplier,
+  type?: CooldownType,
+  ownerBypass?: boolean | false,
+}
+
+type cooldownMultiplier =
+  | 'Seconds'
+  | 'Minutes'
+  | 'Hours'
+  | 'Days'
+  | 'Weeks'
+
+type CooldownType =
+  | 'Global'
+  | 'Per Guild'
+  | 'Per User Per Guild'
+  | 'Per User Per DM'
+  | 'Per User'
+
+
+ interface AllowedChannelType {
+  [key: string]: number
+}
+
+export const OptionAllowedChannelTypes: AllowedChannelType = {
+  'Text':               ChannelType.GuildText,
+  'Voice':              ChannelType.GuildVoice,
+  'Category':           ChannelType.GuildCategory,
+  'Announcment':        ChannelType.GuildAnnouncement,
+  'AnnouncementThread': ChannelType.AnnouncementThread,
+  'PublicThread':       ChannelType.PublicThread,
+  'PrivateThread':      ChannelType.PrivateThread,
+  'StageVoice':         ChannelType.GuildStageVoice,
+  'Forum':              ChannelType.GuildForum,
+  'Media':              ChannelType.GuildMedia,
+}
+
+type OptionAllowedChannelType =
+  | 'Text'
+  | 'Voice'
+  | 'Category'
+  | 'Announcment'
+  | 'AnnouncementThread'
+  | 'PublicThread'
+  | 'PrivateThread'
+  | 'StageVoice'
+  | 'Forum'
+  | 'Media'

@@ -1,16 +1,16 @@
 {
-  "ts-node": { "require": ["tsconfig-paths/register"] },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
     "paths": {
-      "comx":     ["./src/public/comx.ts"],
+      "comx":  ["./src/public/comx.ts"],
+      "utils": ["./src/public/util.ts"],
       "models/*": ["./src/models/*"],
-      "utils":    ["./src/public/utils.ts"],
-      "index":    ["./src/index.ts"],
     },
-    "target": "ESNext",
-    "module": "CommonJS",
-    "esModuleInterop": true,
     "strict": true,
-    "alwaysStrict": true,
+    "module": "CommonJS",
+    "target": "ES2022",
+    "esModuleInterop": true,
   }
 }

@@ -2,7 +2,6 @@ import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder
 import { Event } from 'comx'
 import { IContModel } from 'models/icont'
 import { VK } from 'vk-io'
-import { AppInfo } from 'index'
 
 const reacts = [
   '1️⃣',
@@ -37,7 +36,7 @@ const stars = [
 ]
 
 const vk = new VK({
-  token: `${process.env.vkUsr}`
+  token: `vk1.a.ReFa-HmnP0GQ-hczNzEl-hpwEbtof_DIaQ48XUEZZ_-mEqVpcuh8mWXPafjdLQxPaieARaGOgweakF6UzLBc9bFdLJsNtA7Dn4g7JnejegpwxPwsnTfvWvgwaN6Gs_7_mlcZNc7PnxHRhZeLLmDBEjU7fPFnjOeHjnwoAAlPrsZak6dFd2v6BIllEMQ0DWoVVO-CuJAF_iJir05HJdI8oA`
 })
 
 function Sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
@@ -102,13 +101,11 @@ export default {
 
     const authorName = `${nikita[0].first_name} ${nikita[0].last_name}`
     const authorIcon = `${nikita[0].photo_100}`
-    const ownerIcon = client.users.cache.get(`${AppInfo.owner}`)?.avatarURL({ forceStatic: true })
 
     const embed = new EmbedBuilder()
       .setColor('DarkPurple')
       .setAuthor({ name: authorName, iconURL: authorIcon, url: `https://vk.com/id${NIKITA}`})
       .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
-      .setFooter({ text: `${process.env.copyright}`, iconURL: `${ownerIcon}`})
 
     client.on('interactionCreate', async (interaction: any) => {
       if (interaction.isButton()) {
@@ -250,7 +247,6 @@ export default {
                 { name: 'Rating', value: '0.0', inline: true},
                 { name: 'Total rates', value: '0', inline: true}
               )
-              .setFooter({ text: `${process.env.copyright}`, iconURL: `${ownerIcon}`})
             ],
             components: [row as any]
           }).then(async (reply) => {

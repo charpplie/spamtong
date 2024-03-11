@@ -1,5 +1,5 @@
-import { EventHandler, FeaturesHandler, SlashCommandHandler } from './public/cmdx'
-import { Client, GatewayIntentBits, Partials } from 'discord.js'
+import { EventHandler, SlashCommandHandler } from './public/cmdx'
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js'
 import { join } from 'path'
 import 'dotenv/config'
 
@@ -7,10 +7,9 @@ import 'dotenv/config'
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers,
       GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.GuildPresences,
       GatewayIntentBits.MessageContent,
+      GatewayIntentBits.GuildVoiceStates,
       GatewayIntentBits.GuildMessageReactions,
     ],
     partials: [
@@ -20,19 +19,17 @@ import 'dotenv/config'
     ],
   })
 
-  EventHandler(client, join(__dirname, 'events'))
-  FeaturesHandler(client, join(__dirname, 'models'))
-  // SlashCommandHandler(client, join(__dirname, 'commands'))
+  new EventHandler(client, [
+    {
+      dir: join(__dirname, 'events')
+    },
+    {
+      dir: join(__dirname, 'models'),
+      name_override: Events.ClientReady,
+    },
+  ])
+
+  // new SlashCommandHandler(client, [join(__dirname, 'commands')])
 
   client.login(process.env.token)
 })()
-
-interface IAppInfo {
-  appId: string,
-  owner: string,
-}
-
-export const AppInfo: IAppInfo = {
-  appId: `${process.env.appId}`,
-  owner: `${process.env.owner}`,
-}
