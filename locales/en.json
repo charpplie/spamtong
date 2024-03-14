@@ -1,0 +1,5 @@
+{
+  "cooldown": {
+    "error": "Please be patient! You will be able to use %s again %s"
+  }
+}
