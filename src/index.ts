@@ -1,7 +1,30 @@
-import { EventHandler, SlashCommandHandler } from './public/cmdx'
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js'
+import { EventHandler, SlashCommandHandler } from 'cmdx'
 import { join } from 'path'
+import { I18n } from 'i18n'
 import 'dotenv/config'
+
+export const i18n = new I18n({
+  locales: [
+    'en',
+    'ru',
+  ],
+  directory: join(__dirname, '../locales'),
+  defaultLocale: 'en',
+  retryInDefaultLocale: true,
+  objectNotation: true,
+  register: global,
+  updateFiles: false,
+  logWarnFn: function(msg) {
+    console.log(msg)
+  },
+  logErrorFn: function(msg) {
+    console.log(msg)
+  },
+  missingKeyFn: function(locale, value) {
+    return value
+  },
+})
 
 ;(() => {
   const client = new Client({
@@ -29,7 +52,7 @@ import 'dotenv/config'
     },
   ])
 
-  // new SlashCommandHandler(client, [join(__dirname, 'commands')])
+  new SlashCommandHandler(client, [join(__dirname, 'commands')])
 
   client.login(process.env.token)
 })()

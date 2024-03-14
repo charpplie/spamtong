@@ -7,7 +7,7 @@ export class EventHandler {
   private client: Client
   private events: Collection<string, [string, Function]> = new Collection<string, [string, Function]>()
 
-  constructor(client: Client, eventsDir: EventsDir[]) {
+  public constructor(client: Client, eventsDir: EventsDir[]) {
     this.client = client
 
     this.readEvents(eventsDir).then(() => this.registerEvents())

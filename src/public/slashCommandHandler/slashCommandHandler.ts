@@ -2,6 +2,7 @@ import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteracti
 import { OptionAllowedChannelTypes, SlashCommand } from './slashCommand'
 import { readdirSync } from 'fs'
 import { join } from 'path'
+import { i18n } from 'locales'
 
 export class SlashCommandHandler {
   private client: Client
@@ -12,7 +13,7 @@ export class SlashCommandHandler {
   private slashCommandsGlobal: SlashCommandBuilder[] = []
   private slashCommandsGuilds: SlashCommandBuilder[] = []
 
-  constructor(client: Client, commandsDir: string[]) {
+  public constructor(client: Client, commandsDir: string[]) {
     this.client = client
     this.init(commandsDir)
   }
@@ -143,7 +144,7 @@ export class SlashCommandHandler {
       const end = timestamps.get(cooldownKey)[1]
       if (now < end) {
         await interaction.reply({
-          content: `Please be patient! You are on a cooldown for ${command.name}. You can use it again <t:${Math.round(end / 1000)}:R>`,
+          content: i18n.__mf({ phrase: 'cooldown.error', locale: interaction.locale.substring(0, 2)}, command.name, `<t:${Math.round(end / 1000)}:R>`),
           ephemeral: true,
         })
 
