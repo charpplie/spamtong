@@ -1,5 +1,5 @@
-import { Event } from 'jukai'
-import { generateRandomText } from '../../../utils'
+import { Event } from 'comx'
+import { generateRandomText } from 'utils'
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
 import { join } from 'path'

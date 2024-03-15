@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "paths": {
-      "models/*": ["./src/events/models/*"],
-      "utils": ["./src/utils.ts"],
+      "comx":  ["./src/public/comx.ts"],
+      "cmdx":  ["./src/public/cmdx.ts"],
+      "utils": ["./src/public/util.ts"],
+      "models/*": ["./src/models/*"]
     },
     "strict": true,
     "target": "ES2022",

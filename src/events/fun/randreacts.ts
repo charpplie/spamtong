@@ -1,6 +1,6 @@
-import { Event } from 'jukai'
+import { Event } from 'comx'
 import { Message, TextChannel } from 'discord.js'
-import { fetchMessages } from '../../utils'
+import { fetchMessages } from 'utils'
 
 interface IGuildChance {
   chance: number,

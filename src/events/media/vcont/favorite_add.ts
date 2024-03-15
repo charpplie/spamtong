@@ -1,5 +1,5 @@
-import { Event } from 'jukai'
-import { IVcontFavModel } from '../../models/vcont'
+import { Event } from 'comx'
+import { IVcontFavModel } from '../../../models/vcont'
 import { TextChannel } from 'discord.js'
 import { VCONT_CHANNELS, VCONT_CRITICAL } from './vcont'
 

@@ -250,8 +250,8 @@
 // } as Event
 
 import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder, Events } from 'discord.js'
-import { Event } from 'jukai'
-import { IContModel } from '../models/icont'
+import { Event } from 'comx'
+import { IContModel } from '../../models/icont'
 import { VK } from 'vk-io'
 
 const reacts = [

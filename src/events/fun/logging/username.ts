@@ -1,4 +1,4 @@
-import { Event } from 'jukai'
+import { Event } from 'comx'
 import { TextChannel } from 'discord.js'
 
 const GUILD = '1150427580734906368'

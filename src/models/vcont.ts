@@ -1,6 +1,5 @@
 import { defSequelize } from './!sequelize'
 import { DataTypes } from 'sequelize'
-import { Event } from 'jukai'
 
 const sequelize = defSequelize('vcont')
 
@@ -14,9 +13,6 @@ export const IVcontFavModel = sequelize.define('model', {
   dmId: DataTypes.STRING,
 })
 
-export default {
-  name: 'ready',
-  callback: async () => {
-    IVcontFavModel.sync()
-  }
-} as Event
+export default async () => {
+  IVcontFavModel.sync()
+}
