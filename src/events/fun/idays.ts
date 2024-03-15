@@ -1,6 +1,6 @@
 import { Event, Events } from 'comx'
 import { TextChannel } from 'discord.js'
-import { Sleep } from 'utils'
+import { Sleep } from '../../utils'
 
 const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second-birthday-gif-16100991'
 

@@ -1,7 +1,7 @@
 import { Event, Events } from 'comx'
 import { VCONT_CHANNELS, VCONT_REACTIONS } from './vcont'
 import { TextChannel } from 'discord.js'
-import { Sleep, fetchMessages } from 'utils'
+import { Sleep, fetchMessages } from '../../../utils'
 
 export default {
   name: Events.ClientReady,

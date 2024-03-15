@@ -1,16 +1,8 @@
 {
-  "ts-node": { "require": ["tsconfig-paths/register"] },
   "compilerOptions": {
-    "paths": {
-      "comx":  ["./src/public/comx.ts"],
-      "cmdx":  ["./src/public/cmdx.ts"],
-      "utils": ["./src/public/util.ts"],
-      "models/*": ["./src/models/*"],
-      "locales":  ["./src/index.ts"],
-    },
     "strict": true,
-    "module": "CommonJS",
     "target": "ES2022",
+    "module": "CommonJS",
     "esModuleInterop": true,
   }
 }

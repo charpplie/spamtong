@@ -1,30 +1,5 @@
-import { Client, Events, GatewayIntentBits, Partials } from 'discord.js'
-import { EventHandler, SlashCommandHandler } from 'cmdx'
+import { Client, GatewayIntentBits, Partials } from 'discord.js'
 import { join } from 'path'
-import { I18n } from 'i18n'
-import 'dotenv/config'
-
-export const i18n = new I18n({
-  locales: [
-    'en',
-    'ru',
-  ],
-  directory: join(__dirname, '../locales'),
-  defaultLocale: 'en',
-  retryInDefaultLocale: true,
-  objectNotation: true,
-  register: global,
-  updateFiles: false,
-  logWarnFn: function(msg) {
-    console.log(msg)
-  },
-  logErrorFn: function(msg) {
-    console.log(msg)
-  },
-  missingKeyFn: function(locale, value) {
-    return value
-  },
-})
 
 ;(() => {
   const client = new Client({
@@ -32,27 +7,11 @@ export const i18n = new I18n({
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.MessageContent,
-      GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.GuildPresences,
       GatewayIntentBits.GuildMessageReactions,
-    ],
-    partials: [
-      Partials.Channel,
-      Partials.Message,
-      Partials.Reaction,
     ],
   })
 
-  new EventHandler(client, [
-    {
-      dir: join(__dirname, 'events')
-    },
-    {
-      dir: join(__dirname, 'models'),
-      name_override: Events.ClientReady,
-    },
-  ])
-
-  new SlashCommandHandler(client, [join(__dirname, 'commands')])
-
-  client.login(process.env.token)
+  // client.login('OTEyMzI2ODI4NTc0NzczMjk5.G48-_q.Pg58-CHugsv25xVWZmTdvBWK8ByY58R3Ycfxuo')
+  client.login('MTE3NDM3MDQ0MDE2OTM5NDI1Ng.Gu76qU.SfZfpc9X8cv158TDVbd7eVVpf7aY-HEznDIsvg')
 })()

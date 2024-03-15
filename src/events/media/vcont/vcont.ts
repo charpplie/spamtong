@@ -1,5 +1,5 @@
 import { Event, Events } from 'comx'
-import { generateRandomText } from 'utils'
+import { generateRandomText } from '../../../utils'
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
 import { join } from 'path'
