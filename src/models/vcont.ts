@@ -1,7 +1,7 @@
 import { defSequelize } from './!sequelize'
 import { DataTypes } from 'sequelize'
 
-const sequelize = defSequelize('vcont')
+const sequelize = defSequelize('vcont_fav')
 
 export const IVcontFavModel = sequelize.define('model', {
   user: {
