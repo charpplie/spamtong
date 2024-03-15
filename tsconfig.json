@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "paths": {
+      "models/*": ["./src/events/models/*"],
+      "utils": ["./src/utils.ts"],
+    },
     "strict": true,
     "target": "ES2022",
     "module": "CommonJS",

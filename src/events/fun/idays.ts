@@ -1,4 +1,4 @@
-import { Event, Events } from 'comx'
+import { Event } from 'jukai'
 import { TextChannel } from 'discord.js'
 import { Sleep } from '../../utils'
 
@@ -15,7 +15,7 @@ let NEWYEAR = 0
 let NEWBLOOM = 0
 
 export default {
-  name: Events.ClientReady,
+  name: 'ready',
   callback: async (client) => {
     const guild = client.guilds.cache.get('1150427580734906368')
     const channel = guild?.channels.cache.get('1150427581296935006') as TextChannel

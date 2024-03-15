@@ -6,6 +6,7 @@
     "axios": "^1.6.7",
     "discord.js": "^14.14.1",
     "fluent-ffmpeg": "^2.1.2",
+    "jukai": "file:../jukai",
     "sequelize": "^6.37.1",
     "sqlite3": "^5.1.7",
     "vk-io": "^4.9.1"

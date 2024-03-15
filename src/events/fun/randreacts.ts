@@ -1,4 +1,4 @@
-import { Event, Events } from 'comx'
+import { Event } from 'jukai'
 import { Message, TextChannel } from 'discord.js'
 import { fetchMessages } from '../../utils'
 
@@ -31,7 +31,7 @@ function resetGuildChances(guild: string) {
 }
 
 export default {
-  name: Events.MessageCreate,
+  name: 'messageCreate',
   callback: async (client, message: Message) => {
     try {
       if (message.author.bot) return

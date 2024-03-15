@@ -1,4 +1,4 @@
-import { Event, Events } from 'comx'
+import { Event } from 'jukai'
 import { generateRandomText } from '../../../utils'
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
@@ -19,7 +19,7 @@ export const VCONT_CHANNELS = ['1181427849303965768']
 export const VCONT_CRITICAL = '1150427581296935006'
 
 export default {
-  name: Events.MessageCreate,
+  name: 'messageCreate',
   callback: async (client, message) => {
     if (message.author.bot) return
     if (!message.guild) return

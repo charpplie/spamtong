@@ -1,9 +1,9 @@
-import { Event, Events } from 'comx'
+import { Event } from 'jukai'
 import { TextChannel } from 'discord.js'
 import { VCONT_CHANNELS } from './vcont'
 
 export default {
-  name: Events.MessageReactionRemove,
+  name: 'messageReactionAdd',
   callback: async (client, react, user) => {
     if (!VCONT_CHANNELS.includes(react.message.channelId)) return
 

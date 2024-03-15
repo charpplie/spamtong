@@ -1,10 +1,10 @@
-import { Event, Events } from 'comx'
+import { Event } from 'jukai'
 import { VCONT_CHANNELS, VCONT_REACTIONS } from './vcont'
 import { TextChannel } from 'discord.js'
 import { Sleep, fetchMessages } from '../../../utils'
 
 export default {
-  name: Events.ClientReady,
+  name: 'ready',
   callback: async (client) => {
     while (true) {
       VCONT_CHANNELS.forEach(async (_channel) => {

@@ -1,7 +1,8 @@
 import { defSequelize } from './!sequelize'
 import { DataTypes } from 'sequelize'
+import { Event } from 'jukai'
 
-const sequelize = defSequelize('vcont_fav')
+const sequelize = defSequelize('vcont')
 
 export const IVcontFavModel = sequelize.define('model', {
   user: {
@@ -13,6 +14,9 @@ export const IVcontFavModel = sequelize.define('model', {
   dmId: DataTypes.STRING,
 })
 
-export default async () => {
+export default {
+  name: 'ready',
+  callback: async () => {
     IVcontFavModel.sync()
-}
+  }
+} as Event

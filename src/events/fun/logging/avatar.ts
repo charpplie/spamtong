@@ -1,11 +1,11 @@
-import { Event, Events } from 'comx'
+import { Event } from 'jukai'
 import { TextChannel } from 'discord.js'
 
 const GUILD = '1150427580734906368'
 const CHANNEL = '1204439974766706698'
 
 export default {
-  name: Events.UserUpdate,
+  name: 'userUpdate',
   callback: async (client, Old, New) => {
     if (Old.bot) return
 
