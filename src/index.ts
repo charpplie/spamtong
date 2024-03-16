@@ -1,17 +1,28 @@
-import { Client, Events, GatewayIntentBits } from 'discord.js'
-import { EventHandler, SlashCommandHandler } from 'cmdx'
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js'
+import { EventHandler } from 'cmdx'
 import { join } from 'path'
 
 ;(() => {
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
       GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildPresences,
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.GuildMessageReactions,
     ],
-
+    partials: [
+      Partials.User,
+      Partials.Channel,
+      Partials.Message,
+      Partials.Reaction,
+      Partials.GuildMember,
+      Partials.ThreadMember,
+      Partials.GuildScheduledEvent,
+    ],
   })
+
   new EventHandler(client, [
     {
       dir: join(__dirname, 'events')

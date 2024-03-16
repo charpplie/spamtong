@@ -4,7 +4,7 @@ import { TextChannel } from 'discord.js'
 import { Sleep, fetchMessages } from 'utils'
 
 export default {
-  name: 'ready',
+  name: Events.ClientReady,
   callback: async (client) => {
     while (true) {
       VCONT_CHANNELS.forEach(async (_channel) => {

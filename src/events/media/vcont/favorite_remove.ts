@@ -1,10 +1,10 @@
 import { Event } from 'comx'
 import { IVcontFavModel } from '../../../models/vcont'
-import { TextChannel } from 'discord.js'
+import { Events, TextChannel } from 'discord.js'
 import { VCONT_CHANNELS } from './vcont'
 
 export default {
-  name: 'messageReactionRemove',
+  name: Events.MessageReactionRemove,
   callback: async (client, react, user) => {
     if (user.bot) return
     if (!VCONT_CHANNELS.includes(react.message.channelId)) return
