@@ -1,6 +1,5 @@
-import { Event } from 'comx'
-import { Message, TextChannel } from 'discord.js'
-import { fetchMessages } from 'utils'
+import { Event } from 'public/event'
+import { fetchMessages } from 'public/utils'
 
 interface IGuildChance {
   chance: number,
@@ -32,7 +31,7 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: 'messageCreate',
-  callback: async (client, message: Message) => {
+  callback: async (client, message) => {
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return
@@ -51,7 +50,7 @@ export default {
           if (Random() <= CGuilds[`${guild}`].chance) {
             resetGuildChances(guild)
 
-            const messages = await fetchMessages(message.channel as TextChannel, 3)
+            const messages = await fetchMessages(message.channel, 3)
             if (messages.every(msg => msg.author.id === message.author.id)) {
               let text = ''
               messages.forEach(msg => { text += msg.content + ' '})

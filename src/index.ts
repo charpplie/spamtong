@@ -1,5 +1,5 @@
-import { Client, Events, GatewayIntentBits, Partials } from 'discord.js'
-import { EventHandler } from 'cmdx'
+import { Client, GatewayIntentBits, Partials } from 'discord.js'
+import { EventHandler } from 'public/event'
 import { join } from 'path'
 
 ;(() => {
@@ -29,7 +29,7 @@ import { join } from 'path'
     },
     {
       dir: join(__dirname, 'models'),
-      name_override: Events.ClientReady,
+      name_override: 'ready',
     },
   ])
 

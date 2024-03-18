@@ -250,7 +250,7 @@
 // } as Event
 
 import { TextChannel, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder, Events } from 'discord.js'
-import { Event } from 'comx'
+import { Event } from 'public/event'
 import { IContModel } from '../../models/icont'
 import { VK } from 'vk-io'
 

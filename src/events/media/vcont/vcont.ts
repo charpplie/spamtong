@@ -1,5 +1,5 @@
-import { Event } from 'comx'
-import { generateRandomText } from 'utils'
+import { Event } from 'public/event'
+import { generateRandomText } from 'public/utils'
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
 import { join } from 'path'
@@ -52,7 +52,7 @@ export default {
             writer.on('error', reject)
           })
 
-          const ffmpegPath = os.type() === 'Windows_NT' ? String(require('@ffmpeg-installer/ffmpeg').path) : '/usr/bin/ffmpeg'
+          const ffmpegPath = os.type() === 'Windows_NT' ? `C:\\Users\\charlie\\GitHub\\spamtong\\ffmpeg.exe` : '/usr/bin/ffmpeg'
           const convertedFilePath = join(__dirname, `${_message.id}${generateRandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
           ffmpeg(filePath)
             .setFfmpegPath(ffmpegPath)

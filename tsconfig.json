@@ -4,14 +4,13 @@
   },
   "compilerOptions": {
     "paths": {
-      "comx":  ["./src/public/comx.ts"],
-      "cmdx":  ["./src/public/cmdx.ts"],
-      "utils": ["./src/public/util.ts"],
-      "models/*": ["./src/models/*"]
+      "public/*": ["./src/public/*"],
+      "models/*": ["./src/models/*"],
     },
     "strict": true,
     "target": "ES2022",
     "module": "CommonJS",
+    "alwaysStrict": true,
     "esModuleInterop": true,
   }
 }

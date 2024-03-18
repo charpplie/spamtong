@@ -1,5 +1,5 @@
-import { Event } from 'comx'
-import { IVcontFavModel } from '../../../models/vcont'
+import { Event } from 'public/event
+import { IVcontFavModel } from 'models/vcont'
 import { Events, TextChannel } from 'discord.js'
 import { VCONT_CHANNELS } from './vcont'
 

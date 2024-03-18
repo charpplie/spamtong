@@ -1,5 +1,5 @@
-import { Event, Events } from 'comx'
-import { IVcontFavModel } from '../../../models/vcont'
+import { Event, Events } from 'public/event'
+import { IVcontFavModel } from 'models/vcont'
 import { VCONT_CHANNELS, VCONT_CRITICAL } from './vcont'
 
 export default {

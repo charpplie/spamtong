@@ -1,6 +1,5 @@
-import { Event } from 'comx'
-import { TextChannel } from 'discord.js'
-import { Sleep } from 'utils'
+import { Event, Events } from 'public/event'
+import { Sleep } from 'public/utils'
 
 const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second-birthday-gif-16100991'
 
@@ -15,10 +14,11 @@ let NEWYEAR = 0
 let NEWBLOOM = 0
 
 export default {
-  name: 'ready',
+  name: Events.ClientReady,
   callback: async (client) => {
     const guild = client.guilds.cache.get('1150427580734906368')
-    const channel = guild?.channels.cache.get('1150427581296935006') as TextChannel
+    const channel = guild?.channels.cache.get('1150427581296935006')
+    if (!channel || !channel.isTextBased()) return
 
     while (true) {
       const month = new Date().getMonth()
@@ -46,8 +46,7 @@ export default {
           }
         } else LUMEE = 0
       }
-
-      await Sleep(15000)
+      await Sleep(60000)
     }
   }
 } as Event
