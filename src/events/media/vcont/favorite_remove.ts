@@ -1,4 +1,4 @@
-import { Event } from 'public/event
+import { Event } from 'public/event'
 import { IVcontFavModel } from 'models/vcont'
 import { Events, TextChannel } from 'discord.js'
 import { VCONT_CHANNELS } from './vcont'
