@@ -119,7 +119,7 @@ export default {
               else await IContModel.update({ photoId: `${new_photos_ids[i]}` }, { where: { messageId: `g${guildId}` }})
             })
 
-            await Sleep(750)
+            await Sleep(2500)
           }
         }
 
