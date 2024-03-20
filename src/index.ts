@@ -21,6 +21,7 @@ import { join } from 'path'
       Partials.ThreadMember,
       Partials.GuildScheduledEvent,
     ],
+    closeTimeout: 10000,
   })
 
   new EventHandler(client, [
@@ -35,4 +36,4 @@ import { join } from 'path'
 
   client.login('OTEyMzI2ODI4NTc0NzczMjk5.G48-_q.Pg58-CHugsv25xVWZmTdvBWK8ByY58R3Ycfxuo')
   // client.login('MTE3NDM3MDQ0MDE2OTM5NDI1Ng.Gu76qU.SfZfpc9X8cv158TDVbd7eVVpf7aY-HEznDIsvg')
-})()
+})();

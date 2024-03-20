@@ -1,6 +1,6 @@
 import { Event, Events } from 'public/event'
-import { TextChannel } from 'discord.js'
 import { VCONT_CHANNELS } from './vcont'
+import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.MessageReactionAdd,
