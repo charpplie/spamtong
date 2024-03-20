@@ -16,7 +16,7 @@ const row = new ActionRowBuilder().addComponents(react1, react2, react3, react4,
 const GUILDS: { guild: string, channel: string, users: string[] }[] = [
   {
   guild: '1150427580734906368',
-  channel: '1173213492153688098',
+  channel: '1177374466448302180',
   users: ['255594607'],
   },
 ]
