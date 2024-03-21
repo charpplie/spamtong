@@ -15,6 +15,10 @@ const GUILDS: { guild: string, channel: string, groups: { id: string, domain: st
       {
         id: '135729590',
         domain: 'surs_pls',
+      },
+      {
+        id: '133040232',
+        domain: 'average_abomination1',
       }
     ]
   },
