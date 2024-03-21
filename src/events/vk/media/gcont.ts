@@ -39,23 +39,31 @@ export default {
           .setFooter({ text: COPYRIGHT, iconURL: `${ownerIcon}` })
 
         async function main(id: number, domain: string, guildId: string, channel: TextChannel) {
-          const wall = (await vk.api.wall.get({ owner_id: id, domain: domain, count: 1 })).items[0].is_pinned? await vk.api.wall.get({ owner_id: id, domain: domain, count: 1, offset: 1}) : await vk.api.wall.get({ owner_id: id, domain: domain, count: 1 })
+          const wall = await vk.api.wall.get({ owner_id: id, domain: domain, count: 100 })
 
           const lastId: number = +((await GIContModel.findOne({ where: { guildId: guildId, groupId: id } }))?.get('lastId') || 0)
 
-          if (wall.items[0].id !== lastId) {
-            await channel.send({
+          const newPosts = wall.items.filter(item => item.id > lastId).reverse()
+
+          for (const post of newPosts) {
+            if (post.is_pinned) continue
+
+            const imageUrl = post.attachments[0].photo.sizes[post.attachments[0].photo.sizes.length - 1].url
+
+            if (imageUrl) {
+              await channel.send({
               embeds: [
-                embed.setImage(wall.items[0].attachments[0].photo.sizes[wall.items[0].attachments[0].photo.sizes.length - 1].url)
+                embed.setImage(imageUrl)
               ]
             })
 
             if (!(await GIContModel.findOne({ where: { guildId: guildId} })))
-              await GIContModel.create({ guildId: guildId, groupId: id, lastId: wall.items[0].id })
+              await GIContModel.create({ guildId: guildId, groupId: id, lastId: post.id })
             else
-              await GIContModel.update({ lastId: wall.items[0].id }, { where: { guildId: guildId, groupId: id }})
+              await GIContModel.update({ lastId: post.id }, { where: { guildId: guildId, groupId: id }})
 
-            await Sleep(2500)
+            await Sleep(1125) 
+            }
           }
         }
 
