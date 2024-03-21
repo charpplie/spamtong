@@ -48,7 +48,7 @@ export default {
           for (const post of newPosts) {
             if (post.is_pinned) continue
 
-            if (!post.attachments[0].photo.sizes !== undefined) continue
+            if (!post.attachments[0].photo !== undefined) continue
 
             const imageUrl = post.attachments[0].photo?.sizes[post.attachments[0].photo.sizes.length - 1].url
 
