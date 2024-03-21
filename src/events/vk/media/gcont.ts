@@ -65,7 +65,7 @@ export default {
               ]
             })
 
-            if (!(await GIContModel.findOne({ where: { guildId: guildId, groupId: group } })))
+            if (!(await GIContModel.findOne({ where: { guildId: guildId, groupId: id } })))
               await GIContModel.create({ guildId: guildId, groupId: id, lastId: post.id })
             else
               await GIContModel.update({ lastId: post.id }, { where: { guildId: guildId, groupId: id }})
