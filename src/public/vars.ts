@@ -1,0 +1,1 @@
+export const COPYRIGHT = 'xyerssisya (C) 2021-2024. All kromers reserved.'

@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
 import { Event, Events } from 'public/event'
 import { IContModel } from 'models/icont'
+import { COPYRIGHT } from 'public/vars'
 import { Sleep } from 'public/utils'
 import { VK } from 'vk-io'
 
@@ -12,14 +13,12 @@ const row = new ActionRowBuilder().addComponents(...reactButtons)
 const GUILDS: { guild: string, channel: string, users: string[] }[] = [
   {
     guild: '1150427580734906368',
-    channel: '1173213492153688098',
+    channel: '1177374466448302180',
     users: ['255594607'],
   },
 ]
 
 const ALBUM_ID = '-15' // Saved photos
-
-const COPYRIGHT = 'xyerssisya (C) 2021-2024. All kromers reserved.'
 
 export default {
   name: Events.ClientReady,
