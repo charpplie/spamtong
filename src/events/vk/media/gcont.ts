@@ -43,7 +43,7 @@ export default {
           .setFooter({ text: COPYRIGHT, iconURL: `${ownerIcon}` })
 
         async function main(id: number, domain: string, guildId: string, channel: TextChannel) {
-          const wall = await vk.api.wall.get({ owner_id: id, domain: domain, count: 100 })
+          const wall = await vk.api.wall.get({ owner_id: id, domain: domain, count: 11 })
 
           const lastId: number = +((await GIContModel.findOne({ where: { guildId: guildId, groupId: id } }))?.get('lastId') || 0)
 
