@@ -13,13 +13,13 @@ const GUILDS: { guild: string, channel: string, groups: { id: string, domain: st
     channel: '1220325347699195965',
     groups: [
       {
+        id: '133040232',
+        domain: 'average_abomination1',
+      },
+      {
         id: '135729590',
         domain: 'surs_pls',
       },
-      {
-        id: '133040232',
-        domain: 'average_abomination1',
-      }
     ]
   },
 ]
@@ -29,17 +29,18 @@ export default {
   callback: async (client) => {
     const ownerIcon = client.users.cache.get('783443296382746672')?.avatarURL({ forceStatic: true })
 
-    for (const _guildInfo of GUILDS) {
+    GUILDS.forEach(async (_guildInfo) => {
       const guild = client.guilds.cache.get(_guildInfo.guild)
-      if (!guild) continue
+      if (!guild) return
 
       const channel = guild.channels.cache.get(_guildInfo.channel)
-      if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) continue
+      if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return
 
-      for (const group of _guildInfo.groups) {
+      _guildInfo.groups.forEach(async (group) => {
+        const groupName = await vk.api.groups.getById({ group_id: group.id })
         const embed = new EmbedBuilder()
           .setColor('DarkPurple')
-          .setTitle('Отдельный щитпостинг')
+          .setTitle(`${groupName.groups[0].name}`)
           .setFooter({ text: COPYRIGHT, iconURL: `${ownerIcon}` })
 
         async function main(id: number, domain: string, guildId: string, channel: TextChannel) {
@@ -60,7 +61,7 @@ export default {
               await channel.send({
               embeds: [
                 embed
-                  .setDescription(`Щитпостер скозал: ${post.text}`)
+                  .setDescription(`${post.text}.`)
                   .setImage(imageUrl)
               ]
             })
@@ -79,7 +80,7 @@ export default {
           await main(parseInt(group.id), group.domain, _guildInfo.guild, channel)
           await Sleep(120000)
         }
-      }
-    }
+      })
+    })
   }
 } as Event
