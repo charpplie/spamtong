@@ -55,7 +55,9 @@ export default {
             if (imageUrl) {
               await channel.send({
               embeds: [
-                embed.setImage(imageUrl)
+                embed
+                  .setDescription(`Щитпостер скозал: ${post.text}`)
+                  .setImage(imageUrl)
               ]
             })
 
