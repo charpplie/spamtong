@@ -1,9 +1,11 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
 import { Event, Events } from 'public/event'
 import { GIContModel } from 'models/gcont'
-import { COPYRIGHT } from 'public/vars'
+import { COPYRIGHT, IMGUR } from 'public/vars'
 import { Sleep } from 'public/utils'
 import { VK } from 'vk-io'
+import axios from 'axios'
+import { writeFileSync, readFileSync, unlinkSync } from 'fs'
 
 const vk = new VK({ token: `vk1.a.ReFa-HmnP0GQ-hczNzEl-hpwEbtof_DIaQ48XUEZZ_-mEqVpcuh8mWXPafjdLQxPaieARaGOgweakF6UzLBc9bFdLJsNtA7Dn4g7JnejegpwxPwsnTfvWvgwaN6Gs_7_mlcZNc7PnxHRhZeLLmDBEjU7fPFnjOeHjnwoAAlPrsZak6dFd2v6BIllEMQ0DWoVVO-CuJAF_iJir05HJdI8oA` })
 
@@ -20,6 +22,24 @@ const GUILDS: { guild: string, channel: string, groups: { id: string, domain: st
   },
 ]
 
+async function uploadToImgur(accessToken: string, filename: string) {
+  try {
+    const response = await axios.post(
+      'https://api.imgur.com/3/image',
+      {
+        image: readFileSync(filename, 'base64'),
+        type: 'base64',
+      },
+      {
+        headers: {
+          Authorization: `Client-ID ${accessToken}`,
+        },
+      }
+    )
+    return response.data.data.link
+  } catch (why) {}
+}
+
 export default {
   name: Events.ClientReady,
   callback: async (client) => {
@@ -33,11 +53,16 @@ export default {
       if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return
 
       _guildInfo.groups.forEach(async (group) => {
-        const groupName = await vk.api.groups.getById({ group_id: group.id })
-        const embed = new EmbedBuilder()
-          .setColor('DarkPurple')
-          .setTitle(`${groupName.groups[0].name}`)
-          .setFooter({ text: COPYRIGHT, iconURL: `${ownerIcon}` })
+        const groupInfo = await vk.api.groups.getById({ group_id: group.id, fields: ['photo_100']})
+        const groupName = groupInfo.groups[0].name
+
+        const r = await axios.get(groupInfo.groups[0].photo_100, { responseType: 'arraybuffer' })
+        const fileData = Buffer.from(r.data, 'binary')
+        writeFileSync(`${group.id}.png`, fileData)
+        const groupIcon = await uploadToImgur(IMGUR, `${group.id}.png`)
+        unlinkSync(`${group.id}.png`)
+
+        const embed = new EmbedBuilder().setColor('DarkPurple').setFooter({ text: COPYRIGHT, iconURL: `${ownerIcon}` })
 
         async function main(id: number, domain: string, guildId: string, channel: TextChannel) {
           const wall = await vk.api.wall.get({ owner_id: id, domain: domain, count: 11 })
@@ -56,8 +81,14 @@ export default {
             if (imageUrl) {
               await channel.send({
               embeds: [
+                post.text?
                 embed
-                  .setDescription(`${post.text}.`)
+                  .setAuthor({ name: `${groupName}`, iconURL: groupIcon, url: `https://vk.com/public${id}`})
+                  .setDescription(`${post.text}`)
+                  .setImage(imageUrl)
+                :
+                embed
+                  .setAuthor({ name: `${groupName}`, iconURL: groupIcon, url: `https://vk.com/public${id}`})
                   .setImage(imageUrl)
               ]
             })
