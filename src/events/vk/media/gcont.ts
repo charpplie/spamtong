@@ -48,9 +48,9 @@ export default {
           for (const post of newPosts) {
             if (post.is_pinned) continue
 
-            if (!post.attachments[0].photo.sizes) continue
+            if (!post.attachments[0].photo.sizes !== undefined) continue
 
-            const imageUrl = post.attachments[0].photo.sizes[post.attachments[0].photo.sizes.length - 1].url
+            const imageUrl = post.attachments[0].photo?.sizes[post.attachments[0].photo.sizes.length - 1].url
 
             if (imageUrl) {
               await channel.send({
