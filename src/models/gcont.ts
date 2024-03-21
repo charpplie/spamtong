@@ -6,7 +6,6 @@ const sequelize = defSequelize('gcont')
 export const GIContModel = sequelize.define('model', {
   guildId: {
     type: DataTypes.STRING,
-    unique: true,
     primaryKey: true,
   },
   groupId: {
