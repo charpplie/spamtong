@@ -3,9 +3,7 @@ import { Event, Events } from 'public/event'
 import { IContModel } from 'models/icont'
 import { COPYRIGHT } from 'public/vars'
 import { Sleep } from 'public/utils'
-import { VK } from 'vk-io'
-
-const vk = new VK({ token: `vk1.a.ReFa-HmnP0GQ-hczNzEl-hpwEbtof_DIaQ48XUEZZ_-mEqVpcuh8mWXPafjdLQxPaieARaGOgweakF6UzLBc9bFdLJsNtA7Dn4g7JnejegpwxPwsnTfvWvgwaN6Gs_7_mlcZNc7PnxHRhZeLLmDBEjU7fPFnjOeHjnwoAAlPrsZak6dFd2v6BIllEMQ0DWoVVO-CuJAF_iJir05HJdI8oA` })
+import { vk } from './!vk'
 
 const reactButtons = Array.from({ length: 5 }, (_, i) => new ButtonBuilder().setCustomId(`react${i + 1}`).setLabel(`${i + 1}️⃣`).setStyle(ButtonStyle.Secondary))
 const row = new ActionRowBuilder().addComponents(...reactButtons)

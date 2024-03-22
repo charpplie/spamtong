@@ -1,4 +1,6 @@
+import axios from 'axios'
 import { Message, Snowflake, TextChannel } from 'discord.js'
+import { readFileSync } from 'fs'
 
 export function Sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
@@ -43,4 +45,16 @@ export async function fetchMessages(channel: TextChannel, limit: number): Promis
   }
 
   return out
+}
+
+export async function uploadToImgur(accessToken: string, filename: string) {
+  try {
+    const response = await axios.post(
+      'https://api.imgur.com/3/image',
+      { image: readFileSync(filename, 'base64'), type: 'base64' },
+      { headers: { Authorization: `Client-ID ${accessToken}` } },
+    )
+
+    return response.data.data.link
+  } catch (why) {}
 }

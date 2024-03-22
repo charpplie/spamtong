@@ -2,12 +2,10 @@ import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
 import { Event, Events } from 'public/event'
 import { GIContModel } from 'models/gcont'
 import { COPYRIGHT, IMGUR } from 'public/vars'
-import { Sleep } from 'public/utils'
-import { VK } from 'vk-io'
+import { Sleep, uploadToImgur } from 'public/utils'
+import { writeFileSync, unlinkSync } from 'fs'
+import { vk } from './!vk'
 import axios from 'axios'
-import { writeFileSync, readFileSync, unlinkSync } from 'fs'
-
-const vk = new VK({ token: `vk1.a.ReFa-HmnP0GQ-hczNzEl-hpwEbtof_DIaQ48XUEZZ_-mEqVpcuh8mWXPafjdLQxPaieARaGOgweakF6UzLBc9bFdLJsNtA7Dn4g7JnejegpwxPwsnTfvWvgwaN6Gs_7_mlcZNc7PnxHRhZeLLmDBEjU7fPFnjOeHjnwoAAlPrsZak6dFd2v6BIllEMQ0DWoVVO-CuJAF_iJir05HJdI8oA` })
 
 const GUILDS: { guild: string, channel: string, groups: { id: string, domain: string }[] }[] = [
   {
@@ -21,24 +19,6 @@ const GUILDS: { guild: string, channel: string, groups: { id: string, domain: st
     ]
   },
 ]
-
-async function uploadToImgur(accessToken: string, filename: string) {
-  try {
-    const response = await axios.post(
-      'https://api.imgur.com/3/image',
-      {
-        image: readFileSync(filename, 'base64'),
-        type: 'base64',
-      },
-      {
-        headers: {
-          Authorization: `Client-ID ${accessToken}`,
-        },
-      }
-    )
-    return response.data.data.link
-  } catch (why) {}
-}
 
 export default {
   name: Events.ClientReady,
@@ -89,6 +69,7 @@ export default {
                 :
                 embed
                   .setAuthor({ name: `${groupName}`, iconURL: groupIcon, url: `https://vk.com/public${id}`})
+                  .setDescription(null)
                   .setImage(imageUrl)
               ]
             })
