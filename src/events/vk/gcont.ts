@@ -33,7 +33,8 @@ export default {
       if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return
 
       _guildInfo.groups.forEach(async (group) => {
-        const groupInfo = await vk.api.groups.getById({ group_id: group.id, fields: ['photo_100']})
+        const groupInfo = await vk.api.groups.getById({ group_id: group.id, fields: ['photo_100']}).catch((why) => {})
+        if (!groupInfo) return
         const groupName = groupInfo.groups[0].name
 
         const r = await axios.get(groupInfo.groups[0].photo_100, { responseType: 'arraybuffer' })
@@ -45,7 +46,8 @@ export default {
         const embed = new EmbedBuilder().setColor('DarkPurple').setFooter({ text: COPYRIGHT, iconURL: `${ownerIcon}` })
 
         async function main(id: number, domain: string, guildId: string, channel: TextChannel) {
-          const wall = await vk.api.wall.get({ owner_id: id, domain: domain, count: 11 })
+          const wall = await vk.api.wall.get({ owner_id: id, domain: domain, count: 11 }).catch((why) => {})
+          if (!wall) return
 
           const lastId: number = +((await GIContModel.findOne({ where: { guildId: guildId, groupId: id } }))?.get('lastId') || 0)
 
