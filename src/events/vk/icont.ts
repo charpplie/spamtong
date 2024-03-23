@@ -31,7 +31,8 @@ export default {
       if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) continue
 
       for (const user of _guildInfo.users) {
-        const author = await vk.api.users.get({ user_id: user, fields: ['photo_100'] })
+        const author = await vk.api.users.get({ user_id: user, fields: ['photo_100'] }).catch((why) => {})
+        if (!author) return
         const authorName = `${author[0].first_name} ${author[0].last_name}`
         const authorIcon = `${author[0].photo_100}`
 
@@ -46,7 +47,8 @@ export default {
           )
 
         async function main(ownerId: number, guildId: string, channel: TextChannel) {
-          const r = await vk.api.photos.get({ owner_id: ownerId, album_id: ALBUM_ID, rev: 1 })
+          const r = await vk.api.photos.get({ owner_id: ownerId, album_id: ALBUM_ID, rev: 1 }).catch((why) => {})
+          if (!r) return
 
           const lastPhotoId: number = +((await IContModel.findOne({ where: { messageId: `g${guildId}` } }))?.get('photoId') || 0)
 

@@ -63,15 +63,9 @@ export default {
             if (imageUrl) {
               await channel.send({
               embeds: [
-                post.text?
                 embed
                   .setAuthor({ name: `${groupName}`, iconURL: groupIcon, url: `https://vk.com/public${id}`})
-                  .setDescription(`${post.text}`)
-                  .setImage(imageUrl)
-                :
-                embed
-                  .setAuthor({ name: `${groupName}`, iconURL: groupIcon, url: `https://vk.com/public${id}`})
-                  .setDescription(null)
+                  .setDescription(`${post.text ? post.text : null}`)
                   .setImage(imageUrl)
               ]
             })
