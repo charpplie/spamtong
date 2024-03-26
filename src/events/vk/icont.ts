@@ -110,7 +110,7 @@ export default {
 
             await interaction.editReply(`You rated this photo with ${rating === 1 ? `1 star` : `${rating} stars`}`)
           } else {
-            const prevUserRating = users[`${interaction.user.id}`].rate? users[`${interaction.user.id}`]?.rate : 0
+            const prevUserRating = users[`${interaction.user.id}`] !== undefined? users[`${interaction.user.id}`]?.rate : 0
 
             if (users[interaction.user.id]?.rate == rating)
               await IContModel.update({ users: { [interaction.user.id]: { rate: 0 }}}, { where: { messageId: interaction.message.id }})
