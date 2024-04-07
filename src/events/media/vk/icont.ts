@@ -1,8 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
-import { Event, Events } from 'public/event'
-import { IContModel } from 'models/icont'
-import { COPYRIGHT } from 'public/vars'
-import { Sleep } from 'public/utils'
+import { Event, Events } from 'comx'
+import { ICPhoto } from 'models/icont'
+import { COPYRIGHT } from 'vars'
+import { Sleep } from 'utils'
 import { vk } from './!vk'
 
 const reactButtons = Array.from({ length: 5 }, (_, i) => new ButtonBuilder().setCustomId(`react${i + 1}`).setLabel(`${i + 1}️⃣`).setStyle(ButtonStyle.Secondary))
@@ -11,7 +11,7 @@ const row = new ActionRowBuilder().addComponents(...reactButtons)
 const GUILDS: { guild: string, channel: string, users: string[] }[] = [
   {
     guild: '1150427580734906368',
-    channel: '1177374466448302180',
+    channel: '1173213492153688098',
     users: ['255594607'],
   },
 ]
@@ -50,7 +50,7 @@ export default {
           const r = await vk.api.photos.get({ owner_id: ownerId, album_id: ALBUM_ID, rev: 1 }).catch((why) => {})
           if (!r) return
 
-          const lastPhotoId: number = +((await IContModel.findOne({ where: { messageId: `g${guildId}` } }))?.get('photoId') || 0)
+          const lastPhotoId: number = +((await ICPhoto.findOne({ where: { messageId: `g${guildId}` } }))?.get('photoId') || 0)
 
           const newPhotos = r.items.filter(item => item.id > lastPhotoId).reverse()
 
@@ -69,14 +69,14 @@ export default {
               components: [row as any]
             })
 
-            await IContModel.create({ messageId: sentMessage.id })
+            await ICPhoto.create({ messageId: sentMessage.id, photoId: photo.post_id})
 
-            if (!(await IContModel.findOne({ where: { messageId: `g${guildId}`} })))
-              await IContModel.create({ messageId: `g${guildId}`, photoId: photo.id })
+            if (!(await ICPhoto.findOne({ where: { messageId: `g${guildId}`} })))
+              await ICPhoto.create({ messageId: `g${guildId}`, photoId: photo.id })
             else
-              await IContModel.update({ photoId: photo.id }, { where: { messageId: `g${guildId}` }})
+              await ICPhoto.update({ photoId: photo.id }, { where: { messageId: `g${guildId}` }})
 
-            await Sleep(2500)
+            await Sleep(1125)
           }
         }
 
@@ -90,13 +90,13 @@ export default {
 
           const rating = parseInt(button.charAt(button.length - 1))
 
-          const photo = await IContModel.findOne({ where: { messageId: `${interaction.message.id}` }})
+          const photo = await ICPhoto.findOne({ where: { messageId: `${interaction.message.id}` }})
           if (!photo) return
 
           const users: any = photo.get('users')
 
-          if (Object.entries(users).length === 0) {
-            await IContModel.update({ users: { [interaction.user.id]: { rate: rating }}}, { where: { messageId: interaction.message.id }})
+          if (!users) {
+            await ICPhoto.update({ users: { [interaction.user.id]: `${rating}` }}, { where: { messageId: interaction.message.id }})
   
             embed
               .setFields(
@@ -110,26 +110,23 @@ export default {
 
             await interaction.editReply(`You rated this photo with ${rating === 1 ? `1 star` : `${rating} stars`}`)
           } else {
-            const prevUserRating = users[`${interaction.user.id}`] !== undefined? users[`${interaction.user.id}`]?.rate : 0
+            const prevUserRating = users[interaction.user.id] !== undefined? users[interaction.user.id] : 0
 
-            if (users[interaction.user.id]?.rate == rating)
-              await IContModel.update({ users: { [interaction.user.id]: { rate: 0 }}}, { where: { messageId: interaction.message.id }})
-            else
-              await IContModel.update({ users: { [interaction.user.id]: { rate: rating }}}, { where: { messageId: interaction.message.id }})
+            await ICPhoto.update({ users: { ...users, [interaction.user.id]: users[interaction.user.id] == rating? 0 : rating }}, { where: { messageId: interaction.message.id }})
 
-            const _photo = await IContModel.findOne({ where: { messageId: interaction.message.id }})
+            const _photo = await ICPhoto.findOne({ where: { messageId: interaction.message.id }})
             if (!_photo) return
     
             const _users: any = _photo.get('users')
 
-            const totalRates = Object.values(_users).filter((user: any) => user.rate !== 0).length
-            const totalRatesArray = Object.values(_users).map((user: any) => user.rate).filter((rate: number) => rate !== 0)
+            const totalRates = Object.values(_users).filter((user: any) => user !== 0).length
+            const totalRatesArray = Object.values(_users).map((user: any) => user).filter((rate: number) => rate !== 0)
 
             const averageRating = totalRatesArray.length === 0 ? 0 : calculateWeightedAverage(totalRatesArray)
 
             embed
               .setFields(
-                { name: 'Rating', value: `${averageRating}`, inline: true },
+                { name: 'Rating', value: `${averageRating.toFixed(1)}`, inline: true },
                 { name: 'Total rates', value: `${totalRates}`, inline: true }
               )
               .setImage(`${interaction.message.embeds[0].data.image?.url}`)

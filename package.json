@@ -5,16 +5,14 @@
   "dependencies": {
     "axios": "^1.6.8",
     "discord.js": "^14.14.1",
-    "fluent-ffmpeg": "^2.1.2",
-    "sequelize": "^6.37.1",
+    "ffmpeggy": "^3.0.0",
+    "sequelize": "^6.37.2",
     "sqlite3": "^5.1.7",
     "vk-io": "^4.9.1"
   },
   "devDependencies": {
-    "@types/fluent-ffmpeg": "^2.1.24",
-    "@types/node": "^20.11.28",
+    "@types/node": "^20.12.4",
     "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.4.2"
+    "tsconfig-paths": "^4.2.0"
   }
 }

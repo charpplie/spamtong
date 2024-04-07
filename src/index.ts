@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits, Partials } from 'discord.js'
-import { EventHandler } from 'public/event'
+import { EventHandler } from 'cmdx'
 import { join } from 'path'
 
 const client = new Client({
@@ -24,12 +24,12 @@ const client = new Client({
 ;(() => {
   new EventHandler(client, [
     {
-      dir: join(__dirname, 'events')
+      dir: join(__dirname, 'models'),
+      name_override: 'ready'
     },
     {
-      dir: join(__dirname, 'models'),
-      name_override: 'ready',
-    },
+      dir: join(__dirname, 'events')
+    }
   ])
 
   client.login('OTEyMzI2ODI4NTc0NzczMjk5.G48-_q.Pg58-CHugsv25xVWZmTdvBWK8ByY58R3Ycfxuo')

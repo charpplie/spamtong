@@ -3,14 +3,19 @@
     "require": ["tsconfig-paths/register"]
   },
   "compilerOptions": {
-    "paths": {
-      "public/*": ["./src/public/*"],
-      "models/*": ["./src/models/*"],
-    },
-    "strict": true,
-    "target": "ES2022",
+    "target": "ESNext",
     "module": "CommonJS",
-    "alwaysStrict": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "skipLibCheck": true,
+    "paths": {
+      "cmdx": ["./src/public/cmdx.ts"],
+      "comx": ["./src/public/comx.ts"],
+      "utils": ["./src/public/utils.ts"],
+      "vars": ["./src/public/vars.ts"],
+      "models/*": ["./src/models/*"]
+    }
   }
 }

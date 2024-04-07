@@ -1,10 +1,12 @@
-import axios from 'axios'
 import { Message, Snowflake, TextChannel } from 'discord.js'
 import { readFileSync } from 'fs'
+import axios from 'axios'
 
 export function Sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
-export function generateRandomText(length: number): string {
+export const Random = ((limit = 100) => { return Math.floor(Math.random() * limit) })
+
+export function RandomText(length: number): string {
   const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let randomText = ''
 

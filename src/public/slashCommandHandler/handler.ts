@@ -1,20 +1,9 @@
-import {
-  APIApplicationCommandOptionChoice,
-  AutocompleteInteraction,
-  ChannelType,
-  Client,
-  Collection,
-  CommandInteraction,
-  Interaction,
-  LocalizationMap,
-  Permissions,
-  REST,
-  Routes,
-  SlashCommandBuilder } from 'discord.js'
-import { readdirSync } from 'fs'
-import { join } from 'path'
+import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from "discord.js"
+import { OptionAllowedChannelTypes, SlashCommand } from "./command"
+import { readdirSync } from "fs"
+import { join } from "path"
 
-class SlashCommandHandler {
+export class SlashCommandHandler {
   private client: Client
   private appId!: string
   private owner!: string
@@ -199,7 +188,7 @@ class SlashCommandHandler {
 
     if (command.options) this.assingCommandOptions(command, data)
 
-    if (command.default_member_permissions) data.setDefaultMemberPermissions(command.default_member_permissions)
+    // if (command.default_member_permissions) data.setDefaultMemberPermissions(command.default_member_permissions)
 
     if (command.dm_permission) data.setDMPermission(command.dm_permission)
 
@@ -454,103 +443,4 @@ class SlashCommandHandler {
 
 interface IGuildCommands {
   [guild: string]: SlashCommandBuilder[]
-}
-
-interface SlashCommand {
-  name: string,
-  description: string,
-  name_localizations?: LocalizationMap,
-  description_localizations?: LocalizationMap,
-  options?: {
-    name: string,
-    description: string,
-    name_localizations?: LocalizationMap,
-    description_localizations?: LocalizationMap,
-    type: OptionType,
-    required?: boolean | false,
-    autocomplete?: boolean | false,
-    choices?: APIApplicationCommandOptionChoice<string | number>[],
-    minLength?: number,
-    maxLength?: number,
-    minValue?: number,
-    maxValue?: number,
-    channelTypes?: OptionAllowedChannelType[],
-  }[],
-  default_member_permissions?: Permissions | null,
-  dm_permission?: boolean | true,
-  nsfw?: boolean | false,
-  guilds?: string[],
-  allowedUsers?: string[],
-  cooldown?: CooldownOptions,
-  callback: (interaction: CommandInteraction) => void,
-  autocomplete?: (interaction: AutocompleteInteraction) => void,
-}
-
-type OptionType =
-  | 'String'
-  | 'Integer'
-  | 'Number'
-  | 'Boolean'
-  | 'User'
-  | 'Channel'
-  | 'Role'
-  | 'Mentionable'
-  | 'Attachment'
-  | 'Subcommand'
-  | 'SubcommandGroup'
-
-interface CooldownOptions {
-  amount: number,
-  multiplier: cooldownMultiplier,
-  type?: CooldownType,
-  ownerBypass?: boolean | false,
-}
-
-type cooldownMultiplier =
-  | 'Seconds'
-  | 'Minutes'
-  | 'Hours'
-  | 'Days'
-  | 'Weeks'
-
-type CooldownType =
-  | 'Global'
-  | 'Per Guild'
-  | 'Per User Per Guild'
-  | 'Per User Per DM'
-  | 'Per User'
-
-
- interface AllowedChannelType {
-  [key: string]: number
-}
-
-const OptionAllowedChannelTypes: AllowedChannelType = {
-  'Text':               ChannelType.GuildText,
-  'Voice':              ChannelType.GuildVoice,
-  'Category':           ChannelType.GuildCategory,
-  'Announcment':        ChannelType.GuildAnnouncement,
-  'AnnouncementThread': ChannelType.AnnouncementThread,
-  'PublicThread':       ChannelType.PublicThread,
-  'PrivateThread':      ChannelType.PrivateThread,
-  'StageVoice':         ChannelType.GuildStageVoice,
-  'Forum':              ChannelType.GuildForum,
-  'Media':              ChannelType.GuildMedia,
-}
-
-type OptionAllowedChannelType =
-  | 'Text'
-  | 'Voice'
-  | 'Category'
-  | 'Announcment'
-  | 'AnnouncementThread'
-  | 'PublicThread'
-  | 'PrivateThread'
-  | 'StageVoice'
-  | 'Forum'
-  | 'Media'
-
-export {
-  SlashCommand,
-  SlashCommandHandler,
 }

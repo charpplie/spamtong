@@ -1,10 +1,9 @@
-import { Event } from 'public/event'
-import { generateRandomText } from 'public/utils'
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
-import ffmpeg from 'fluent-ffmpeg'
+import { Event, Events } from 'comx'
+import { RandomText } from 'utils'
+import { FFmpeggy } from 'ffmpeggy'
 import { join } from 'path'
 import axios from 'axios'
-import os from 'os'
 
 export const VCONT_REACTIONS = [
   '1️⃣',
@@ -15,66 +14,60 @@ export const VCONT_REACTIONS = [
   '⭐',
 ]
 
-export const VCONT_CHANNELS = ['1181427849303965768']
-export const VCONT_CRITICAL = '1150427581296935006'
+export const VCONT_CHANNELS = ['1173213492153688098']
 
 export default {
-  name: 'messageCreate',
+  name: Events.MessageCreate,
   callback: async (client, message) => {
-    if (message.author.bot) return
-    if (!message.guild) return
-    if (!VCONT_CHANNELS.includes(message.channel.id)) return
+    if (message.author.bot || !message.guild || !VCONT_CHANNELS.includes(message.channel.id) || message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) return
 
-    if (message.attachments.size > 0) {
-      const _guild = message.guild
-      const _channel = message.channel
-      const _user = _guild.members.cache.get(message.author.id)
-      const _author = _user?.nickname ? _user?.nickname :_user?.user.username
-      const _text = message.content ? message.content : ''
-      const _message = message
-      await message.delete()
-      for (let i = 0; i < _message.attachments.size; i++) {
-        const attachment = _message.attachments.at(i)
-        if (attachment && attachment.contentType?.startsWith('video')) {
-          const filePath = join(__dirname, `${_message.id}${generateRandomText(6)}${attachment.name}`)
-          const writer = createWriteStream(filePath)
+    const _message = message
+    await message.delete()
+    for (let i = 0; i < _message.attachments.size; i++) {
+      const attachment = _message.attachments.at(i)
+      if (!attachment || !attachment.contentType?.startsWith('video')) continue
+      const filePath = join(__dirname, `${_message.id}${RandomText(6)}${attachment.name}`)
+      const writer = createWriteStream(filePath)
 
-          const response = await axios({
-            url: attachment.url,
-            method: 'GET',
-            responseType: 'stream'
-          })
+      const response = await axios({
+        url: attachment.url,
+        method: 'GET',
+        responseType: 'stream'
+      })
 
-          response.data.pipe(writer)
+      response.data.pipe(writer)
 
-          await new Promise((resolve, reject) => {
-            writer.on('finish', resolve)
-            writer.on('error', reject)
-          })
+      await new Promise((resolve, reject) => {
+        writer.on('finish', resolve)
+        writer.on('error', reject)
+      })
 
-          const ffmpegPath = os.type() === 'Windows_NT' ? `C:\\Users\\charlie\\GitHub\\spamtong\\ffmpeg.exe` : '/usr/bin/ffmpeg'
-          const convertedFilePath = join(__dirname, `${_message.id}${generateRandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
-          ffmpeg(filePath)
-            .setFfmpegPath(ffmpegPath)
-            .output(convertedFilePath)
-            .on('end', async function () {
-              unlinkSync(filePath)
-              const convertedFile = readFileSync(convertedFilePath)
-              await _channel.send({
-                files: [{
-                  attachment: convertedFile,
-                  name: attachment.name.replace(/\.[^/.]+$/, '.mov')
-                }]
-              }).then(async (interaction: any) => {
-                unlinkSync(convertedFilePath)
-                for (let j = 0; j < VCONT_REACTIONS.length; j++) {
-                  await interaction.edit(`v${interaction.id} | ${_author}: ${_text}`)
-                  await interaction.react(VCONT_REACTIONS[j]).catch(() => {})
-                }
-              }).catch(() => {})
-            }).run()
-        }
-      }
+      const convertedFilePath = join(__dirname, `${_message.id}${RandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
+      FFmpeggy.DefaultConfig = { ...FFmpeggy.DefaultConfig, ffmpegBin: '/usr/bin/ffmpeg' }
+      new FFmpeggy({
+        autorun: true,
+        input: `${filePath}`,
+        output: `${convertedFilePath}`,
+      })
+      .on('error', (error) => console.error(error))
+      .on('done', async () => {
+        unlinkSync(filePath)
+        const convertedFile = readFileSync(convertedFilePath)
+        await _message.channel.send({
+          files: [{
+            attachment: convertedFile,
+            name: attachment.name.replace(/\.[^/.]+$/, '.mov')
+          }]
+        }).then(async (interaction: any) => {
+          unlinkSync(convertedFilePath)
+          const guild = _message.guild
+          const user = guild.members.cache.get(_message.author.id)
+          await interaction.edit(`v${interaction.id}\n${user?.nickname ? user?.nickname :user?.user.username}: ${_message.content ? _message.content : ''}`).catch((why: any) => console.error(why))
+          for (let j = 0; j < VCONT_REACTIONS.length; j++) {
+            await interaction.react(VCONT_REACTIONS[j]).catch((why: any) => console.error(why))
+          }
+        })
+      })
     }
   }
 } as Event

@@ -3,19 +3,12 @@ import { DataTypes } from 'sequelize'
 
 const sequelize = defSequelize('icont')
 
-export const IContModel = sequelize.define('model', {
-  messageId: {
-    type: DataTypes.STRING,
-    unique: true,
-    primaryKey: true,
-  },
+export const ICPhoto = sequelize.define('icphoto', {
+  messageId: DataTypes.STRING,
   photoId: DataTypes.STRING,
-  users: {
-    type: DataTypes.JSON,
-    defaultValue: {},
-  },
-})
+  users: DataTypes.JSON
+}, { timestamps: false })
 
 export default async () => {
-  IContModel.sync()
+  ICPhoto.sync()
 }

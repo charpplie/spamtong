@@ -1,7 +1,7 @@
-import { Event } from 'public/event'
-import { IVcontFavModel } from 'models/vcont'
-import { Events, TextChannel } from 'discord.js'
+import { Event, Events } from 'comx'
+import { VCUser } from 'models/vcont_fav'
 import { VCONT_CHANNELS } from './vcont'
+import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.MessageReactionRemove,
@@ -15,12 +15,12 @@ export default {
     if (!message.content.startsWith(`v${message.id}`)) return
 
     const dmChannel = client.channels.cache.get(`${(await user.createDM()).id}`) as TextChannel
-    const dmMessage = await IVcontFavModel.findOne({ where: { user: `${user.id}`, guildId: `${message.id}`}}).catch(() => {})
+    const dmMessage = await VCUser.findOne({ where: { guild: `${react.message.guildId}`, user: `${user.id}`, guildId: `${message.id}`}}).catch(() => {})
 
     if (dmMessage) {
       const id = dmMessage.get('dmId')
       ;(await dmChannel.messages.fetch(`${id}`)).delete()
-      await IVcontFavModel.destroy({ where: { user: `${user.id}`, guildId: `${message.id}`, dmId: `${id}`}})
+      await VCUser.destroy({ where: { guild: `${react.message.guildId}`, user: `${user.id}`, guildId: `${message.id}`, dmId: `${id}`}})
     }
   }
 } as Event

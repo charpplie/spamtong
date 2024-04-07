@@ -1,5 +1,5 @@
-import { Event } from 'public/event'
-import { fetchMessages } from 'public/utils'
+import { Event, Events } from 'comx'
+import { fetchMessages, Random } from 'utils'
 
 interface IGuildChance {
   chance: number,
@@ -19,7 +19,6 @@ const CHANCE_INC = 1.15
 
 const EmojiRegExp: RegExp = /<:[^>]+>/g
 
-const Random = ((limit = 100) => { return Math.floor(Math.random() * limit) })
 
 function resetGuildChances(guild: string) {
   CGuilds[`${guild}`] = {
@@ -30,7 +29,7 @@ function resetGuildChances(guild: string) {
 }
 
 export default {
-  name: 'messageCreate',
+  name: Events.MessageCreate,
   callback: async (client, message) => {
     try {
       if (message.author.bot) return

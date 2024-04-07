@@ -1,8 +1,8 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
-import { Event, Events } from 'public/event'
+import { Event, Events } from 'comx'
 import { GIContModel } from 'models/gcont'
-import { COPYRIGHT, IMGUR } from 'public/vars'
-import { Sleep, uploadToImgur } from 'public/utils'
+import { COPYRIGHT, IMGUR } from 'vars'
+import { Sleep, uploadToImgur } from 'utils'
 import { writeFileSync, unlinkSync } from 'fs'
 import { vk } from './!vk'
 import axios from 'axios'
@@ -63,9 +63,15 @@ export default {
             if (imageUrl) {
               await channel.send({
               embeds: [
+                post.text?
                 embed
                   .setAuthor({ name: `${groupName}`, iconURL: groupIcon, url: `https://vk.com/public${id}`})
-                  .setDescription(`${post.text ? post.text : null}`)
+                  .setDescription(`${post.text}`)
+                  .setImage(imageUrl)
+                :
+                embed
+                  .setAuthor({ name: `${groupName}`, iconURL: groupIcon, url: `https://vk.com/public${id}`})
+                  .setDescription(null)
                   .setImage(imageUrl)
               ]
             })
