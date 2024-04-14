@@ -1,20 +1,16 @@
 {
   "ts-node": {
-    "require": ["tsconfig-paths/register"]
+    "require": ["tsconfig-paths/register"],
   },
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     "strict": true,
     "alwaysStrict": true,
-    "skipLibCheck": true,
+    "esModuleInterop": true,
     "paths": {
-      "index": ["./src/index.ts"],
-      "comx": ["./src/public/comx.ts"],
-      "utils": ["./src/public/utils.ts"],
-      "models/*": ["./src/models/*"]
-    }
+      "public/*": ["./src/server/public/*"],
+      "models/*": ["./src/client/models/*"],
+    },
   }
 }

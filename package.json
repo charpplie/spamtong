@@ -4,9 +4,10 @@
     "dev": "ts-node src/index.ts"
   },
   "dependencies": {
-    "@discordjs/voice": "^0.16.1",
+    "aws-sdk": "^2.1599.0",
     "axios": "^1.6.8",
     "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
     "ffmpeggy": "^3.0.0",
     "sequelize": "^6.37.2",
     "sqlite3": "^5.1.7",
