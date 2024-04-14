@@ -4,7 +4,7 @@ import axios from 'axios'
 
 export function Sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
-export const Random = ((limit = 100) => { return Math.floor(Math.random() * limit) })
+export const Random = ((limit = 100): number => { return Math.floor(Math.random() * limit) })
 
 export function RandomText(length: number): string {
   const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -49,7 +49,7 @@ export async function fetchMessages(channel: TextChannel, limit: number): Promis
   return out
 }
 
-export async function uploadToImgur(accessToken: string, filename: string) {
+export async function uploadToImgur(accessToken: string, filename: string): Promise<void> {
   try {
     const response = await axios.post(
       'https://api.imgur.com/3/image',

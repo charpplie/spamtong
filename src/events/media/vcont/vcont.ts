@@ -1,6 +1,5 @@
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
-import { Event, Events } from 'comx'
-import { RandomText } from 'utils'
+import { Event, Events, RandomText } from 'index'
 import { FFmpeggy } from 'ffmpeggy'
 import { join } from 'path'
 import axios from 'axios'

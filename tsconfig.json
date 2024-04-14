@@ -11,10 +11,9 @@
     "alwaysStrict": true,
     "skipLibCheck": true,
     "paths": {
-      "cmdx": ["./src/public/cmdx.ts"],
+      "index": ["./src/index.ts"],
       "comx": ["./src/public/comx.ts"],
       "utils": ["./src/public/utils.ts"],
-      "vars": ["./src/public/vars.ts"],
       "models/*": ["./src/models/*"]
     }
   }

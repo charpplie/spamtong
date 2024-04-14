@@ -1,10 +1,10 @@
 {
   "scripts": {
     "start": "npm install && npm run dev",
-    "dev": "ts-node src/index.ts",
-    "caravan_dev": "cd ./src/apps/caravan && http-server"
+    "dev": "ts-node src/index.ts"
   },
   "dependencies": {
+    "@discordjs/voice": "^0.16.1",
     "axios": "^1.6.8",
     "discord.js": "^14.14.1",
     "ffmpeggy": "^3.0.0",

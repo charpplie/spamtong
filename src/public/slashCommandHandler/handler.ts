@@ -5,29 +5,30 @@ import { join } from "path"
 
 export class SlashCommandHandler {
   private client: Client
-  private appId!: string
-  private owner!: string
+  private token: string
+  private appId: string
+  private owner: string
   private commands: Collection<string, SlashCommand> = new Collection<string, SlashCommand>()
   private cooldowns: Collection<string, number> = new Collection<string, number>()
   private slashCommandsGlobal: SlashCommandBuilder[] = []
   private slashCommandsGuilds: SlashCommandBuilder[] = []
 
-  public constructor(client: Client, commandsDir: string[]) {
+  public constructor(options: Options) {
+    const {
+      client,
+      token,
+      appId,
+      owner,
+      commandsDir
+    } = options
+
     this.client = client
-    this.init(commandsDir)
-  }
+    this.token = token
+    this.appId = appId
+    this.owner = owner
 
-  private async init(commandsDir: string[]) {
     this.client.on('ready', async () => {
-      await this.client.application?.fetch().then(() => {
-        const appId = this.client.application?.id
-        const owner = this.client.application?.owner?.id
-
-        if (appId) this.appId = appId
-        if (owner) this.owner = owner
-
-        this.readSlashCommands(commandsDir).then(() => this.registerSlashCommands())
-      })
+      this.readSlashCommands(commandsDir).then(() => this.registerSlashCommands())
     })
   }
 
@@ -59,7 +60,7 @@ export class SlashCommandHandler {
   }
 
   private async registerSlashCommands() {
-    const rest = new REST({ version: '10' }).setToken(String(process.env.token))
+    const rest = new REST({ version: '10' }).setToken(this.token)
 
     if (this.slashCommandsGlobal) await rest.put(Routes.applicationCommands(`${this.appId}`), { body: this.slashCommandsGlobal, })
 
@@ -85,6 +86,7 @@ export class SlashCommandHandler {
         const command = this.commands.get(interaction.commandName)
         if (!command) return
 
+        if (command.isOwnerOnly && interaction.user.id !== this.owner) return
         if (command.allowedUsers && !command.allowedUsers.includes(interaction.user.id)) return
 
         if (await this.checkcooldowns(command, interaction)) command.callback(interaction as CommandInteraction)
@@ -188,7 +190,7 @@ export class SlashCommandHandler {
 
     if (command.options) this.assingCommandOptions(command, data)
 
-    // if (command.default_member_permissions) data.setDefaultMemberPermissions(command.default_member_permissions)
+    if (command.default_member_permissions) data.setDefaultMemberPermissions(command.default_member_permissions)
 
     if (command.dm_permission) data.setDMPermission(command.dm_permission)
 
@@ -443,4 +445,12 @@ export class SlashCommandHandler {
 
 interface IGuildCommands {
   [guild: string]: SlashCommandBuilder[]
+}
+
+interface Options {
+  client: Client,
+  token: string,
+  appId: string,
+  owner: string,
+  commandsDir: string[],
 }

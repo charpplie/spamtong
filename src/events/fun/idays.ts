@@ -1,5 +1,4 @@
-import { Event, Events } from 'comx'
-import { Sleep } from 'utils'
+import { Event, Events, Sleep } from 'index'
 
 const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second-birthday-gif-16100991'
 

@@ -1,8 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
-import { Event, Events } from 'comx'
+import { spamtong, Event, Events, Sleep } from 'index'
 import { ICPhoto } from 'models/icont'
-import { COPYRIGHT } from 'vars'
-import { Sleep } from 'utils'
 import { vk } from './!vk'
 
 const reactButtons = Array.from({ length: 5 }, (_, i) => new ButtonBuilder().setCustomId(`react${i + 1}`).setLabel(`${i + 1}️⃣`).setStyle(ButtonStyle.Secondary))

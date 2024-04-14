@@ -1,10 +1,6 @@
 name: Main
 
-on: 
-  workflow_dispatch:
-  push:
-    branches:
-    - master
+on: [workflow_dispatch]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -13,7 +9,6 @@ concurrency:
 jobs:
   prodbuild:
     runs-on: self-hosted
-
     steps:
       - uses: actions/checkout@v4
 

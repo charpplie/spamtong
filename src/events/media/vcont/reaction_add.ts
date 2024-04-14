@@ -1,4 +1,4 @@
-import { Event, Events } from 'comx'
+import { Event, Events } from 'index'
 import { VCONT_CHANNELS } from './vcont'
 import { TextChannel } from 'discord.js'
 

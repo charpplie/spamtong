@@ -5,14 +5,23 @@ import { join } from 'path'
 
 export class EventHandler {
   private client: Client
+  private isDev = false
 
-  public constructor(client: Client, eventsDir: EventsDir[]) {
+  public constructor(options: Options) {
+    const {
+      client,
+      isDev,
+      eventsDir
+    } = options
+
     this.client = client
+    this.isDev = isDev
+
     this.registerEvents(eventsDir)
   }
 
   private async registerEvents(eventsDir: EventsDir[]) {
-    const handler = async (dir: string, name_override?: string) => {
+    const handler = async (dir: string, name_override?: string, dev?: boolean) => {
       const files = readdirSync(dir, { withFileTypes: true })
 
       for (const file of files) {
@@ -21,11 +30,20 @@ export class EventHandler {
         if (file.name.charAt(0) === '!') continue
         if (!file.isDirectory() && !file.name.endsWith('.ts')) continue
         if (file.isDirectory()) {
-          await handler(filePath)
+          await handler(filePath, name_override, dev)
           continue
         }
 
         const event = (await import(filePath)).default
+        if (this.isDev) {
+          if (dev) {
+            if (event.dev && event.dev === false) {
+              continue
+            }
+          }
+          else if (!event.dev) continue
+        }
+
         if (name_override) {
           if (event && typeof event === 'function') {
             this.client.on(name_override, async (...args: any[]) => {
@@ -41,6 +59,13 @@ export class EventHandler {
         }
       }
     }
-    for (const eventDir of eventsDir) await handler(eventDir.dir, eventDir.name_override)
+
+    for (const eventDir of eventsDir) await handler(eventDir.dir, eventDir.name_override, eventDir.dev)
   }
+}
+
+interface Options {
+  client: Client,
+  isDev: boolean,
+  eventsDir: EventsDir[],
 }

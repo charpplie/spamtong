@@ -20,11 +20,12 @@ export interface SlashCommand {
     maxValue?: number,
     channelTypes?: OptionAllowedChannelType[],
   }[],
-  default_member_permissions?: Permissions | null,
+  default_member_permissions?: string | bigint | number | null | undefined,
   dm_permission?: boolean | true,
   nsfw?: boolean | false,
   guilds?: string[],
   allowedUsers?: string[],
+  isOwnerOnly?: boolean | false,
   cooldown?: CooldownOptions,
   callback: (interaction: CommandInteraction) => void,
   autocomplete?: (interaction: AutocompleteInteraction) => void,
@@ -45,12 +46,12 @@ type OptionType =
 
 interface CooldownOptions {
   amount: number,
-  multiplier: cooldownMultiplier,
+  multiplier: CooldownMultiplier,
   type?: CooldownType,
   ownerBypass?: boolean | false,
 }
 
-type cooldownMultiplier =
+type CooldownMultiplier =
   | 'Seconds'
   | 'Minutes'
   | 'Hours'
@@ -64,8 +65,7 @@ type CooldownType =
   | 'Per User Per DM'
   | 'Per User'
 
-
- interface AllowedChannelType {
+interface AllowedChannelType {
   [key: string]: number
 }
 

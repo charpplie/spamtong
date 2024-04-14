@@ -1,4 +1,4 @@
-import { Event, Events } from 'comx'
+import { Event, Events } from 'index'
 
 const GUILD = '1150427580734906368'
 const CHANNEL = '1204439974766706698'

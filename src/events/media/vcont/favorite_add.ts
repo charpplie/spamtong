@@ -1,4 +1,4 @@
-import { Event, Events } from 'comx'
+import { Event, Events } from 'index'
 import { VCUser } from 'models/vcont_fav'
 import { VCONT_CHANNELS } from './vcont'
 
