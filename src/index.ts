@@ -1,8 +1,8 @@
-import dotenv from 'dotenv'
-// import 'dotenv/config'
 import { Client, GatewayIntentBits, Partials } from 'discord.js'
 import { Spamtong } from './server/handler/spamtong'
 import { join } from 'path'
+// import 'dotenv/config'
+import dotenv from 'dotenv'
 
 dotenv.config({ path: '../.env'})
 
@@ -50,19 +50,14 @@ export const spamtong = Spamtong.getInstance({
 //   owner: `${process.env.owner}`,
 //   isDev: true,
 //   eventsDir:
-//   [
-//     // {
-//     //   dir: join(__dirname, 'client/models'),
-//     //   name_override: 'ready',
-//     //   dev: true,
-//     // },
-//     {
-//       dir: join(__dirname, 'client/test'),
-//       dev: true,
-//     },
-//   ],
-//   // commandsDir:
-//   // [
-//   //   join(__dirname, 'client/commands')
-//   // ]
+//     [
+//       {
+//         dir: join(__dirname, 'client/models'),
+//         name_override: 'ready',
+//         dev: true,
+//       },
+//       {
+//         dir: join(__dirname, 'client/events'),
+//       },
+//     ]
 // })

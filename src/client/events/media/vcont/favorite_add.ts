@@ -1,5 +1,5 @@
 import { Event, Events } from 'public/comx'
-import { VCUser } from 'models/vcont_fav'
+import { VCUser } from 'models/media/vcont_fav'
 import { VCONT_CHANNELS } from './vcont'
 
 export default {
