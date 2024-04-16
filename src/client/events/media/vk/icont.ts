@@ -22,7 +22,7 @@ export default {
   callback: async (client) => {
     const ownerIcon = client.users.cache.get('783443296382746672')?.avatarURL({ forceStatic: true })
 
-    for (const _guildInfo of GUILDS) {
+    GUILDS.forEach(async (_guildIndo) => {
       const guild = client.guilds.cache.get(_guildInfo.guild)
       if (!guild) continue
 
@@ -142,7 +142,7 @@ export default {
           await Sleep(120000)
         }
       }
-    }
+    })
   }
 } as Event
 
