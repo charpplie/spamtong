@@ -11,7 +11,7 @@ const GUILDS: { guild: string, channel: string, users: string[] }[] = [
   {
     guild: '1150427580734906368',
     channel: '1177374466448302180',
-    users: ['255594607', '506134223'],
+    users: ['255594607'],
   },
 ]
 
@@ -22,7 +22,7 @@ export default {
   callback: async (client) => {
     const ownerIcon = client.users.cache.get('783443296382746672')?.avatarURL({ forceStatic: true })
 
-    GUILDS.forEach(async (_guildInfo) => {
+    for (const _guildInfo of GUILDS) {
       const guild = client.guilds.cache.get(_guildInfo.guild)
       if (!guild) continue
 
@@ -142,7 +142,7 @@ export default {
           await Sleep(120000)
         }
       }
-    })
+    }
   }
 } as Event
 
