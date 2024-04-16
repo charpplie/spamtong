@@ -11,7 +11,7 @@ import { join } from 'path'
 const GUILDS: { guild: string, channel: string, groups: { id: string }[] }[] = [
   {
     guild: '1150427580734906368',
-    channel: '1173213492153688098',
+    channel: '1220325347699195965',
     groups: [
       {
         id: '135729590'
