@@ -22,7 +22,7 @@ export default {
   callback: async (client) => {
     const ownerIcon = client.users.cache.get('783443296382746672')?.avatarURL({ forceStatic: true })
 
-    GUILDS.forEach(async (_guildIndo) => {
+    GUILDS.forEach(async (_guildInfo) => {
       const guild = client.guilds.cache.get(_guildInfo.guild)
       if (!guild) continue
 
