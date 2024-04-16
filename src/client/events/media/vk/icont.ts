@@ -11,7 +11,7 @@ const GUILDS: { guild: string, channel: string, users: string[] }[] = [
   {
     guild: '1150427580734906368',
     channel: '1177374466448302180',
-    users: ['255594607'],
+    users: ['255594607', '506134223'],
   },
 ]
 
