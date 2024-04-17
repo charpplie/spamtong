@@ -119,6 +119,7 @@ export default {
           await ICPhoto.update({ users: { [interaction.user.id]: `${rating}` } }, { where: { messageId: interaction.message.id } })
 
           embed
+            .setAuthor({ name: `${interaction.message.embeds[0].data.author?.name}`, iconURL: `${interaction.message.embeds[0].data.author?.icon_url}`, url: `${interaction.message.embeds[0].data.author?.url}` })
             .setFields(
               { name: 'Rating', value: `${rating}.0`, inline: true },
               { name: 'Total rates', value: '1', inline: true },
@@ -145,6 +146,7 @@ export default {
           const averageRating = totalRatesArray.length === 0 ? 0 : calculateWeightedAverage(totalRatesArray)
 
           embed
+            .setAuthor({ name: `${interaction.message.embeds[0].data.author?.name}`, iconURL: `${interaction.message.embeds[0].data.author?.icon_url}`, url: `${interaction.message.embeds[0].data.author?.url}` })
             .setFields(
               { name: 'Rating', value: `${averageRating.toFixed(1)}`, inline: true },
               { name: 'Total rates', value: `${totalRates}`, inline: true }
