@@ -22,7 +22,7 @@ interface IGuildSettings {
 const GUILDS: IGuildSettings[] = [
   {
     guildId: '1150427580734906368',
-    channelId: '1173213492153688098',
+    channelId: '1177374466448302180',
     users: [
       {
         id: '255594607'
