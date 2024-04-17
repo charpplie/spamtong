@@ -38,7 +38,6 @@ const ALBUM_ID = '-15' // Saved photos
 
 export default {
   name: Events.ClientReady,
-  dev: true,
   callback: async (client) => {
     for (const guild of GUILDS) {
       const _guild = client.guilds.cache.get(guild.guildId)
