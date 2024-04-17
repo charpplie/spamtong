@@ -1,6 +1,6 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
 import { Event, Events } from 'public/comx'
-import { GIContModel } from 'models/media/gcont'
+import { GIContModel } from 'models/media/vk/gcont'
 import { uploadToBucket, fetchObjectsInBucket, deleteObjectInBucket } from 'public/s3storage'
 import { Sleep, hashCode } from 'public/utils'
 import { writeFileSync, unlinkSync, createWriteStream } from 'fs'
@@ -22,7 +22,6 @@ const GUILDS: { guild: string, channel: string, groups: { id: string }[] }[] = [
 
 export default {
   name: Events.ClientReady,
-  dev: true,
   callback: async (client) => {
     GUILDS.forEach(async (_guildInfo) => {
       const guild = client.guilds.cache.get(_guildInfo.guild)

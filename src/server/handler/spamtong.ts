@@ -3,7 +3,7 @@ import { EventHandler } from './eventHandler/handler'
 import { EventsDir } from './eventHandler/event'
 import { Client } from 'discord.js'
 
-export class Spamtong {
+class Spamtong {
   private static instance: Spamtong
   private client: Client
   private token: string
@@ -11,7 +11,9 @@ export class Spamtong {
   private owner: string
   private isDev = false
 
-  private constructor(options: Options) {
+  private static ownerIcon: string
+
+  private constructor(options: SOptions) {
     const {
       client,
       token,
@@ -30,7 +32,7 @@ export class Spamtong {
 
     if (eventsDir) {
       new EventHandler({
-        client: this.client, 
+        client: this.client,
         isDev: this.isDev,
         eventsDir: eventsDir,
       })
@@ -45,19 +47,26 @@ export class Spamtong {
         commandsDir: commandsDir,
       })
     }
+
     this.client.login(this.token)
   }
 
-  public static getInstance(options: Options): Spamtong {
+  public static getInstance(options: SOptions): Spamtong {
     if (!this.instance) {
       return new Spamtong(options)
     }
 
     return this.instance
   }
+
+  public getOwnerIcon(): string {
+    const icon = this.client.users.cache.get(`${this.owner}`)?.avatarURL({ forceStatic: true })
+
+    return icon!
+  }
 }
 
-interface Options {
+interface SOptions {
   client: Client,
   token: string,
   appId: string,
@@ -65,4 +74,9 @@ interface Options {
   isDev: boolean,
   commandsDir?: string[],
   eventsDir?: EventsDir[],
+}
+
+export {
+  Spamtong,
+  SOptions,
 }

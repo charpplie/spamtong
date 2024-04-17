@@ -1,7 +1,8 @@
-import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from "discord.js"
-import { OptionAllowedChannelTypes, SlashCommand } from "./command"
-import { readdirSync } from "fs"
-import { join } from "path"
+import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from 'discord.js'
+import { OptionAllowedChannelTypes, SlashCommand } from './command'
+import { SOptions } from '../spamtong'
+import { readdirSync } from 'fs'
+import { join } from 'path'
 
 export class SlashCommandHandler {
   private client: Client
@@ -13,7 +14,7 @@ export class SlashCommandHandler {
   private slashCommandsGlobal: SlashCommandBuilder[] = []
   private slashCommandsGuilds: SlashCommandBuilder[] = []
 
-  public constructor(options: Options) {
+  public constructor(options: Omit<Required<SOptions>, 'isDev' | 'eventsDir'>) {
     const {
       client,
       token,
@@ -93,8 +94,8 @@ export class SlashCommandHandler {
       } else if (interaction.isAutocomplete()) {
         const command = this.commands.get(interaction.commandName)
         if (!command || !command.autocomplete) return
-  
-        try { await command.autocomplete(interaction) } catch (why) {}
+
+        try { await command.autocomplete(interaction) } catch (why) { }
       }
     })
   }
@@ -208,9 +209,9 @@ export class SlashCommandHandler {
             data.addStringOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : []))
@@ -221,9 +222,9 @@ export class SlashCommandHandler {
             data.addStringOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : []))
@@ -233,9 +234,9 @@ export class SlashCommandHandler {
             data.addStringOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : []))
@@ -245,9 +246,9 @@ export class SlashCommandHandler {
             data.addStringOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : [])),
@@ -260,9 +261,9 @@ export class SlashCommandHandler {
             data.addIntegerOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -273,9 +274,9 @@ export class SlashCommandHandler {
             data.addIntegerOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -285,9 +286,9 @@ export class SlashCommandHandler {
             data.addIntegerOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -297,9 +298,9 @@ export class SlashCommandHandler {
             data.addIntegerOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -312,9 +313,9 @@ export class SlashCommandHandler {
             data.addNumberOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -325,9 +326,9 @@ export class SlashCommandHandler {
             data.addNumberOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -337,9 +338,9 @@ export class SlashCommandHandler {
             data.addNumberOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -349,9 +350,9 @@ export class SlashCommandHandler {
             data.addNumberOption(optionData =>
               optionData
                 .setName(name)
-                .setNameLocalizations((name_localizations? name_localizations : {}))
+                .setNameLocalizations((name_localizations ? name_localizations : {}))
                 .setDescription(description)
-                .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
                 .setRequired(required || false)
                 .setAutocomplete(autocomplete || false)
                 .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
@@ -363,9 +364,9 @@ export class SlashCommandHandler {
           data.addBooleanOption(optionData =>
             optionData
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
               .setRequired(required || false)
           )
           break
@@ -373,9 +374,9 @@ export class SlashCommandHandler {
           data.addUserOption(optionData =>
             optionData
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
               .setRequired(required || false)
           )
           break
@@ -383,9 +384,9 @@ export class SlashCommandHandler {
           data.addChannelOption(optionData =>
             optionData
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
               .setRequired(required || false)
               .addChannelTypes(...(channelTypes ? channelTypes.map(channelType => OptionAllowedChannelTypes[channelType]) : []))
           )
@@ -394,9 +395,9 @@ export class SlashCommandHandler {
           data.addRoleOption(optionData =>
             optionData
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
               .setRequired(required || false)
           )
           break
@@ -404,9 +405,9 @@ export class SlashCommandHandler {
           data.addMentionableOption(optionData =>
             optionData
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
               .setRequired(required || false)
           )
           break
@@ -414,28 +415,28 @@ export class SlashCommandHandler {
           data.addAttachmentOption(optionData =>
             optionData
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
-              .setRequired(required  || false)
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
+              .setRequired(required || false)
           )
           break
         case 'Subcommand':
           data.addSubcommand(subcommand =>
             subcommand
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
           )
           break
         case 'SubcommandGroup':
           data.addSubcommandGroup(subcommandGroup =>
             subcommandGroup
               .setName(name)
-              .setNameLocalizations((name_localizations? name_localizations : {}))
+              .setNameLocalizations((name_localizations ? name_localizations : {}))
               .setDescription(description)
-              .setDescriptionLocalizations((description_localizations? description_localizations : {}))
+              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
           )
           break
       }
@@ -445,12 +446,4 @@ export class SlashCommandHandler {
 
 interface IGuildCommands {
   [guild: string]: SlashCommandBuilder[]
-}
-
-interface Options {
-  client: Client,
-  token: string,
-  appId: string,
-  owner: string,
-  commandsDir: string[],
 }

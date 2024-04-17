@@ -1,82 +1,102 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
 import { Event, Events } from 'public/comx'
+import { ICPhoto } from 'models/media/vk/icont'
+import { ICPhotoIDs } from 'models/media/vk/icont_lastIds'
 import { Sleep } from 'public/utils'
-import { ICPhoto } from 'models/media/icont'
 import { vk } from './!vk'
 
 const reactButtons = Array.from({ length: 5 }, (_, i) => new ButtonBuilder().setCustomId(`react${i + 1}`).setLabel(`${i + 1}️⃣`).setStyle(ButtonStyle.Secondary))
 const row = new ActionRowBuilder().addComponents(...reactButtons)
 
-const GUILDS: { guild: string, channel: string, users: string[] }[] = [
+interface IUserSettings {
+  id: string,
+  channelOverride?: string,
+}
+
+interface IGuildSettings {
+  guildId: string,
+  channelId: string,
+  users: IUserSettings[],
+}
+
+const GUILDS: IGuildSettings[] = [
   {
-    guild: '1150427580734906368',
-    channel: '1177374466448302180',
-    users: ['255594607'],
-  },
+    guildId: '1150427580734906368',
+    channelId: '1173213492153688098',
+    users: [
+      {
+        id: '255594607'
+      },
+      {
+        id: '506134223'
+      },
+    ]
+  }
 ]
 
 const ALBUM_ID = '-15' // Saved photos
 
 export default {
   name: Events.ClientReady,
+  dev: true,
   callback: async (client) => {
-    const ownerIcon = client.users.cache.get('783443296382746672')?.avatarURL({ forceStatic: true })
+    for (const guild of GUILDS) {
+      const _guild = client.guilds.cache.get(guild.guildId)
+      if (!_guild) continue
 
-    for (const _guildInfo of GUILDS) {
-      const guild = client.guilds.cache.get(_guildInfo.guild)
-      if (!guild) continue
-
-      const channel = guild.channels.cache.get(_guildInfo.channel)
+      const channel = _guild.channels.cache.get(guild.channelId)
       if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) continue
 
-      for (const user of _guildInfo.users) {
-        const author = await vk.api.users.get({ user_id: user, fields: ['photo_100'] }).catch((why) => {})
-        if (!author) return
-        const authorName = `${author[0].first_name} ${author[0].last_name}`
-        const authorIcon = `${author[0].photo_100}`
+      async function main(userId: number, guildId: string, channel: TextChannel) {
+        const authors = await vk.api.users.get({ user_id: userId, fields: ['photo_100', 'has_photo', 'counters'] }).catch((why) => { console.error(why) })
+        if (!authors) return
+
+        const author = authors[0]
+
+        const authorName = `${author.first_name} ${author.last_name}`
+        const authorIcon = `${author.photo_100}`
 
         const embed = new EmbedBuilder()
           .setColor('DarkPurple')
           .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
-          .setAuthor({ name: authorName, iconURL: authorIcon, url: `https://vk.com/id${user}` })
-          .setFooter({ text: `${process.env.copyright}`, iconURL: `${ownerIcon}` })
+          .setAuthor({ name: authorName, iconURL: authorIcon, url: `https://vk.com/id${userId}` })
+          .setFooter({ text: `${process.env.copyright}` })
           .setFields(
             { name: 'Rating', value: '0', inline: true },
             { name: 'Total rates', value: '0', inline: true },
           )
+        const r = await vk.api.photos.get({ owner_id: userId, album_id: ALBUM_ID, rev: 1 }).catch((why) => { console.error(why) })
+        if (!r) return
 
-        async function main(ownerId: number, guildId: string, channel: TextChannel) {
-          const r = await vk.api.photos.get({ owner_id: ownerId, album_id: ALBUM_ID, rev: 1 }).catch((why) => {})
-          if (!r) return
+        const lastIds = await ICPhotoIDs.findOne({ where: { guildId: guildId, userId: userId } })
+        const lastId = lastIds?.get('lastId') as number
+        const lastPhotoId = lastId ? lastId : 0
 
-          const lastPhotoId: number = +((await ICPhoto.findOne({ where: { messageId: `g${guildId}` } }))?.get('photoId') || 0)
+        const newPhotos = r.items.filter(item => item.id > lastPhotoId).reverse()
 
-          const newPhotos = r.items.filter(item => item.id > lastPhotoId).reverse()
+        for (const photo of newPhotos) {
+          const imageUrl = photo.sizes[photo.sizes.length - 1].url
 
-          for (const photo of newPhotos) {
-            const imageUrl = photo.sizes[photo.sizes.length - 1].url
+          const sentMessage = await channel.send({
+            embeds: [
+              embed
+                .setFields(
+                  { name: 'Rating', value: '0', inline: true },
+                  { name: 'Total rates', value: '0', inline: true },
+                )
+                .setImage(imageUrl)
+            ],
+            components: [row as any]
+          })
 
-            const sentMessage = await channel.send({
-              embeds: [
-                embed
-                  .setFields(
-                    { name: 'Rating', value: '0', inline: true },
-                    { name: 'Total rates', value: '0', inline: true },
-                  )
-                  .setImage(imageUrl)
-              ],
-              components: [row as any]
-            })
+          await ICPhoto.create({ messageId: sentMessage.id, photoId: photo.post_id })
 
-            await ICPhoto.create({ messageId: sentMessage.id, photoId: photo.post_id})
+          if (!(await ICPhotoIDs.findOne({ where: { guildId: guildId, userId: userId } })))
+            await ICPhotoIDs.create({ guildId: guildId, userId: userId, lastId: photo.id })
+          else
+            await ICPhotoIDs.update({ lastId: photo.id }, { where: { guildId: guildId, userId: userId } })
 
-            if (!(await ICPhoto.findOne({ where: { messageId: `g${guildId}`} })))
-              await ICPhoto.create({ messageId: `g${guildId}`, photoId: photo.id })
-            else
-              await ICPhoto.update({ photoId: photo.id }, { where: { messageId: `g${guildId}` }})
-
-            await Sleep(1125)
-          }
+          await Sleep(1125)
         }
 
         client.on(Events.InteractionCreate, async (interaction: Interaction) => {
@@ -89,14 +109,14 @@ export default {
 
           const rating = parseInt(button.charAt(button.length - 1))
 
-          const photo = await ICPhoto.findOne({ where: { messageId: `${interaction.message.id}` }})
+          const photo = await ICPhoto.findOne({ where: { messageId: `${interaction.message.id}` } })
           if (!photo) return
 
           const users: any = photo.get('users')
 
           if (!users) {
-            await ICPhoto.update({ users: { [interaction.user.id]: `${rating}` }}, { where: { messageId: interaction.message.id }})
-  
+            await ICPhoto.update({ users: { [interaction.user.id]: `${rating}` } }, { where: { messageId: interaction.message.id } })
+
             embed
               .setFields(
                 { name: 'Rating', value: `${rating}`, inline: true },
@@ -109,13 +129,13 @@ export default {
 
             await interaction.editReply(`You rated this photo with ${rating === 1 ? `1 star` : `${rating} stars`}`)
           } else {
-            const prevUserRating = users[interaction.user.id] !== undefined? users[interaction.user.id] : 0
+            const prevUserRating = users[interaction.user.id] !== undefined ? users[interaction.user.id] : 0
 
-            await ICPhoto.update({ users: { ...users, [interaction.user.id]: users[interaction.user.id] == rating? 0 : rating }}, { where: { messageId: interaction.message.id }})
+            await ICPhoto.update({ users: { ...users, [interaction.user.id]: users[interaction.user.id] == rating ? 0 : rating } }, { where: { messageId: interaction.message.id } })
 
-            const _photo = await ICPhoto.findOne({ where: { messageId: interaction.message.id }})
+            const _photo = await ICPhoto.findOne({ where: { messageId: interaction.message.id } })
             if (!_photo) return
-    
+
             const _users: any = _photo.get('users')
 
             const totalRates = Object.values(_users).filter((user: any) => user !== 0).length
@@ -133,14 +153,16 @@ export default {
             const msg = await channel.messages.fetch(interaction.message.id)
             if (msg) await msg.edit({ embeds: [embed] })
 
-            await interaction.editReply(`${prevUserRating === 0? `You rated this photo with ${rating === 1? `1 star` : `${rating} stars`}` : `${_users[`${interaction.user.id}`].rate === 0? `убрана оценка`: `изменена оценка`}`}`)
+            await interaction.editReply(`${prevUserRating === 0 ? `You rated this photo with ${rating === 1 ? `1 star` : `${rating} stars`}` : `${_users[`${interaction.user.id}`].rate === 0 ? `убрана оценка` : `изменена оценка`}`}`)
           }
         })
+      }
 
-        while (true) {
-          await main(parseInt(user), _guildInfo.guild, channel)
-          await Sleep(120000)
+      while (true) {
+        for (const user of guild.users) {
+          await main(parseInt(user.id), guild.guildId, channel)
         }
+        await Sleep(120000)
       }
     }
   }
@@ -151,9 +173,9 @@ function calculateWeightedAverage(ratings: number[], coefficient: number = 0.7):
   let weightSum = 0
 
   for (let i = 0; i < ratings.length; i++) {
-      const weight = Math.pow(coefficient, i)
-      weightedSum += ratings[i] * weight
-      weightSum += weight
+    const weight = Math.pow(coefficient, i)
+    weightedSum += ratings[i] * weight
+    weightSum += weight
   }
 
   return weightedSum / weightSum

@@ -70,16 +70,16 @@ interface AllowedChannelType {
 }
 
 export const OptionAllowedChannelTypes: AllowedChannelType = {
-  'Text':               ChannelType.GuildText,
-  'Voice':              ChannelType.GuildVoice,
-  'Category':           ChannelType.GuildCategory,
-  'Announcment':        ChannelType.GuildAnnouncement,
+  'Text': ChannelType.GuildText,
+  'Voice': ChannelType.GuildVoice,
+  'Category': ChannelType.GuildCategory,
+  'Announcment': ChannelType.GuildAnnouncement,
   'AnnouncementThread': ChannelType.AnnouncementThread,
-  'PublicThread':       ChannelType.PublicThread,
-  'PrivateThread':      ChannelType.PrivateThread,
-  'StageVoice':         ChannelType.GuildStageVoice,
-  'Forum':              ChannelType.GuildForum,
-  'Media':              ChannelType.GuildMedia,
+  'PublicThread': ChannelType.PublicThread,
+  'PrivateThread': ChannelType.PrivateThread,
+  'StageVoice': ChannelType.GuildStageVoice,
+  'Forum': ChannelType.GuildForum,
+  'Media': ChannelType.GuildMedia,
 }
 
 type OptionAllowedChannelType =

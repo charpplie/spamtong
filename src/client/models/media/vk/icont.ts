@@ -1,4 +1,4 @@
-import { defSequelize } from '../!sequelize'
+import { defSequelize } from '../../!sequelize'
 import { DataTypes } from 'sequelize'
 
 const sequelize = defSequelize('icont')

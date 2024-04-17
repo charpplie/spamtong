@@ -1,5 +1,6 @@
-import { Client } from 'discord.js'
+import { SOptions } from '../spamtong'
 import { EventsDir } from './event'
+import { Client } from 'discord.js'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 
@@ -7,7 +8,7 @@ export class EventHandler {
   private client: Client
   private isDev = false
 
-  public constructor(options: Options) {
+  public constructor(options: Omit<Required<SOptions>, 'token' | 'appId' | 'owner' | 'commandsDir'>) {
     const {
       client,
       isDev,
@@ -62,10 +63,4 @@ export class EventHandler {
 
     for (const eventDir of eventsDir) await handler(eventDir.dir, eventDir.name_override, eventDir.dev)
   }
-}
-
-interface Options {
-  client: Client,
-  isDev: boolean,
-  eventsDir: EventsDir[],
 }
