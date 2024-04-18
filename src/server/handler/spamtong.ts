@@ -53,9 +53,11 @@ class Spamtong {
   private async logWhenReady() {
     if (this.isDev) return
 
-    const owner = this.client.users.cache.get(this.owner)!
+    this.client.on('ready', async () => {
+      const owner = this.client.users.cache.get(this.owner)!
 
-    await owner.send('Ok!')
+      await owner.send('Ok!')
+    })
   }
 
   public static getInstance(options: SOptions): Spamtong {
