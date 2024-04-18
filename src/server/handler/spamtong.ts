@@ -47,6 +47,12 @@ class Spamtong {
     }
 
     this.client.login(this.token)
+    this.logWhenReady()
+  }
+
+  private logWhenReady() {
+    const owner = this.client.users.cache.get(this.owner)!
+    owner.send('Ok!')
   }
 
   public static getInstance(options: SOptions): Spamtong {
