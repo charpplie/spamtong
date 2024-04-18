@@ -26,7 +26,7 @@ const client = new Client({
   closeTimeout: 12000,
 })
 
-export const spamtong = Spamtong.getInstance({
+const spamtong = Spamtong.getInstance({
   client: client,
   token: `${process.env.token}`,
   appId: `${process.env.appId}`,

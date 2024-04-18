@@ -3,7 +3,7 @@ import { Event, Events } from 'public/comx'
 import { GIContModel } from 'models/media/vk/gcont'
 import { uploadToBucket, fetchObjectsInBucket, deleteObjectInBucket } from 'public/s3storage'
 import { Sleep, hashCode } from 'public/utils'
-import { writeFileSync, unlinkSync, createWriteStream } from 'fs'
+import { unlinkSync, createWriteStream } from 'fs'
 import { vk } from './!vk'
 import axios from 'axios'
 import { join } from 'path'
@@ -22,7 +22,7 @@ const GUILDS: { guild: string, channel: string, groups: { id: string }[] }[] = [
 
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
+  callback: async ({ client }) => {
     GUILDS.forEach(async (_guildInfo) => {
       const guild = client.guilds.cache.get(_guildInfo.guild)
       if (!guild) return

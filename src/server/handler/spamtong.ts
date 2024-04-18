@@ -11,8 +11,6 @@ class Spamtong {
   private owner: string
   private isDev = false
 
-  private static ownerIcon: string
-
   private constructor(options: SOptions) {
     const {
       client,
@@ -31,7 +29,7 @@ class Spamtong {
     this.isDev = isDev
 
     if (eventsDir) {
-      new EventHandler({
+      new EventHandler(this, {
         client: this.client,
         isDev: this.isDev,
         eventsDir: eventsDir,

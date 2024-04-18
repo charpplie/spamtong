@@ -5,7 +5,7 @@ import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.MessageReactionRemove,
-  callback: async (client, react, user) => {
+  callback: async ({ client }, react, user) => {
     if (user.bot) return
     if (!VCONT_CHANNELS.includes(react.message.channelId)) return
     if (react._emoji.name !== '⭐') return

@@ -7,12 +7,15 @@ import axios from 'axios'
 
 export default {
   name: Events.UserUpdate,
-  dev: true,
-  callback: async (client, Old, New) => {
+  callback: async ({ client }, Old, New) => {
     if (Old.bot) return
 
+    const guild = client.guilds.cache.get(GUILD)
+
+    const member = guild?.members.cache.get(`${Old.id}`)
+    if (!member) return
+
     if (Old.avatar !== New.avatar) {
-      const guild = client.guilds.cache.get(GUILD)
       const channel = guild?.channels.cache.get(CHANNEL)
 
       if (!channel || !channel.isTextBased()) return

@@ -18,7 +18,7 @@ export const VCONT_CHANNELS = ['1181427849303965768']
 
 export default {
   name: Events.MessageCreate,
-  callback: async (client, message) => {
+  callback: async ({}, message) => {
     if (message.author.bot || !message.guild || !VCONT_CHANNELS.includes(message.channel.id) || message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) return
 
     const _message = message

@@ -38,7 +38,7 @@ const ALBUM_ID = '-15' // Saved photos
 
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
+  callback: async ({ client, instance }) => {
     for (const guild of GUILDS) {
       const _guild = client.guilds.cache.get(guild.guildId)
       if (!_guild) continue
@@ -49,7 +49,7 @@ export default {
       const embed = new EmbedBuilder()
         .setColor('DarkPurple')
         .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
-        .setFooter({ text: `${process.env.copyright}` })
+        .setFooter({ text: `${process.env.copyright}`, iconURL: instance.getOwnerIcon()})
         .setFields(
           { name: 'Rating', value: '0', inline: true },
           { name: 'Total rates', value: '0', inline: true },

@@ -5,7 +5,7 @@ import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
+  callback: async ({ client }) => {
     while (true) {
       VCONT_CHANNELS.forEach(async (_channel) => {
         const channel = client.channels.cache.get(`${_channel}`) as TextChannel

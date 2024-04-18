@@ -1,9 +1,15 @@
 import { Client, Events } from 'discord.js'
+import { Spamtong } from '../spamtong'
 
 interface Event {
   name: Events | string,
   dev?: boolean | false,
-  callback: (client: Client, ...args: any[]) => void,
+  callback: (options: EventOptions, ...args: any[]) => void,
+}
+
+interface EventOptions {
+  client: Client,
+  instance: Spamtong,
 }
 
 interface EventsDir {

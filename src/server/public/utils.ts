@@ -1,4 +1,7 @@
 import { Message, Snowflake, TextChannel } from 'discord.js'
+import { readdir } from 'fs/promises'
+import { Dirent } from 'fs'
+import { join } from 'path'
 
 export function Sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
@@ -59,4 +62,36 @@ export function hashCode(str: string): number {
   }
 
   return hash
+}
+
+type AnyObject = {
+  [key: string]: any
+}
+
+export async function readObjects<T extends AnyObject>(dir: string): Promise<T[]> {
+  const stack: string[] = [dir]
+  const objects: T[] = []
+
+  while (stack.length > 0) {
+    const currentDir = stack.pop()
+    if (!currentDir) continue
+
+    const files: Dirent[] = await readdir(currentDir, { withFileTypes: true })
+
+    for (const file of files) {
+      const filePath = join(currentDir, file.name)
+
+      if (file.name.charAt(0) === '!') continue
+      if (!file.isDirectory() && !file.name.endsWith('.ts')) continue
+      if (file.isDirectory()) {
+        stack.push(filePath)
+        continue
+      }
+
+      const object: T = (await import(filePath)).default
+      objects.push(object)
+    }
+  }
+
+  return objects
 }

@@ -4,7 +4,7 @@ import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.MessageReactionAdd,
-  callback: async (client, react, user) => {
+  callback: async ({ client }, react, user) => {
     if (user.bot || !VCONT_CHANNELS.includes(react.message.channelId)) return
 
     const message = await (client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)

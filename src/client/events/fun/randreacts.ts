@@ -180,7 +180,7 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: Events.MessageCreate,
-  callback: async (client, message) => {
+  callback: async ({ client }, message) => {
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return

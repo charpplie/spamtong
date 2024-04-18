@@ -1,14 +1,16 @@
-import { SOptions } from '../spamtong'
-import { EventsDir } from './event'
+import { Event, EventsDir } from './event'
+import { readObjects } from 'public/utils'
+import { SOptions, Spamtong } from '../spamtong'
 import { Client } from 'discord.js'
-import { readdirSync } from 'fs'
-import { join } from 'path'
 
 export class EventHandler {
+  private instance: Spamtong
   private client: Client
   private isDev = false
 
-  public constructor(options: Omit<Required<SOptions>, 'token' | 'appId' | 'owner' | 'commandsDir'>) {
+  public constructor(instance: Spamtong, options: Omit<Required<SOptions>, 'token' | 'appId' | 'owner' | 'commandsDir'>) {
+    this.instance = instance
+
     const {
       client,
       isDev,
@@ -22,45 +24,44 @@ export class EventHandler {
   }
 
   private async registerEvents(eventsDir: EventsDir[]) {
-    const handler = async (dir: string, name_override?: string, dev?: boolean) => {
-      const files = readdirSync(dir, { withFileTypes: true })
+    for (const eventDir of eventsDir) {
+      const events = await readObjects<Event | Function>(eventDir.dir)
 
-      for (const file of files) {
-        const filePath = join(dir, file.name)
-
-        if (file.name.charAt(0) === '!') continue
-        if (!file.isDirectory() && !file.name.endsWith('.ts')) continue
-        if (file.isDirectory()) {
-          await handler(filePath, name_override, dev)
-          continue
-        }
-
-        const event = (await import(filePath)).default
+      for (const event of events) {
         if (this.isDev) {
-          if (dev) {
-            if (event.dev && event.dev === false) {
+          if (eventDir.dev) {
+            if (typeof event === 'object' && event.dev === false) {
               continue
             }
+          } else if (typeof event === 'object' && !event.dev) {
+            continue
           }
-          else if (!event.dev) continue
         }
 
-        if (name_override) {
-          if (event && typeof event === 'function') {
-            this.client.on(name_override, async (...args: any[]) => {
-              event(this.client, ...args)
+        if (eventDir.name_override) {
+          if (typeof event === 'function') {
+            this.client.on(eventDir.name_override, async (...args: any[]) => {
+              event({
+                client: this.client,
+                instance: this.instance,
+              }, ...args)
             })
           }
         } else {
-          if (event && typeof event.name === 'string' && typeof event.callback === 'function') {
+          if (
+            typeof event === 'object' &&
+            typeof event.name === 'string' &&
+            typeof event.callback === 'function'
+          ) {
             this.client.on(event.name, async (...args: any[]) => {
-              event.callback(this.client, ...args)
+              event.callback({
+                client: this.client,
+                instance: this.instance,
+              }, ...args)
             })
           }
         }
       }
     }
-
-    for (const eventDir of eventsDir) await handler(eventDir.dir, eventDir.name_override, eventDir.dev)
   }
 }

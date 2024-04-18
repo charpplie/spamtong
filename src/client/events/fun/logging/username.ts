@@ -3,7 +3,7 @@ import { GUILD, CHANNEL } from './!logging'
 
 export default {
   name: Events.GuildMemberUpdate,
-  callback: async (client, Old, New) => {
+  callback: async ({ client }, Old, New) => {
     if (Old.user.bot) return
  
     if (Old.nickname !== New.nickname) {
