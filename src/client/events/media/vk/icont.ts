@@ -27,9 +27,6 @@ const GUILDS: IGuildSettings[] = [
       {
         id: '255594607'
       },
-      {
-        id: '506134223'
-      },
     ]
   }
 ]
