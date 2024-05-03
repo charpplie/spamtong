@@ -1,4 +1,4 @@
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events } from 'jukai'
 import { GUILD, CHANNEL } from './!logging'
 import { createWriteStream, unlinkSync } from 'fs'
 import { join } from 'path'
@@ -6,10 +6,10 @@ import axios from 'axios'
 
 export default {
   name: Events.UserUpdate,
-  callback: async ({ client }, Old, New) => {
+  callback: async (instance, Old, New) => {
     if (Old.bot) return
 
-    const guild = client.guilds.cache.get(GUILD)
+    const guild = instance.client.guilds.cache.get(GUILD)
 
     const member = guild?.members.cache.get(`${Old.id}`)
     if (!member) return
@@ -42,7 +42,7 @@ export default {
             writer.on('error', reject)
           })
 
-          const res = await Utils.uploadToBucket(filePath).then(async (location) => {
+          const res = await instance.utils.bucket?.uploadObject(filePath).then(async (location) => {
             unlinkSync(filePath)
             await channel.send(`${date} | ${username} поставил [аватар](${location})`)
           })
@@ -63,7 +63,7 @@ export default {
             writer.on('error', reject)
           })
 
-          const res = await Utils.uploadToBucket(filePath).then(async (location) => {
+          const res = await instance.utils.bucket?.uploadObject(filePath).then(async (location) => {
             unlinkSync(filePath)
             await channel.send(`${date} | ${username} сменил [аватар](${process.env.bucketURL}/${process.env.bucketName}/${Old.avatar}.png) на [новый](${location})`)
           })

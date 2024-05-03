@@ -42,4 +42,11 @@ new Jukai({
         dir: join(__dirname, 'events')
       },
     ],
+  bucketOptions: {
+    bucketName: `${process.env.bucketName}`,
+    accessKeyId: `${process.env.bucketAccessKey}`,
+    secretAccessKey: `${process.env.bucketSecretAccessKey}`,
+    endpoint: `${process.env.bucketURL}`,
+    region: 'ru-1'
+  }
 })

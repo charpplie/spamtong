@@ -1,5 +1,5 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events } from 'jukai'
 import { GIContModel } from 'models/media/vk/gcont'
 import { unlinkSync, createWriteStream } from 'fs'
 import { vk } from './!vk'
@@ -20,7 +20,7 @@ const GUILDS: { guild: string, channel: string, groups: { id: string }[] }[] = [
 
 export default {
   name: Events.ClientReady,
-  callback: async ({ client }) => {
+  callback: async (instance, client) => {
     GUILDS.forEach(async (_guildInfo) => {
       const guild = client.guilds.cache.get(_guildInfo.guild)
       if (!guild) return
@@ -46,8 +46,8 @@ export default {
 
           let groupIcon: string | undefined
           if (groupHasPhoto) {
-            const hash = `${Utils.hashCode(groupPhoto)}`
-            const photos = await Utils.fetchObjectsInBucket()
+            const hash = `${instance.utils.hashCode(groupPhoto)}`
+            const photos = await instance.utils.bucket?.fetchObjects()
 
             if (!photos?.includes(`${groupId}_${hash}.png`)) {
               const filePath = join(__dirname, `${groupId}_${hash}.png`)
@@ -66,7 +66,7 @@ export default {
                 writer.on('error', reject)
               })
 
-              const groupIcon = await Utils.uploadToBucket(filePath).then(() => {
+              const groupIcon = await instance.utils.bucket?.uploadObject(filePath).then(() => {
                 unlinkSync(filePath)
               })
             }
@@ -79,7 +79,7 @@ export default {
               groupPhotos.forEach(async (photo: string) => {
                 if (photo === `${groupId}_${hash}.png`) {
                 } else {
-                  await Utils.deleteObjectInBucket(photo)
+                  await instance.utils.bucket?.deleteObject(photo)
                 }
               })
             }
@@ -123,14 +123,14 @@ export default {
               else
                 await GIContModel.update({ lastId: post.id }, { where: { guildId: guildId, groupId: groupId } })
 
-              await Utils.Sleep(1125)
+              await instance.utils.Sleep(1125)
             }
           }
         }
 
         while (true) {
           await main(group.id, _guildInfo.guild, channel)
-          await Utils.Sleep(120000)
+          await instance.utils.Sleep(120000)
         }
       })
     })

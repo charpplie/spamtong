@@ -3,11 +3,11 @@ import { GUILD, CHANNEL } from './!logging'
 
 export default {
   name: Events.GuildMemberUpdate,
-  callback: async ({ client }, Old, New) => {
+  callback: async (instance, Old, New) => {
     if (Old.user.bot) return
  
     if (Old.nickname !== New.nickname) {
-      const guild = client.guilds.cache.get(GUILD)
+      const guild = instance.client.guilds.cache.get(GUILD)
       const channel = guild?.channels.cache.get(CHANNEL)
       if (!channel || !channel.isTextBased()) return
 

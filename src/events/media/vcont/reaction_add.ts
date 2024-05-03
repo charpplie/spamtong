@@ -4,14 +4,14 @@ import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.MessageReactionAdd,
-  callback: async ({ client }, react, user) => {
+  callback: async (instance, react, user) => {
     if (user.bot || !VCONT_CHANNELS.includes(react.message.channelId)) return
 
-    const message = await (client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)
+    const message = await (instance.client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)
 
     if (!message.content.startsWith(`v${react.message.id}`)) return
 
-    const channel = client.channels.cache.get('1173213492153688098') as TextChannel
+    const channel = instance.client.channels.cache.get('1173213492153688098') as TextChannel
 
     const emoji = react._emoji.id ? `<:${react._emoji.name}:${react._emoji.id}>` : react._emoji.name
     if (emoji === '⭐') return

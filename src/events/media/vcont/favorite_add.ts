@@ -4,13 +4,13 @@ import { VCONT_CHANNELS } from './vcont'
 
 export default {
   name: Events.MessageReactionAdd,
-  callback: async ({ client }, react, user) => {
+  callback: async (instance, react, user) => {
     if (user.bot || !VCONT_CHANNELS.includes(react.message.channelId) || react._emoji.name !== '⭐') return
 
-    const channel = client.channels.cache.get('1173213492153688098')
+    const channel = instance.client.channels.cache.get('1173213492153688098')
     if (!channel || !channel.isTextBased()) return
 
-    const msgChannel = client.channels.cache.get(react.message.channelId)
+    const msgChannel = instance.client.channels.cache.get(react.message.channelId)
     if (!msgChannel || !msgChannel.isTextBased()) return
 
     const message = await msgChannel.messages.fetch(react.message.id)
@@ -23,7 +23,7 @@ export default {
     const favVid = await VCUser.findOne({ where: { guild: `${react.message.guildId}`, user: `${user.id}` } })
     if (favVid) {
       const dmId = favVid.get('dmId')
-      const dmChannel = client.channels.cache.get(`${(await user.createDM()).id}`)
+      const dmChannel = instance.client.channels.cache.get(`${(await user.createDM()).id}`)
       if (!dmChannel || !dmChannel.isTextBased()) return
       await VCUser.destroy({ where: { guild: `${react.message.guildId}`, user: `${user.id}`, guildId: `${message.id}`, dmId: `${dmId}` } })
       try { (await dmChannel.messages.fetch(`${dmId}`)).delete() } catch (why) { console.error(why) }

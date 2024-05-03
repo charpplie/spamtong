@@ -148,7 +148,7 @@
 //   }
 // } as Event
 
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events } from 'jukai'
 
 interface IGuildChance {
   chance: number,
@@ -179,7 +179,7 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: Events.MessageCreate,
-  callback: async ({ client }, message) => {
+  callback: async (instance, message) => {
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return
@@ -188,24 +188,24 @@ export default {
       GUILDS.forEach(async (guild) => {
         if (guild !== message.guild?.id) return
 
-        const _guild = client.guilds.cache.get(guild)
+        const _guild = instance.client.guilds.cache.get(guild)
         if (!_guild) return
 
         const emojis = _guild.emojis.cache.map((e: any) => { return `<:${e.name}:${e.id}>` })
 
         if (!CGuilds[`${guild}`]) resetGuildChances(guild)
         else {
-          if (Utils.Random() <= CGuilds[`${guild}`].chance) {
+          if (instance.utils.Random() <= CGuilds[`${guild}`].chance) {
             resetGuildChances(guild)
 
-            const messages = await Utils.fetchMessages(message.channel, 3)
+            const messages = await instance.utils.fetchMessages(message.channel, 3)
             if (messages.every(msg => msg.author.id === message.author.id)) {
               let text = ''
               messages.forEach(msg => { text += msg.content + ' '})
               if (text.match(EmojiRegExp)) {
-                if (Utils.Random() <= 23) {
+                if (instance.utils.Random() <= 23) {
                   const matches: string[] = text.match(EmojiRegExp) || []
-                  const emoji = matches[Utils.Random(matches.length)]
+                  const emoji = matches[instance.utils.Random(matches.length)]
                   message.react(emoji).catch(() => {})
                   return
                 }
@@ -213,15 +213,15 @@ export default {
             }
 
             if (message.content.match(EmojiRegExp)) {
-              if (Utils.Random() <= 17) {
+              if (instance.utils.Random() <= 17) {
                 const matches: string[] = message.content.match(EmojiRegExp) || []
-                const emoji = matches[Utils.Random(matches.length)]
+                const emoji = matches[instance.utils.Random(matches.length)]
                 message.react(emoji).catch(() => {})
                 return
               }
             }
 
-            const rand_emoji = emojis[Utils.Random(emojis.length)]
+            const rand_emoji = emojis[instance.utils.Random(emojis.length)]
             message.react(rand_emoji).catch(() => {})
             return
           }
