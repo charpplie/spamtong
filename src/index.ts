@@ -1,4 +1,4 @@
-import config from '../config.json'
+import config from '../../config.json'
 import { GatewayIntentBits, Partials } from 'discord.js'
 import { Jukai } from 'jukai'
 import { join } from 'path'

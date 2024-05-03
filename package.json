@@ -8,7 +8,7 @@
     "axios": "^1.6.8",
     "discord.js": "^14.14.1",
     "ffmpeggy": "^3.0.1",
-    "jukai": "file:../jukai",
+    "jukai": "https://github.com/charpplie/jukai.git",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
     "vk-io": "^4.9.1"
