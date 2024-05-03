@@ -1,4 +1,4 @@
-import { Event, Events } from 'public/comx'
+import { Event, Events } from 'jukai'
 import { GUILD, CHANNEL } from './!logging'
 
 export default {

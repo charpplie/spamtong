@@ -1,5 +1,4 @@
-import { Event, Events } from 'public/comx'
-import { Sleep } from 'public/utils'
+import { Event, Events, Utils } from 'jukai'
 
 const GIF = 'https://tenor.com/view/happy-birthday-cat-cute-birthday-cake-second-birthday-gif-16100991'
 
@@ -46,7 +45,7 @@ export default {
           }
         } else LUMEE = 0
       }
-      await Sleep(60000)
+      await Utils.Sleep(60000)
     }
   }
 } as Event

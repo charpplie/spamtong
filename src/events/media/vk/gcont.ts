@@ -1,8 +1,6 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
-import { Event, Events } from 'public/comx'
+import { Event, Events, Utils } from 'jukai'
 import { GIContModel } from 'models/media/vk/gcont'
-import { uploadToBucket, fetchObjectsInBucket, deleteObjectInBucket } from 'public/s3storage'
-import { Sleep, hashCode } from 'public/utils'
 import { unlinkSync, createWriteStream } from 'fs'
 import { vk } from './!vk'
 import axios from 'axios'
@@ -48,8 +46,8 @@ export default {
 
           let groupIcon: string | undefined
           if (groupHasPhoto) {
-            const hash = `${hashCode(groupPhoto)}`
-            const photos = await fetchObjectsInBucket()
+            const hash = `${Utils.hashCode(groupPhoto)}`
+            const photos = await Utils.fetchObjectsInBucket()
 
             if (!photos?.includes(`${groupId}_${hash}.png`)) {
               const filePath = join(__dirname, `${groupId}_${hash}.png`)
@@ -68,7 +66,7 @@ export default {
                 writer.on('error', reject)
               })
 
-              const groupIcon = await uploadToBucket(filePath).then(() => {
+              const groupIcon = await Utils.uploadToBucket(filePath).then(() => {
                 unlinkSync(filePath)
               })
             }
@@ -81,7 +79,7 @@ export default {
               groupPhotos.forEach(async (photo: string) => {
                 if (photo === `${groupId}_${hash}.png`) {
                 } else {
-                  await deleteObjectInBucket(photo)
+                  await Utils.deleteObjectInBucket(photo)
                 }
               })
             }
@@ -125,14 +123,14 @@ export default {
               else
                 await GIContModel.update({ lastId: post.id }, { where: { guildId: guildId, groupId: groupId } })
 
-              await Sleep(1125)
+              await Utils.Sleep(1125)
             }
           }
         }
 
         while (true) {
           await main(group.id, _guildInfo.guild, channel)
-          await Sleep(120000)
+          await Utils.Sleep(120000)
         }
       })
     })

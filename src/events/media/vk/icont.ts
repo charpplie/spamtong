@@ -1,8 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
-import { Event, Events } from 'public/comx'
+import { Event, Events, Utils } from 'jukai'
 import { ICPhoto } from 'models/media/vk/icont'
 import { ICPhotoIDs } from 'models/media/vk/icont_lastIds'
-import { Sleep } from 'public/utils'
 import { vk } from './!vk'
 
 const reactButtons = Array.from({ length: 5 }, (_, i) => new ButtonBuilder().setCustomId(`react${i + 1}`).setLabel(`${i + 1}️⃣`).setStyle(ButtonStyle.Secondary))
@@ -93,7 +92,7 @@ export default {
           else
             await ICPhotoIDs.update({ lastId: photo.id }, { where: { guildId: guildId, userId: userId } })
 
-          await Sleep(1125)
+          await Utils.Sleep(1125)
         }
       }
 
@@ -161,7 +160,7 @@ export default {
         for (const user of guild.users) {
           await main(parseInt(user.id), guild.guildId, channel)
         }
-        await Sleep(120000)
+        await Utils.Sleep(120000)
       }
     }
   }

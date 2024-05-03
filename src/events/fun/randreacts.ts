@@ -148,8 +148,7 @@
 //   }
 // } as Event
 
-import { Event, Events } from 'public/comx'
-import { fetchMessages, Random } from 'public/utils'
+import { Event, Events, Utils } from 'jukai'
 
 interface IGuildChance {
   chance: number,
@@ -196,17 +195,17 @@ export default {
 
         if (!CGuilds[`${guild}`]) resetGuildChances(guild)
         else {
-          if (Random() <= CGuilds[`${guild}`].chance) {
+          if (Utils.Random() <= CGuilds[`${guild}`].chance) {
             resetGuildChances(guild)
 
-            const messages = await fetchMessages(message.channel, 3)
+            const messages = await Utils.fetchMessages(message.channel, 3)
             if (messages.every(msg => msg.author.id === message.author.id)) {
               let text = ''
               messages.forEach(msg => { text += msg.content + ' '})
               if (text.match(EmojiRegExp)) {
-                if (Random() <= 23) {
+                if (Utils.Random() <= 23) {
                   const matches: string[] = text.match(EmojiRegExp) || []
-                  const emoji = matches[Random(matches.length)]
+                  const emoji = matches[Utils.Random(matches.length)]
                   message.react(emoji).catch(() => {})
                   return
                 }
@@ -214,15 +213,15 @@ export default {
             }
 
             if (message.content.match(EmojiRegExp)) {
-              if (Random() <= 17) {
+              if (Utils.Random() <= 17) {
                 const matches: string[] = message.content.match(EmojiRegExp) || []
-                const emoji = matches[Random(matches.length)]
+                const emoji = matches[Utils.Random(matches.length)]
                 message.react(emoji).catch(() => {})
                 return
               }
             }
 
-            const rand_emoji = emojis[Random(emojis.length)]
+            const rand_emoji = emojis[Utils.Random(emojis.length)]
             message.react(rand_emoji).catch(() => {})
             return
           }

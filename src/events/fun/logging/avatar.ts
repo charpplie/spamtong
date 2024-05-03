@@ -1,6 +1,5 @@
-import { Event, Events } from 'public/comx'
+import { Event, Events, Utils } from 'jukai'
 import { GUILD, CHANNEL } from './!logging'
-import { uploadToBucket } from 'public/s3storage'
 import { createWriteStream, unlinkSync } from 'fs'
 import { join } from 'path'
 import axios from 'axios'
@@ -43,7 +42,7 @@ export default {
             writer.on('error', reject)
           })
 
-          const res = await uploadToBucket(filePath).then(async (location) => {
+          const res = await Utils.uploadToBucket(filePath).then(async (location) => {
             unlinkSync(filePath)
             await channel.send(`${date} | ${username} поставил [аватар](${location})`)
           })
@@ -64,7 +63,7 @@ export default {
             writer.on('error', reject)
           })
 
-          const res = await uploadToBucket(filePath).then(async (location) => {
+          const res = await Utils.uploadToBucket(filePath).then(async (location) => {
             unlinkSync(filePath)
             await channel.send(`${date} | ${username} сменил [аватар](${process.env.bucketURL}/${process.env.bucketName}/${Old.avatar}.png) на [новый](${location})`)
           })

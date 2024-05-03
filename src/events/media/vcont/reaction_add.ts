@@ -1,9 +1,9 @@
-import { Event, Events } from 'public/comx'
+import { Event, Events } from 'jukai'
 import { VCONT_CHANNELS } from './vcont'
 import { TextChannel } from 'discord.js'
 
 export default {
-  name: Events.MessageReactionRemove,
+  name: Events.MessageReactionAdd,
   callback: async ({ client }, react, user) => {
     if (user.bot || !VCONT_CHANNELS.includes(react.message.channelId)) return
 
@@ -15,6 +15,6 @@ export default {
 
     const emoji = react._emoji.id ? `<:${react._emoji.name}:${react._emoji.id}>` : react._emoji.name
     if (emoji === '⭐') return
-    await channel.send(`${user.username} убрал реакцию ${emoji} с видео [v${react.message.id}](https://discord.com/channels/${message.guildId}/${message.channelId}/${react.message.id})`)
+    await channel.send(`${user.username} поставил реакцию ${emoji} на видео [v${react.message.id}](https://discord.com/channels/${message.guildId}/${message.channelId}/${react.message.id})`)
   }
 } as Event
