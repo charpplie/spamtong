@@ -3,7 +3,9 @@ import { GatewayIntentBits, Partials } from 'discord.js'
 import { Jukai } from 'jukai'
 import { join } from 'path'
 
-const bot = config.dev ?
+const isDev = process.argv.slice(2).includes('--dev')
+
+const bot = isDev ?
   {
     token: config.bot_dev.token,
     appId: config.bot_dev.appId,
@@ -38,25 +40,18 @@ new Jukai({
   token: bot.token,
   appId: bot.appId,
   owner: bot.owner,
-  isDev: config.dev,
+  isDev: isDev,
   eventsDir:
     [
       {
         dir: join(__dirname, 'models'),
         name_override: 'ready',
-        dev: config.dev
+        dev: isDev
       },
       {
         dir: join(__dirname, 'events')
       },
     ],
-  // featuresDir:
-  //   [
-  //     {
-  //       dir: join(__dirname, 'features'),
-  //       dev: config.dev
-  //     }
-  //   ],
   bucketOptions: {
     name: config.bucket.name,
     region: config.bucket.region,

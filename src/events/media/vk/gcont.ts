@@ -30,9 +30,7 @@ export default {
 
       _guildInfo.groups.forEach(async (group) => {
         async function main(groupId: string, guildId: string, channel: TextChannel) {
-          const ownerIcon = client.users.cache.get(`${process.env.owner}`)?.avatarURL({ forceStatic: true })
-
-          const embed = new EmbedBuilder().setColor('DarkPurple').setFooter({ text: `${process.env.copyright}`, iconURL: `${ownerIcon}` })
+          const embed = new EmbedBuilder().setColor('DarkPurple').setFooter({ text: `${process.env.copyright}`, iconURL: instance.getOwnerIcon() })
 
           const groups = await vk.api.groups.getById({ group_id: groupId, fields: ['photo_100', 'has_photo'] }).catch((why) => { console.error(why) })
           if (!groups) return
