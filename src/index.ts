@@ -1,7 +1,20 @@
-import config from '../../config.json'
+import config from '../config.json'
 import { GatewayIntentBits, Partials } from 'discord.js'
 import { Jukai } from 'jukai'
 import { join } from 'path'
+
+const bot = config.dev ?
+  {
+    token: config.bot_dev.token,
+    appId: config.bot_dev.appId,
+    owner: config.bot_dev.owner,
+  }
+  :
+  {
+    token: config.bot_prod.token,
+    appId: config.bot_prod.appId,
+    owner: config.bot_prod.owner,
+  }
 
 new Jukai({
   clientOptions: {
@@ -22,9 +35,9 @@ new Jukai({
     ],
     closeTimeout: 12000,
   },
-  token: config.bot.token,
-  appId: config.bot.appId,
-  owner: config.bot.owner,
+  token: bot.token,
+  appId: bot.appId,
+  owner: bot.owner,
   isDev: config.dev,
   eventsDir:
     [
