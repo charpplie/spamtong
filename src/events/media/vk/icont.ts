@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
-import { Event, Events } from 'jukai'
+import { Event, Events, Utils } from 'jukai'
 import { ICPhoto } from 'models/media/vk/icont'
 import { ICPhotoIDs } from 'models/media/vk/icont_lastIds'
 import { vk } from './!vk'
@@ -34,7 +34,7 @@ const ALBUM_ID = '-15' // Saved photos
 
 export default {
   name: Events.ClientReady,
-  callback: async (instance, client) => {
+  callback: async (client) => {
     for (const guild of GUILDS) {
       const _guild = client.guilds.cache.get(guild.guildId)
       if (!_guild) continue
@@ -45,7 +45,7 @@ export default {
       const embed = new EmbedBuilder()
         .setColor('DarkPurple')
         .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
-        .setFooter({ text: `${process.env.copyright}`, iconURL: instance.getOwnerIcon()})
+        .setFooter({ text: `${process.env.copyright}`})
         .setFields(
           { name: 'Rating', value: '0', inline: true },
           { name: 'Total rates', value: '0', inline: true },
@@ -92,7 +92,7 @@ export default {
           else
             await ICPhotoIDs.update({ lastId: photo.id }, { where: { guildId: guildId, userId: userId } })
 
-          await instance.utils.Sleep(1125)
+          await Utils.Sleep(1125)
         }
       }
 
@@ -160,7 +160,7 @@ export default {
         for (const user of guild.users) {
           await main(parseInt(user.id), guild.guildId, channel)
         }
-        await instance.utils.Sleep(120000)
+        await Utils.Sleep(120000)
       }
     }
   }

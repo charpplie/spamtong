@@ -1,25 +1,26 @@
-import config from '../config.json'
 import { GatewayIntentBits, Partials } from 'discord.js'
 import { Jukai } from 'jukai'
 import { join } from 'path'
+
+import config from '../config.json'
 
 const isDev = process.argv.slice(2).includes('--dev')
 
 const bot = isDev ?
   {
-    token: config.bot_dev.token,
-    appId: config.bot_dev.appId,
-    owner: config.bot_dev.owner,
+    token: config.bot.dev.token,
+    appId: config.bot.dev.appId,
+    owner: config.bot.dev.owner,
   }
   :
   {
-    token: config.bot_prod.token,
-    appId: config.bot_prod.appId,
-    owner: config.bot_prod.owner,
+    token: config.bot.prod.token,
+    appId: config.bot.prod.appId,
+    owner: config.bot.prod.owner,
   }
 
 new Jukai({
-  clientOptions: {
+  client: {
     intents: [
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMembers,
@@ -52,11 +53,4 @@ new Jukai({
         dir: join(__dirname, 'events')
       },
     ],
-  bucketOptions: {
-    name: config.bucket.name,
-    region: config.bucket.region,
-    endpoint: config.bucket.endpoint,
-    accessKey: config.bucket.accessKey,
-    secretKey: config.bucket.secretKey,
-  }
 })

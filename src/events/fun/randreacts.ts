@@ -148,7 +148,7 @@
 //   }
 // } as Event
 
-import { Event, Events } from 'jukai'
+import { Event, Events, Utils } from 'jukai'
 
 interface IGuildChance {
   chance: number,
@@ -168,7 +168,6 @@ const CHANCE_INC = 1.15
 
 const EmojiRegExp: RegExp = /<:[^>]+>/g
 
-
 function resetGuildChances(guild: string) {
   CGuilds[`${guild}`] = {
     chance: INIT_CHANCE,
@@ -179,7 +178,7 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: Events.MessageCreate,
-  callback: async (instance, message) => {
+  callback: async (client, message) => {
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return
@@ -188,47 +187,47 @@ export default {
       GUILDS.forEach(async (guild) => {
         if (guild !== message.guild?.id) return
 
-        const _guild = instance.client.guilds.cache.get(guild)
+        const _guild = client.guilds.cache.get(guild)
         if (!_guild) return
 
         const emojis = _guild.emojis.cache.map((e: any) => { return `<:${e.name}:${e.id}>` })
 
         if (!CGuilds[`${guild}`]) resetGuildChances(guild)
         else {
-          if (instance.utils.Random() <= CGuilds[`${guild}`].chance) {
+          if (Utils.Random(100) <= CGuilds[`${guild}`].chance) {
             resetGuildChances(guild)
 
-            const messages = await instance.utils.fetchMessages(message.channel, 3)
+            const messages = await Utils.fetchMessages(message.channel, 3)
             if (messages.every(msg => msg.author.id === message.author.id)) {
               let text = ''
-              messages.forEach(msg => { text += msg.content + ' '})
+              messages.forEach(msg => { text += msg.content + ' ' })
               if (text.match(EmojiRegExp)) {
-                if (instance.utils.Random() <= 23) {
+                if (Utils.Random(100) <= 23) {
                   const matches: string[] = text.match(EmojiRegExp) || []
-                  const emoji = matches[instance.utils.Random(matches.length)]
-                  message.react(emoji).catch(() => {})
+                  const emoji = matches[Utils.Random(matches.length)]
+                  message.react(emoji).catch(() => { })
                   return
                 }
               }
             }
 
             if (message.content.match(EmojiRegExp)) {
-              if (instance.utils.Random() <= 17) {
+              if (Utils.Random(100) <= 17) {
                 const matches: string[] = message.content.match(EmojiRegExp) || []
-                const emoji = matches[instance.utils.Random(matches.length)]
-                message.react(emoji).catch(() => {})
+                const emoji = matches[Utils.Random(matches.length)]
+                message.react(emoji).catch(() => { })
                 return
               }
             }
 
-            const rand_emoji = emojis[instance.utils.Random(emojis.length)]
-            message.react(rand_emoji).catch(() => {})
+            const rand_emoji = emojis[Utils.Random(emojis.length)]
+            message.react(rand_emoji).catch(() => { })
             return
           }
 
           CGuilds[`${guild}`] = { chance: INIT_CHANCE + (CGuilds[`${guild}`].increment * CGuilds[`${guild}`].numberOfTriggers), increment: CHANCE_INC, numberOfTriggers: CGuilds[`${guild}`].numberOfTriggers += 1 }
         }
       })
-    } catch (why) {}
+    } catch (why) { }
   }
 } as Event

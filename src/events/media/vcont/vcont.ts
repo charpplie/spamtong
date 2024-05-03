@@ -1,5 +1,5 @@
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
-import { Event, Events } from 'jukai'
+import { Event, Events, Utils } from 'jukai'
 import { join } from 'path'
 import axios from 'axios'
 import { FFmpeggy } from 'ffmpeggy'
@@ -17,7 +17,7 @@ export const VCONT_CHANNELS = ['1181427849303965768']
 
 export default {
   name: Events.MessageCreate,
-  callback: async (instance, message) => {
+  callback: async (client, message) => {
     if (message.author.bot || !message.guild || !VCONT_CHANNELS.includes(message.channel.id) || message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) return
 
     const _message = message
@@ -25,7 +25,7 @@ export default {
     for (let i = 0; i < _message.attachments.size; i++) {
       const attachment = _message.attachments.at(i)
       if (!attachment || !attachment.contentType?.startsWith('video')) continue
-      const filePath = join(__dirname, `${_message.id}${instance.utils.RandomText(6)}${attachment.name}`)
+      const filePath = join(__dirname, `${_message.id}${Utils.RandomText(6)}${attachment.name}`)
       const writer = createWriteStream(filePath)
 
       const response = await axios({
@@ -41,7 +41,7 @@ export default {
         writer.on('error', reject)
       })
 
-      const convertedFilePath = join(__dirname, `${_message.id}${instance.utils.RandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
+      const convertedFilePath = join(__dirname, `${_message.id}${Utils.RandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
 
       FFmpeggy.DefaultConfig = { ...FFmpeggy.DefaultConfig, ffmpegBin: '/usr/bin/ffmpeg' }
 

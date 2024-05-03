@@ -1,14 +1,14 @@
-import { Event, Events } from 'jukai'
+import { Event, Events, Utils } from 'jukai'
 import { VCONT_CHANNELS, VCONT_REACTIONS } from './vcont'
 import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.ClientReady,
-  callback: async (instance, client) => {
+  callback: async (client) => {
     while (true) {
       VCONT_CHANNELS.forEach(async (_channel) => {
         const channel = client.channels.cache.get(`${_channel}`) as TextChannel
-        const messages = await instance.utils.fetchMessages(channel, 1000)
+        const messages = await Utils.fetchMessages(channel, 1000)
         messages.forEach(message => {
           if (!message.member?.user.bot) return
           if (message.member.user.id !== client.application?.id) return
@@ -21,7 +21,7 @@ export default {
         })
       })
 
-      await instance.utils.Sleep(12 * 60 * 60 * 1000)
+      await Utils.Sleep(12 * 60 * 60 * 1000)
     }
   }
 } as Event
