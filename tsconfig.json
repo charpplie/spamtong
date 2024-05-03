@@ -10,10 +10,11 @@
     "strict": true,
     "alwaysStrict": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "paths": {
       "models/*": [
         "./src/models/*"
-      ],
+      ]
     }
   }
 }

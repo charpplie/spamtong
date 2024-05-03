@@ -1,12 +1,20 @@
+import config from '../config.json'
 import { GatewayIntentBits, Partials } from 'discord.js'
 import { Jukai } from 'jukai'
 import { join } from 'path'
-import dotenv from 'dotenv'
 
-const args = process.argv.slice(2)
-const IS_DEV = args.includes('--dev')
-
-dotenv.config({ path: IS_DEV ? '.env' : '../.env' })
+const bot = config.dev ?
+  {
+    token: config.bot_dev.token,
+    appId: config.bot_dev.appId,
+    owner: config.bot_dev.owner,
+  }
+  :
+  {
+    token: config.bot_prod.token,
+    appId: config.bot_prod.appId,
+    owner: config.bot_prod.owner,
+  }
 
 new Jukai({
   clientOptions: {
@@ -27,26 +35,33 @@ new Jukai({
     ],
     closeTimeout: 12000,
   },
-  token: `${process.env.token}`,
-  appId: `${process.env.appId}`,
-  owner: `${process.env.owner}`,
-  // isDev: IS_DEV,
+  token: bot.token,
+  appId: bot.appId,
+  owner: bot.owner,
+  isDev: config.dev,
   eventsDir:
     [
       {
         dir: join(__dirname, 'models'),
         name_override: 'ready',
-        dev: IS_DEV
+        dev: config.dev
       },
       {
         dir: join(__dirname, 'events')
       },
     ],
+  // featuresDir:
+  //   [
+  //     {
+  //       dir: join(__dirname, 'features'),
+  //       dev: config.dev
+  //     }
+  //   ],
   bucketOptions: {
-    bucketName: `${process.env.bucketName}`,
-    accessKeyId: `${process.env.bucketAccessKey}`,
-    secretAccessKey: `${process.env.bucketSecretAccessKey}`,
-    endpoint: `${process.env.bucketURL}`,
-    region: 'ru-1'
+    name: config.bucket.name,
+    region: config.bucket.region,
+    endpoint: config.bucket.endpoint,
+    accessKey: config.bucket.accessKey,
+    secretKey: config.bucket.secretKey,
   }
 })
