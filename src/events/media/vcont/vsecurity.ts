@@ -1,4 +1,4 @@
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events, Utils } from 'comx'
 import { VCONT_CHANNELS, VCONT_REACTIONS } from './vcont'
 import { TextChannel } from 'discord.js'
 

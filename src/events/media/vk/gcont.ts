@@ -1,5 +1,5 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events, Utils } from 'comx'
 import { GIContModel } from 'models/media/vk/gcont'
 import { unlinkSync, createWriteStream } from 'fs'
 import { vk } from './!vk'

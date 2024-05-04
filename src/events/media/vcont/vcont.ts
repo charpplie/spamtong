@@ -1,5 +1,5 @@
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events, Utils } from 'comx'
 import { join } from 'path'
 import axios from 'axios'
 import { FFmpeggy } from 'ffmpeggy'

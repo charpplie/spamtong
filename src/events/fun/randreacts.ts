@@ -148,7 +148,7 @@
 //   }
 // } as Event
 
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events, Utils } from 'comx'
 
 interface IGuildChance {
   chance: number,

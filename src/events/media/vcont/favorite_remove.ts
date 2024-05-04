@@ -1,4 +1,4 @@
-import { Event, Events } from 'jukai'
+import { Event, Events } from 'comx'
 import { VCUser } from 'models/media/vcont_fav'
 import { VCONT_CHANNELS } from './vcont'
 import { TextChannel } from 'discord.js'

@@ -1,25 +1,10 @@
 import { GatewayIntentBits, Partials } from 'discord.js'
-import { Jukai } from 'jukai'
+import { Spamtong } from 'comx'
 import { join } from 'path'
-
-import config from '../config.json'
 
 const isDev = process.argv.slice(2).includes('--dev')
 
-const bot = isDev ?
-  {
-    token: config.bot.dev.token,
-    appId: config.bot.dev.appId,
-    owner: config.bot.dev.owner,
-  }
-  :
-  {
-    token: config.bot.prod.token,
-    appId: config.bot.prod.appId,
-    owner: config.bot.prod.owner,
-  }
-
-new Jukai({
+new Spamtong({
   client: {
     intents: [
       GatewayIntentBits.Guilds,
@@ -38,19 +23,19 @@ new Jukai({
     ],
     closeTimeout: 12000,
   },
-  token: bot.token,
-  appId: bot.appId,
-  owner: bot.owner,
+  token: `${process.env.token}`,
+  appId: `${process.env.appId}`,
+  owner: `${process.env.owner}`,
   isDev: isDev,
   eventsDir:
     [
       {
         dir: join(__dirname, 'models'),
         name_override: 'ready',
-        dev: isDev
+        dev: isDev,
       },
       {
-        dir: join(__dirname, 'events')
+        dir: join(__dirname, 'events'),
       },
     ],
 })

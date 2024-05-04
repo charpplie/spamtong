@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
-import { Event, Events, Utils } from 'jukai'
+import { Event, Events, Utils } from 'comx'
 import { ICPhoto } from 'models/media/vk/icont'
 import { ICPhotoIDs } from 'models/media/vk/icont_lastIds'
 import { vk } from './!vk'
