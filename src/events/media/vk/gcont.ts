@@ -1,28 +1,16 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
-import { Event, Events, Utils } from 'comx'
+import { Event, Events, Utils, Constants } from 'comx'
 import { GIContModel } from 'models/media/vk/gcont'
 import { unlinkSync, createWriteStream } from 'fs'
 import { vk } from './!vk'
 import axios from 'axios'
 import { join } from 'path'
 
-const GUILDS: { guild: string, channel: string, groups: { id: string }[] }[] = [
-  {
-    guild: '1150427580734906368',
-    channel: '1220325347699195965',
-    groups: [
-      {
-        id: '135729590'
-      },
-    ]
-  },
-]
-
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
-    GUILDS.forEach(async (_guildInfo) => {
-      const guild = client.guilds.cache.get(_guildInfo.guild)
+  callback: async (instance) => {
+    Constants.gcont.forEach(async (_guildInfo) => {
+      const guild = instance.client.guilds.cache.get(_guildInfo.guild)
       if (!guild) return
 
       const channel = guild.channels.cache.get(_guildInfo.channel)
@@ -30,7 +18,7 @@ export default {
 
       _guildInfo.groups.forEach(async (group) => {
         async function main(groupId: string, guildId: string, channel: TextChannel) {
-          const embed = new EmbedBuilder().setColor('DarkPurple').setFooter({ text: `${process.env.copyright}` })
+          const embed = new EmbedBuilder().setColor('DarkPurple').setFooter({ text: Constants.copyright, iconURL: instance.getOwnerIcon() })
 
           const groups = await vk.api.groups.getById({ group_id: groupId, fields: ['photo_100', 'has_photo'] }).catch((why) => { console.error(why) })
           if (!groups) return
@@ -103,7 +91,7 @@ export default {
               // if (groupIcon !== undefined) {
               //   embed.setAuthor({ name: `${groupName}`, url: `https://vk.com/public${groupId}` })
               // } else {
-                embed.setAuthor({ name: `${groupName}`, url: `https://vk.com/public${groupId}` })
+              embed.setAuthor({ name: `${groupName}`, url: `https://vk.com/public${groupId}` })
               // }
 
               if (post.text) {

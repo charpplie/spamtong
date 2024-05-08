@@ -1,24 +1,13 @@
 import { createWriteStream, unlinkSync, readFileSync } from 'fs'
-import { Event, Events, Utils } from 'comx'
+import { Event, Events, Utils, Constants} from 'comx'
+import { FFmpeggy } from 'ffmpeggy'
 import { join } from 'path'
 import axios from 'axios'
-import { FFmpeggy } from 'ffmpeggy'
-
-export const VCONT_REACTIONS = [
-  '1️⃣',
-  '2️⃣',
-  '3️⃣',
-  '4️⃣',
-  '5️⃣',
-  '⭐',
-]
-
-export const VCONT_CHANNELS = ['1181427849303965768']
 
 export default {
   name: Events.MessageCreate,
-  callback: async (client, message) => {
-    if (message.author.bot || !message.guild || !VCONT_CHANNELS.includes(message.channel.id) || message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) return
+  callback: async (instance, message) => {
+    if (message.author.bot || !message.guild || !Constants.vcont_channels.includes(message.channel.id) || message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) return
 
     const _message = message
     await message.delete()
@@ -64,8 +53,8 @@ export default {
             const guild = _message.guild
             const user = guild.members.cache.get(_message.author.id)
             await interaction.edit(`v${interaction.id}\n${user?.nickname ? user?.nickname : user?.user.username}: ${_message.content ? _message.content : ''}`).catch((why: any) => console.error(why))
-            for (let j = 0; j < VCONT_REACTIONS.length; j++) {
-              await interaction.react(VCONT_REACTIONS[j]).catch((why: any) => console.error(why))
+            for (let j = 0; j < Constants.vcont_reacts.length; j++) {
+              await interaction.react(Constants.vcont_reacts[j]).catch((why: any) => console.error(why))
             }
           })
         })

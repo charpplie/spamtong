@@ -1,6 +1,5 @@
 // import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from 'discord.js'
-// import { OptionAllowedChannelTypes, SlashCommand } from './command'
-// import { SOptions } from '../../spamtong'
+// import { OptionAllowedChannelTypes, SlashCommand } from 'comx'
 // import { readdirSync } from 'fs'
 // import { join } from 'path'
 
@@ -14,7 +13,7 @@
 //   private slashCommandsGlobal: SlashCommandBuilder[] = []
 //   private slashCommandsGuilds: SlashCommandBuilder[] = []
 
-//   public constructor(options: Omit<Required<SOptions>, 'isDev' | 'eventsDir'>) {
+//   public constructor(options: Options) {
 //     const {
 //       client,
 //       token,
@@ -446,4 +445,12 @@
 
 // interface IGuildCommands {
 //   [guild: string]: SlashCommandBuilder[]
+// }
+
+// interface Options {
+//   client: Client,
+//   token: string,
+//   appId: string,
+//   owner: string,
+//   commandsDir: string[],
 // }

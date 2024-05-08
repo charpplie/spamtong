@@ -178,7 +178,7 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: Events.MessageCreate,
-  callback: async (client, message) => {
+  callback: async (instance, message) => {
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return
@@ -187,7 +187,7 @@ export default {
       GUILDS.forEach(async (guild) => {
         if (guild !== message.guild?.id) return
 
-        const _guild = client.guilds.cache.get(guild)
+        const _guild = instance.client.guilds.cache.get(guild)
         if (!_guild) return
 
         const emojis = _guild.emojis.cache.map((e: any) => { return `<:${e.name}:${e.id}>` })

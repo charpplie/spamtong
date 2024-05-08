@@ -1,26 +1,23 @@
-import { Event, Events } from 'comx'
+import { Event, Events, Constants } from 'comx'
 import { VCUser } from 'models/media/vcont_fav'
-import { VCONT_CHANNELS } from './vcont'
 import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.MessageReactionRemove,
-  callback: async (client, react, user) => {
-    if (user.bot) return
-    if (!VCONT_CHANNELS.includes(react.message.channelId)) return
-    if (react._emoji.name !== '⭐') return
+  callback: async (instance, react, user) => {
+    if (user.bot || !Constants.vcont_channels.includes(react.message.channelId) || react._emoji.name !== '⭐') return
 
-    const message = await (client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)
+    const message = await (instance.client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)
 
     if (!message.content.startsWith(`v${message.id}`)) return
 
-    const dmChannel = client.channels.cache.get(`${(await user.createDM()).id}`) as TextChannel
-    const dmMessage = await VCUser.findOne({ where: { guild: `${react.message.guildId}`, user: `${user.id}`, guildId: `${message.id}`}}).catch(() => {})
+    const dmChannel = instance.client.channels.cache.get(`${(await user.createDM()).id}`) as TextChannel
+    const dmMessage = await VCUser.findOne({ where: { guild: `${react.message.guildId}`, user: `${user.id}`, guildId: `${message.id}` } }).catch(() => { })
 
     if (dmMessage) {
       const id = dmMessage.get('dmId')
-      ;(await dmChannel.messages.fetch(`${id}`)).delete()
-      await VCUser.destroy({ where: { guild: `${react.message.guildId}`, user: `${user.id}`, guildId: `${message.id}`, dmId: `${id}`}})
+        ; (await dmChannel.messages.fetch(`${id}`)).delete()
+      await VCUser.destroy({ where: { guild: `${react.message.guildId}`, user: `${user.id}`, guildId: `${message.id}`, dmId: `${id}` } })
     }
   }
 } as Event

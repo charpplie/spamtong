@@ -1,17 +1,22 @@
-import { Event, EventsDir, Utils } from 'comx'
+import { Event, EventsDir } from '../structures/event'
 import { Client } from 'discord.js'
+import { Utils } from '../comx'
+import { Jukai } from './jukai'
 
 export class EventHandler {
+  private instance: Jukai
   private client: Client
   private isDev: boolean
 
   public constructor(options: Options) {
     const {
+      instance,
       client,
       events,
       isDev,
     } = options
 
+    this.instance = instance
     this.client = client
     this.isDev = isDev
 
@@ -36,13 +41,13 @@ export class EventHandler {
         if (eventDir.name_override) {
           if (typeof event === 'function') {
             this.client.on(eventDir.name_override, async (...args: any[]) => {
-              event(this.client, ...args)
+              event(this.instance, ...args)
             })
           }
         } else {
           if (typeof event === 'object' && typeof event.name === 'string' && typeof event.callback === 'function') {
             this.client.on(event.name, async (...args: any[]) => {
-              event.callback(this.client, ...args)
+              event.callback(this.instance, ...args)
             })
           }
         }
@@ -52,6 +57,7 @@ export class EventHandler {
 }
 
 interface Options {
+  instance: Jukai,
   client: Client,
   events: EventsDir[],
   isDev: boolean,

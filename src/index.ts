@@ -1,10 +1,10 @@
 import { GatewayIntentBits, Partials } from 'discord.js'
-import { Spamtong } from 'comx'
+import { Jukai } from './public/classes/jukai'
 import { join } from 'path'
 
 const isDev = process.argv.slice(2).includes('--dev')
 
-new Spamtong({
+new Jukai({
   client: {
     intents: [
       GatewayIntentBits.Guilds,

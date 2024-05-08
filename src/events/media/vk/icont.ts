@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder, Interaction, TextChannel } from 'discord.js'
-import { Event, Events, Utils } from 'comx'
+import { Event, Events, Utils, Constants } from 'comx'
 import { ICPhoto } from 'models/media/vk/icont'
 import { ICPhotoIDs } from 'models/media/vk/icont_lastIds'
 import { vk } from './!vk'
@@ -7,36 +7,11 @@ import { vk } from './!vk'
 const reactButtons = Array.from({ length: 5 }, (_, i) => new ButtonBuilder().setCustomId(`react${i + 1}`).setLabel(`${i + 1}️⃣`).setStyle(ButtonStyle.Secondary))
 const row = new ActionRowBuilder().addComponents(...reactButtons)
 
-interface IUserSettings {
-  id: string,
-  channelOverride?: string,
-}
-
-interface IGuildSettings {
-  guildId: string,
-  channelId: string,
-  users: IUserSettings[],
-}
-
-const GUILDS: IGuildSettings[] = [
-  {
-    guildId: '1150427580734906368',
-    channelId: '1177374466448302180',
-    users: [
-      {
-        id: '255594607'
-      },
-    ]
-  }
-]
-
-const ALBUM_ID = '-15' // Saved photos
-
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
-    for (const guild of GUILDS) {
-      const _guild = client.guilds.cache.get(guild.guildId)
+  callback: async (instance) => {
+    for (const guild of Constants.icont) {
+      const _guild = instance.client.guilds.cache.get(guild.guildId)
       if (!_guild) continue
 
       const channel = _guild.channels.cache.get(guild.channelId)
@@ -45,7 +20,7 @@ export default {
       const embed = new EmbedBuilder()
         .setColor('DarkPurple')
         .setTitle('Новая сохранёнка для ценителей Гигаскусства!')
-        .setFooter({ text: `${process.env.copyright}`})
+        .setFooter({ text: Constants.copyright, iconURL: instance.getOwnerIcon() })
         .setFields(
           { name: 'Rating', value: '0', inline: true },
           { name: 'Total rates', value: '0', inline: true },
@@ -60,7 +35,7 @@ export default {
         const authorName = `${author.first_name} ${author.last_name}`
         const authorIcon = `${author.photo_100}`
 
-        const r = await vk.api.photos.get({ owner_id: userId, album_id: ALBUM_ID, rev: 1 }).catch((why) => { console.error(why) })
+        const r = await vk.api.photos.get({ owner_id: userId, album_id: Constants.icont_album, rev: 1 }).catch((why) => { console.error(why) })
         if (!r) return
 
         const lastIds = await ICPhotoIDs.findOne({ where: { guildId: guildId, userId: userId } })
@@ -96,7 +71,7 @@ export default {
         }
       }
 
-      client.on(Events.InteractionCreate, async (interaction: Interaction) => {
+      instance.client.on(Events.InteractionCreate, async (interaction: Interaction) => {
         if (!interaction.isButton() || interaction.channelId !== channel.id) return
 
         await interaction.deferReply({ ephemeral: true })

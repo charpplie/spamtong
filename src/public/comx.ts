@@ -1,195 +1,44 @@
-import {
-  AutocompleteInteraction,
-  ChannelType,
-  ClientOptions,
-  Client,
-  CommandInteraction,
-  Events,
-  LocalizationMap,
-  Message,
-  Snowflake,
-  TextChannel,
-  APIApplicationCommandOptionChoice
-} from 'discord.js'
-import { EventHandler } from './handlers/eventHandler'
-import { Dirent, readFileSync } from 'fs'
-import { readdir } from 'fs/promises'
-import { join } from 'path'
-import axios from 'axios'
+import { CUtils } from './classes/utils'
 
-class Spamtong {
-  private client: Client
+export const Utils = new CUtils()
 
-  public constructor(options: Options) {
-    const {
-      client,
-      token,
-      appId,
-      owner,
-      isDev,
-      commandsDir,
-      eventsDir,
-    } = options
-
-    this.client = new Client(client)
-
-    if (eventsDir) {
-      new EventHandler({
-        client: this.client,
-        events: eventsDir,
-        isDev: isDev,
-      })
+export const Constants = {
+  vcont_channels: ['1181427849303965768'],
+  vcont_reacts: [
+    '1️⃣',
+    '2️⃣',
+    '3️⃣',
+    '4️⃣',
+    '5️⃣',
+    '⭐',
+  ],
+  icont: [
+    {
+      guildId: '1150427580734906368',
+      channelId: '1177374466448302180',
+      users: [
+        {
+          id: '255594607'
+        },
+      ]
     }
-
-    this.client.login(token)
-  }
+  ],
+  icont_album: '-15',
+  gcont: [
+    {
+      guild: '1150427580734906368',
+      channel: '1220325347699195965',
+      groups: [
+        {
+          id: '135729590'
+        },
+      ]
+    },
+  ],
+  funlog_guild: '1150427580734906368',
+  funlog_channel: '1204439974766706698',
+  copyright: 'xyerssisya (C) 2021-2024. All kromers reserved.'
 }
 
-interface Options {
-  client: ClientOptions,
-  token: string,
-  appId: string,
-  owner: string,
-  isDev: boolean,
-  commandsDir?: string[],
-  eventsDir?: EventsDir[],
-}
-
-class CUtils {
-  constructor() { }
-
-  public async readObjects<T>(dir: string): Promise<T[]> {
-    const stack: string[] = [dir]
-    const objects: T[] = []
-
-    while (stack.length > 0) {
-      const currentDir = stack.pop()
-      if (!currentDir) continue
-
-      try {
-        const files = await readdir(currentDir, { withFileTypes: true })
-
-        for (const file of files) {
-          if (this.shouldSkipFile(file)) continue
-
-          const filePath = join(currentDir, file.name)
-          if (file.isDirectory()) {
-            stack.push(filePath)
-          } else {
-            const object: T = (await import('file://' + filePath)).default
-            objects.push(object)
-          }
-        }
-      } catch (error) {
-        console.error(`Error reading directory ${currentDir}: ${error}`)
-      }
-    }
-
-    return objects
-  }
-
-  private shouldSkipFile(file: Dirent): boolean {
-    return file.name.startsWith('!') || (!file.isDirectory() && !(file.name.endsWith('.ts') || !file.name.endsWith('.js')))
-  }
-
-  public Sleep(ms: number): Promise<unknown> {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
-  public Random(limit: number): number {
-    return Math.floor(Math.random() * limit)
-  }
-
-  public RandomText(length: number): string {
-    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-    let randomText = ''
-
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length)
-      randomText += characters.charAt(randomIndex)
-    }
-
-    return randomText
-  }
-
-  public async fetchMessages(channel: TextChannel, limit: number): Promise<Message[]> {
-    let out: Message[] = []
-
-    if (limit <= 100) {
-      const messages = await channel.messages.fetch({ limit: limit })
-      out.push(...messages.values())
-    } else {
-      let rounds = Math.ceil(limit / 100)
-      let lastId: Snowflake | undefined = undefined
-
-      for (let i = 0; i < rounds; i++) {
-        const options: { limit: number; before?: Snowflake } = {
-          limit: 100
-        }
-
-        if (lastId) {
-          options.before = lastId
-        }
-
-        const messages = await channel.messages.fetch(options)
-
-        if (messages.size === 0) break
-
-        out.push(...messages.values())
-        lastId = messages.lastKey()!
-      }
-    }
-
-    return out
-  }
-
-  public async uploadToImgur(accessToken: string, filename: string) {
-    try {
-      const response = await axios.post(
-        'https://api.imgur.com/3/image',
-        { image: readFileSync(filename, 'base64'), type: 'base64' },
-        { headers: { Authorization: `Client-ID ${accessToken}` } },
-      )
-
-      return response.data.data.link
-    } catch (why) {
-      console.error(why)
-    }
-  }
-
-  public hashCode(str: string): number {
-    let hash = 0
-
-    if (str.length == 0) return hash
-
-    for (let i = 0; i < str.length; i++) {
-      let char = str.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
-      hash = hash & hash
-    }
-
-    return hash
-  }
-}
-
-const Utils = new CUtils()
-
-interface Event {
-  name: Events | string,
-  dev?: boolean | false,
-  callback: (client: Client, ...args: any[]) => void,
-}
-
-interface EventsDir {
-  dir: string,
-  dev?: boolean | false,
-  name_override?: Events | string,
-}
-
-export {
-  Spamtong,
-  Utils,
-  Event,
-  Events,
-  EventsDir,
-}
+export { Command } from './structures/command'
+export { Event, Events } from './structures/event'
