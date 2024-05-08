@@ -94,7 +94,7 @@ export default {
               embed.setAuthor({ name: `${groupName}`, url: `https://vk.com/public${groupId}` })
               // }
 
-              if (post.text) {
+              if (post.text && post.text.length <= 4000) {
                 embed.setDescription(`${post.text}`)
               } else {
                 embed.setDescription(null)
