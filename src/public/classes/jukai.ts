@@ -1,11 +1,11 @@
 import { Client, ClientOptions } from 'discord.js'
+import { CommandHandler } from './commandHandler'
 import { EventHandler } from './eventHandler'
 import { EventsDir } from '../structures/event'
 
 export class Jukai {
+  private client: Client
   private owner: string
-
-  public client: Client
 
   public constructor(options: Options) {
     const {
@@ -21,15 +21,15 @@ export class Jukai {
     this.client = new Client(client)
     this.owner = owner
 
-    // if (commandsDir) {
-    //   new SlashCommandHandler({
-    //     client: this.client,
-    //     token: token,
-    //     appId: appId,
-    //     owner: owner,
-    //     commandsDir: commandsDir,
-    //   })
-    // }
+    if (commandsDir) {
+      new CommandHandler({
+        client: this.client,
+        token: token,
+        appId: appId,
+        owner: owner,
+        commandsDir: commandsDir,
+      })
+    }
 
     if (eventsDir) {
       new EventHandler({
