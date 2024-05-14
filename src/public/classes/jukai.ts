@@ -4,7 +4,7 @@ import { EventHandler } from './eventHandler'
 import { EventsDir } from '../structures/event'
 
 export class Jukai {
-  private client: Client
+  public client: Client
   private owner: string
 
   public constructor(options: Options) {

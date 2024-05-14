@@ -28,13 +28,18 @@ export class EventHandler {
       const events = await Utils.readObjects<Event | Function>(eventDir.dir)
 
       for (const event of events) {
-        if (this.isDev) {
-          if (eventDir.dev)
-            if (typeof event === 'object' && event.dev === false)
+        if (this.isDev && typeof event === 'object') {
+          if (eventDir.dev) {
+            if (event.dev === false) {
               continue
-            else if (typeof event === 'object' && !event.dev)
-              continue
-        } else {
+            }
+          } else if (!event.dev) {
+            continue
+          }
+        } else if (typeof event === 'object') {
+          if (event.dev === true) {
+            continue
+          }
         }
 
         if (eventDir.name_override) {
