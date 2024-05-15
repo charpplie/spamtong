@@ -1,4 +1,10 @@
-import { APIApplicationCommandOptionChoice, AutocompleteInteraction, CommandInteraction, LocalizationMap } from 'discord.js'
+import {
+  APIApplicationCommandOptionChoice,
+  AutocompleteInteraction,
+  ChannelType,
+  CommandInteraction,
+  LocalizationMap
+} from 'discord.js'
 
 export interface Command {
   name: string,
@@ -18,7 +24,7 @@ export interface Command {
     maxLength?: number,
     minValue?: number,
     maxValue?: number,
-    // channelTypes?: OptionAllowedChannelType[],
+    channelTypes?: OptionAllowedChannelType[],
   }[],
   default_member_permissions?: string | bigint | number | null | undefined,
   dm_permission?: boolean | true,
@@ -65,29 +71,27 @@ type CooldownType =
   | 'Per User Per DM'
   | 'Per User'
 
-// import { ChannelType } from 'discord.js'
+export const OptionAllowedChannelTypes: { [key: string]: number } = {
+  'Text': ChannelType.GuildText,
+  'Voice': ChannelType.GuildVoice,
+  'Category': ChannelType.GuildCategory,
+  'Announcment': ChannelType.GuildAnnouncement,
+  'AnnouncementThread': ChannelType.AnnouncementThread,
+  'PublicThread': ChannelType.PublicThread,
+  'PrivateThread': ChannelType.PrivateThread,
+  'StageVoice': ChannelType.GuildStageVoice,
+  'Forum': ChannelType.GuildForum,
+  'Media': ChannelType.GuildMedia,
+}
 
-// const OptionAllowedChannelTypes: { [key: string]: number } = {
-//   'Text': ChannelType.GuildText,
-//   'Voice': ChannelType.GuildVoice,
-//   'Category': ChannelType.GuildCategory,
-//   'Announcment': ChannelType.GuildAnnouncement,
-//   'AnnouncementThread': ChannelType.AnnouncementThread,
-//   'PublicThread': ChannelType.PublicThread,
-//   'PrivateThread': ChannelType.PrivateThread,
-//   'StageVoice': ChannelType.GuildStageVoice,
-//   'Forum': ChannelType.GuildForum,
-//   'Media': ChannelType.GuildMedia,
-// }
-
-// type OptionAllowedChannelType =
-//   | 'Text'
-//   | 'Voice'
-//   | 'Category'
-//   | 'Announcment'
-//   | 'AnnouncementThread'
-//   | 'PublicThread'
-//   | 'PrivateThread'
-//   | 'StageVoice'
-//   | 'Forum'
-//   | 'Media'
+type OptionAllowedChannelType =
+  | 'Text'
+  | 'Voice'
+  | 'Category'
+  | 'Announcment'
+  | 'AnnouncementThread'
+  | 'PublicThread'
+  | 'PrivateThread'
+  | 'StageVoice'
+  | 'Forum'
+  | 'Media'

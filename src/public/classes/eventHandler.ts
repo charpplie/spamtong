@@ -1,4 +1,4 @@
-import { Event, EventsDir } from '../structures/event'
+import { Event, EventsDir, EventSettingsBase } from '../structures/event'
 import { Client } from 'discord.js'
 import { Utils } from '../comx'
 import { Jukai } from './jukai'
@@ -28,12 +28,16 @@ export class EventHandler {
       const events = await Utils.readObjects<Event | Function>(eventDir.dir)
 
       for (const event of events) {
-        if (this.isDev) {
+        if (this.isDev && typeof event === 'object') {
           if (eventDir.dev) {
-            if (typeof event === 'object' && event.dev === false) {
+            if (event.dev === false) {
               continue
             }
-          } else if (typeof event === 'object' && !event.dev) {
+          } else if (!event.dev) {
+            continue
+          }
+        } else if (typeof event === 'object') {
+          if (event.dev === true) {
             continue
           }
         }
