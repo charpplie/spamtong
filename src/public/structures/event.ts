@@ -5,13 +5,14 @@ interface Event {
   name: Events | string,
   dev?: boolean | false,
   callback: (instance: Jukai, ...args: any[]) => void,
-  settings?: EventSettingsBase & EventSettingsCustom
+  settings?: EventSettingsBase & EventSettingsCustom,
 }
 
 interface EventSettingsBase {
   uuid: string,
   name: string,
   category: string,
+  hidden?: boolean | false,
 }
 
 interface EventSettingsCustom {
