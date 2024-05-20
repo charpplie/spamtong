@@ -5,6 +5,7 @@ import {
   CommandInteraction,
   LocalizationMap
 } from 'discord.js'
+import { Settings } from './params'
 
 export interface Command {
   name: string,
@@ -35,6 +36,7 @@ export interface Command {
   cooldown?: CooldownOptions,
   callback: (interaction: CommandInteraction) => void,
   autocomplete?: (interaction: AutocompleteInteraction) => void,
+  settings?: Settings
 }
 
 type OptionType =

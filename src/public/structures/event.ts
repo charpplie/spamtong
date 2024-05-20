@@ -1,26 +1,12 @@
 import { Events } from 'discord.js'
 import { Jukai } from '../classes/jukai'
+import { Settings } from './params'
 
 interface Event {
   name: Events | string,
   dev?: boolean | false,
   callback: (instance: Jukai, ...args: any[]) => void,
-  settings?: EventSettingsBase & EventSettingsCustom,
-}
-
-interface EventSettingsBase {
-  uuid: string,
-  name: string,
-  category: string,
-  hidden?: boolean | false,
-}
-
-interface EventSettingsCustom {
-  [key: string]: {
-    canBeModified: boolean,
-    permissions: any,
-    [key: string]: any
-  }
+  settings?: Settings
 }
 
 interface EventsDir {
@@ -33,5 +19,4 @@ export {
   Event,
   Events,
   EventsDir,
-  EventSettingsBase,
 }

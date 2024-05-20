@@ -4,7 +4,9 @@ import { EventHandler } from './eventHandler'
 import { EventsDir } from '../structures/event'
 
 export class Jukai {
-  public client: Client
+  private commandHandler?: CommandHandler
+  private eventHandler?: EventHandler
+  private client: Client
   private owner: string
 
   public constructor(options: Options) {
@@ -22,7 +24,7 @@ export class Jukai {
     this.owner = owner
 
     if (commandsDir) {
-      new CommandHandler({
+      this.commandHandler = new CommandHandler({
         client: this.client,
         token: token,
         appId: appId,
@@ -32,7 +34,7 @@ export class Jukai {
     }
 
     if (eventsDir) {
-      new EventHandler({
+      this.eventHandler = new EventHandler({
         instance: this,
         client: this.client,
         events: eventsDir,
@@ -46,6 +48,14 @@ export class Jukai {
   public getOwnerIcon(): string {
     return this.client.users.cache.get(this.owner)?.avatarURL({ forceStatic: true })!
   }
+
+  public getCommandHandler(): CommandHandler | undefined {
+    return this.commandHandler
+  }
+
+  public getEventHandler(): EventHandler | undefined {
+    return this.eventHandler
+  }
 }
 
 interface Options {
@@ -56,4 +66,8 @@ interface Options {
   isDev: boolean,
   commandsDir?: string[],
   eventsDir?: EventsDir[],
+}
+
+interface GuildsOptions {
+
 }
