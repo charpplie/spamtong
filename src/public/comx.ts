@@ -10,7 +10,7 @@ export const Constants = {
     '3️⃣',
     '4️⃣',
     '5️⃣',
-    '⭐',
+    // '⭐',
   ],
   icont: [
     {

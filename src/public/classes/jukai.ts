@@ -6,7 +6,7 @@ import { EventsDir } from '../structures/event'
 export class Jukai {
   private commandHandler?: CommandHandler
   private eventHandler?: EventHandler
-  private client: Client
+  public client: Client
   private owner: string
 
   public constructor(options: Options) {

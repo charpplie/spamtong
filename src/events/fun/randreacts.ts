@@ -148,7 +148,7 @@
 //   }
 // } as Event
 
-import { Event, Events, Utils } from 'comx'
+import { Constants, Event, Events, Utils } from 'comx'
 
 interface IGuildChance {
   chance: number,
@@ -179,6 +179,7 @@ function resetGuildChances(guild: string) {
 export default {
   name: Events.MessageCreate,
   callback: async (instance, message) => {
+    if (Constants.vcont_channels.includes(message.channel.id)) return
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return

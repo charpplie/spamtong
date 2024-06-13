@@ -25,8 +25,12 @@ export class CUtils {
           if (file.isDirectory()) {
             stack.push(filePath)
           } else {
-            const object: T = (await import('file://' + filePath)).default
-            objects.push(object)
+            try {
+              const object: T = (await import('file://' + filePath)).default
+              objects.push(object)
+            } catch (error) {
+              console.error(`Error importing file ${filePath}: ${error}`)
+            }
           }
         }
       } catch (error) {
