@@ -69,6 +69,12 @@ export default {
         response = response + `\nИмя: ${objs[i].name}\nСссылки: ${objs[i].links}\nСоздан: ${objs[i].creator} ${objs[i].createdAt}\n`
       }
 
+      if (response.length > 4000) {
+        await interaction.editReply({
+          content: 'Упс! Ваш контент получился больше, чем я могу отправить. А мой создатель ленивая скотина, что не сделает эмбеды со страницами. Уж извините!'
+        })
+      }
+
       await interaction.editReply({
         content: response
       })

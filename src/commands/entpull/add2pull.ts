@@ -37,6 +37,7 @@ export default {
       description: 'Имя добавляемого объекта',
       type: 'String',
       required: true,
+      maxLength: 255,
     },
     {
       name: 'links',
@@ -46,6 +47,7 @@ export default {
       description: 'Ссылки на объект(страница в Steam, страница на Kinopoisk и т.д.)',
       type: 'String',
       required: false,
+      maxLength: 500,
     }
   ],
   guilds: ['1150427580734906368'],
