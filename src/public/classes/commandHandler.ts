@@ -2,6 +2,7 @@ import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteracti
 import { OptionAllowedChannelTypes, Command } from '../structures/command'
 import { readdirSync } from 'fs'
 import { join } from 'path'
+import { Utils } from 'comx'
 
 export class CommandHandler {
   private client: Client
@@ -33,20 +34,11 @@ export class CommandHandler {
   }
 
   private async readSlashCommands(commandsDir: string[]) {
-    const __readSlashCommands = async (dir: string) => {
-      const files = readdirSync(dir, {
-        withFileTypes: true,
-      })
+    for (const commandDir of commandsDir) {
+      const commands = await Utils.readObjects<Command>(commandDir)
 
-      for (const file of files) {
-        const filePath = join(dir, file.name)
-
-        if (file.name.charAt(0) === '!') continue
-        if (!file.isDirectory() && !file.name.endsWith('.ts')) continue
-        if (file.isDirectory()) { await __readSlashCommands(filePath); continue }
-
-        const command = (await import(filePath)).default
-        if (command) this.commands.set(command.name, command)
+      for (const command of commands) {
+        if (command.name) this.commands.set(command.name, command)
 
         const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
         this.assignCommandInfo(command, data)
@@ -55,8 +47,30 @@ export class CommandHandler {
         else this.slashCommandsGlobal.push(data)
       }
     }
+    // const __readSlashCommands = async (dir: string) => {
+    //   const files = readdirSync(dir, {
+    //     withFileTypes: true,
+    //   })
 
-    for (const commandDir of commandsDir) await __readSlashCommands(commandDir)
+    //   for (const file of files) {
+    //     const filePath = join(dir, file.name)
+
+    //     if (file.name.charAt(0) === '!') continue
+    //     if (!file.isDirectory() && !file.name.endsWith('.ts')) continue
+    //     if (file.isDirectory()) { await __readSlashCommands(filePath); continue }
+
+    //     const command = (await import(filePath)).default
+    //     if (command) this.commands.set(command.name, command)
+
+    //     const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
+    //     this.assignCommandInfo(command, data)
+
+    //     if (command.guilds) this.slashCommandsGuilds.push(data)
+    //     else this.slashCommandsGlobal.push(data)
+    //   }
+    // }
+
+    // for (const commandDir of commandsDir) await __readSlashCommands(commandDir)
   }
 
   private async registerSlashCommands() {
