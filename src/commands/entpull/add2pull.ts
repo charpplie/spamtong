@@ -45,7 +45,7 @@ export default {
       },
       description: 'Ссылки на объект(страница в Steam, страница на Kinopoisk и т.д.)',
       type: 'String',
-      required: true,
+      required: false,
     }
   ],
   guilds: ['1150427580734906368'],
@@ -54,7 +54,7 @@ export default {
 
     const category = interaction.options.get('category')?.value!
     const name = interaction.options.get('name')?.value!
-    const links = interaction.options.get('links')?.value!
+    const links = interaction.options.get('links')?.value
 
     const _obj = await EntPullModel.findOne({ where: { category: category, name: name } })
 
@@ -68,12 +68,20 @@ export default {
       return
     }
 
-    EntPullModel.create({
-      category: category,
-      name: name,
-      links: links,
-      creatorId: interaction.user.id
-    })
+    if (links) {
+      EntPullModel.create({
+        category: category,
+        name: name,
+        links: links,
+        creatorId: interaction.user.id
+      })
+    } else {
+      EntPullModel.create({
+        category: category,
+        name: name,
+        creatorId: interaction.user.id
+      })
+    }
 
     await interaction.editReply('Ваш объект успешно сохранен и будет использован во благо PodStolik! Спасибо за Ваш вклад <:respect:1168156721982754947>')
   }
