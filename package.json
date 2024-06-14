@@ -6,6 +6,7 @@
     "rofls": "tsx --env-file=../.env src/zov_index.ts"
   },
   "dependencies": {
+    "aws-sdk": "^2.1599.0",
     "axios": "^1.6.8",
     "discord.js": "^14.14.1",
     "ffmpeggy": "^3.0.1",
