@@ -1,4 +1,4 @@
-import { Constants, Event, Events, Utils, uploadObject } from 'comx'
+import { Constants, Event, Events, Utils, uploadToBucket } from 'comx'
 import { createWriteStream, unlinkSync } from 'fs'
 import { join } from 'path'
 import axios from 'axios'
