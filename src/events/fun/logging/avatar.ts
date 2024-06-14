@@ -62,7 +62,7 @@ export default {
             writer.on('error', reject)
           })
 
-          const res = await uploadObject(filePath).then(async (location) => {
+          const res = (await uploadObject(filePath)).then(async (location) => {
             unlinkSync(filePath)
             await channel.send(`${date} | ${username} сменил [аватар](${process.env.bucketURL}/${process.env.bucketName}/${Old.avatar}.png) на [новый](${location})`)
           })
