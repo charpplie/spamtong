@@ -37,6 +37,7 @@ export const Constants = {
   ],
   funlog_guild: '1150427580734906368',
   funlog_channel: '1204439974766706698',
+  log_channel: '1173213492153688098',
   copyright: 'xyerssisya (C) 2021-2024. All kromers reserved.'
 }
 

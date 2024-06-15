@@ -1,5 +1,5 @@
-import { Command } from 'comx'
-import { CommandInteraction } from 'discord.js'
+import { Command, Constants } from 'comx'
+import { CommandInteraction, TextChannel } from 'discord.js'
 import { EntPullModel } from 'models/entpull'
 
 export default {
@@ -44,16 +44,21 @@ export default {
     await interaction.deferReply({ ephemeral: true })
 
     const category = interaction.options.get('category')?.value!
+    const category_type = interaction.options.get('category')?.type!
     const name = interaction.options.get('name')?.value!
 
     const _obj = await EntPullModel.findOne({ where: { category: category, name: name } })
+    const channel = interaction.guild?.channels.cache.get(Constants.log_channel)! as TextChannel
 
     if (_obj) {
       _obj.destroy()
+
+      await channel.send(`Пользователь ${interaction.user.username} убрал объект ${name} из категории ${category === 'game'? 'Игры' : category === 'film'? 'Фильмы' : 'Сериалы'}`)
       await interaction.editReply({
-        content: `Объект был успешно удален <:roflanpominki:1172648781213343795>. А жаль, я бы еще как-нибудь ${category === 'game'? 'перепрошел' : 'пересмотрел'}`
+        content: `Объект был успешно удален <:roflanpominki:1172648781213343795>. А жаль, я бы еще как-нибудь ${category === 'game' ? 'перепрошел' : 'пересмотрел'}`
       })
     } else {
+      await channel.send(`Пользователь ${interaction.user.username} попытался убрать объект ${name} из категории ${category === 'game'? 'Игры' : category === 'film'? 'Фильмы' : 'Сериалы'} <:hmmmm:1168156798495244329>`)
       await interaction.editReply({
         content: 'Ты уверен[?](https://tenor.com/view/sus-cat-sus-cat-suspicious-cat-suspicious-gif-14666859353905804588)'
       })

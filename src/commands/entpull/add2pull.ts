@@ -1,5 +1,5 @@
-import { Command } from 'comx'
-import { CommandInteraction } from 'discord.js'
+import { Command, Constants } from 'comx'
+import { CommandInteraction, TextChannel } from 'discord.js'
 import { EntPullModel } from 'models/entpull'
 
 export default {
@@ -50,13 +50,14 @@ export default {
       maxLength: 500,
     }
   ],
+  dev: true,
   guilds: ['1150427580734906368'],
   callback: async (interaction: CommandInteraction) => {
     await interaction.deferReply({ ephemeral: true })
 
     const category = interaction.options.get('category')?.value!
     const name = interaction.options.get('name')?.value!
-    const links = interaction.options.get('links')?.value
+    const links = interaction.options.get('links')?.value!
 
     const _obj = await EntPullModel.findOne({ where: { category: category, name: name } })
 
@@ -85,6 +86,9 @@ export default {
       })
     }
 
+    const channel = interaction.guild?.channels.cache.get(Constants.log_channel)! as TextChannel
+
+    await channel.send(`Пользователь ${interaction.user.username} добавил объект ${name} в категорию ${category === 'game'? 'Игры' : category === 'film'? 'Фильмы' : 'Сериалы'}`)
     await interaction.editReply('Ваш объект успешно сохранен и будет использован во благо PodStolik! Спасибо за Ваш вклад <:respect:1168156721982754947>')
   }
 } as Command
