@@ -13,7 +13,7 @@ export class CommandHandler {
   private cooldowns: Collection<string, number> = new Collection<string, number>()
   private slashCommandsGlobal: SlashCommandBuilder[] = []
   private slashCommandsGuilds: SlashCommandBuilder[] = []
-
+//
   public constructor(options: Options) {
     const {
       client,
