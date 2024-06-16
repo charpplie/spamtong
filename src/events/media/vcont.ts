@@ -38,8 +38,8 @@ export default {
 
       const convertedFilePath = join(__dirname, `${_message.id}${Utils.RandomText(6)}${attachment.name.replace(/\.[^/.]+$/, '.mov')}`)
 
-      FFmpeggy.DefaultConfig = { ...FFmpeggy.DefaultConfig, ffmpegBin: 'C:\\Users\\charlie\\GitHub\\spamtong\\ffmpeg.exe' }
-      // FFmpeggy.DefaultConfig = { ...FFmpeggy.DefaultConfig, ffmpegBin: '/usr/bin/ffmpeg' }
+      // FFmpeggy.DefaultConfig = { ...FFmpeggy.DefaultConfig, ffmpegBin: 'C:\\Users\\charlie\\GitHub\\spamtong\\ffmpeg.exe' }
+      FFmpeggy.DefaultConfig = { ...FFmpeggy.DefaultConfig, ffmpegBin: '/usr/bin/ffmpeg' }
 
       new FFmpeggy({
         autorun: true,
