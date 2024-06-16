@@ -3,7 +3,7 @@ import { CUtils } from './classes/utils'
 export const Utils = new CUtils()
 
 export const Constants = {
-  vcont_channels: ['1173213492153688098'],
+  vcont_channels: ['1181427849303965768'],
   vcont_reacts: [
     '1️⃣',
     '2️⃣',
