@@ -1,9 +1,7 @@
 {
   "scripts": {
-    "start": "npm install && npm run prod",
-    "prod": "tsx --env-file=../.env src/index.ts",
-    "dev": "tsx --env-file=.env src/index.ts --dev",
-    "rofls": "tsx --env-file=../.env src/zov_index.ts"
+    "start": "npm install && tsx --env-file=.env src/index.ts",
+    "dev": "tsx --env-file=.env src/index.ts --dev"
   },
   "dependencies": {
     "aws-sdk": "^2.1599.0",

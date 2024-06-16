@@ -48,14 +48,6 @@ export class Jukai {
   public getOwnerIcon(): string {
     return this.client.users.cache.get(this.owner)?.avatarURL({ forceStatic: true })!
   }
-
-  public getCommandHandler(): CommandHandler | undefined {
-    return this.commandHandler
-  }
-
-  public getEventHandler(): EventHandler | undefined {
-    return this.eventHandler
-  }
 }
 
 interface Options {
@@ -66,8 +58,4 @@ interface Options {
   isDev: boolean,
   commandsDir?: string[],
   eventsDir?: EventsDir[],
-}
-
-interface GuildsOptions {
-
 }
