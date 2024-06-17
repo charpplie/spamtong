@@ -198,7 +198,7 @@ export default {
           if (Utils.Random(100) <= CGuilds[`${guild}`].chance) {
             resetGuildChances(guild)
 
-            const messages = await Utils.fetchMessages(message.channel, 3)
+            const messages = await Utils.fetchMessages(message.channel, 4)
             if (messages.every(msg => msg.author.id === message.author.id)) {
               let text = ''
               messages.forEach(msg => { text += msg.content + ' ' })
