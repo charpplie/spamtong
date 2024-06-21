@@ -88,7 +88,7 @@ export default {
 
     const channel = interaction.guild?.channels.cache.get(Constants.log_channel)! as TextChannel
 
-    await channel.send(`Пользователь ${interaction.user.username} добавил объект ${name} в категорию ${category === 'game'? 'Игры' : category === 'film'? 'Фильмы' : 'Сериалы'}`)
+    await channel.send(`Пользователь ${interaction.user.username} добавил объект ${name} в категорию ${category === 'game' ? 'Игры' : category === 'film' ? 'Фильмы' : 'Сериалы'}`)
     await interaction.editReply('Ваш объект успешно сохранен и будет использован во благо PodStolik! Спасибо за Ваш вклад <:respect:1168156721982754947>')
   }
 } as Command

@@ -10,7 +10,7 @@ export default {
     const info = await getLatestCommit(`${process.env.gitowner}`, `${process.env.gitrepo}`, `${process.env.github}`)
     const changes = await getCommitChanges(`${process.env.gitowner}`, `${process.env.gitrepo}`, info.sha, `${process.env.github}`)
 
-    await channel.send(`Spamtong update ${info.sha} with ${changes![0]} additions and ${changes![1]} deletions from ${info.commit.committer.name} with the message: ${info.commit.message}`)
+    await channel.send(`Spamtong update ${info.sha} with ${changes![0]} additions and ${changes![1]} deletions from ${info.commit.committer.name} with the message:\n${info.commit.message}`)
   }
 } as Event
 
