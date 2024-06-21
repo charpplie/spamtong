@@ -1,4 +1,5 @@
 import { Event, Events, Constants } from 'comx'
+import { EmbedBuilder } from 'discord.js'
 import axios from 'axios'
 
 export default {
@@ -8,9 +9,24 @@ export default {
     const channel = guild.channels.cache.get(Constants.log_channel)!
 
     const info = await getLatestCommit(`${process.env.gitowner}`, `${process.env.gitrepo}`, `${process.env.github}`)
-    const changes = await getCommitChanges(`${process.env.gitowner}`, `${process.env.gitrepo}`, info.sha, `${process.env.github}`)
+    const changes = (await getCommitChanges(`${process.env.gitowner}`, `${process.env.gitrepo}`, info.sha, `${process.env.github}`))!
 
-    await channel.send(`Spamtong update ${info.sha} with ${changes![0]} additions and ${changes![1]} deletions from ${info.commit.committer.name} with the message:\n${info.commit.message}`)
+    // await channel.send(`Spamtong update ${info.sha} with ${changes![0]} additions and ${changes![1]} deletions from ${info.commit.committer.name} with the message:\n${info.commit.message}`)
+
+    const embed = new EmbedBuilder()
+      .setColor('DarkPurple')
+      .setFooter({ text: Constants.copyright, iconURL: instance.getOwnerIcon() })
+      .setAuthor({ name: `${info.commit.committer.name}`, iconURL: `${info.author.avatar_url}`, url: `${info.author.html_url}` })
+      .setTitle('Обновление Спемтона!')
+      .setFields(
+        { name: 'Хэш', value: `${info.sha}` },
+        { name: 'Изменения', value: `${info.commit.message}` },
+        { name: 'Всего изменений', value: `+${changes[0]}/-${changes[1]}` },
+      )
+
+    await channel.send({
+      embeds: [embed]
+    })
   }
 } as Event
 
@@ -53,7 +69,7 @@ async function getCommitChanges(owner: string, repo: string, commitSha: string, 
       deletions += file.deletions
     });
 
-    return [additions, deletions]
+    return [additions, deletions]!
   } catch (why) {
     console.error(why)
   }
