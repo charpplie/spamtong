@@ -6,7 +6,7 @@ import axios from 'axios'
 
 export default {
   name: Events.MessageCreate,
-  dev: true,
+  // dev: true,
   callback: async (instance, message) => {
     // const link = message.content
     // const r = await axios({
