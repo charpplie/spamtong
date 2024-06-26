@@ -3,12 +3,13 @@ import { TextChannel } from 'discord.js'
 
 export default {
   name: Events.MessageReactionAdd,
+  // dev: true,
   callback: async (instance, react, user) => {
     if (user.bot || !Constants.vcont_channels.includes(react.message.channelId)) return
 
     const message = await (instance.client.channels.cache.get(react.message.channelId) as TextChannel).messages.fetch(react.message.id)
 
-    if (!message.content.startsWith(`v${react.message.id}`)) return
+    // if (!message.content.startsWith(`v${react.message.id}`)) return
 
     const channel = instance.client.channels.cache.get('1173213492153688098') as TextChannel
 

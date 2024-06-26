@@ -8,13 +8,17 @@ export default {
   name: Events.MessageCreate,
   // dev: true,
   callback: async (instance, message) => {
-    // const link = message.content
-    // const r = await axios({
-    //   url: link,
-    //   method: 'GET',
-    // })
+    if (message.author.bot || !message.guild || !Constants.vcont_channels.includes(message.channel.id)) return
 
-    if (message.author.bot || !message.guild || !Constants.vcont_channels.includes(message.channel.id) || message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) return
+    if (message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) {
+      if (message.content.includes('http') && (message.content.includes('vk.com') || message.content.includes('youtube.com'))) {
+        for (let i = 0; i < Constants.vcont_reacts.length; i++) {
+          await message.react(Constants.vcont_reacts[i]).catch((why: any) => console.error(why))
+        }
+      }
+
+      return
+    }
 
     const _message = message
     for (let i = 0; i < _message.attachments.size; i++) {
@@ -74,7 +78,7 @@ export default {
 // import { Constants, Event, Events } from 'comx'
 
 // export default {
-//   name: Events.MessageCreate,
+// name: Events.MessageCreate,
 //   callback: async (instance, message) => {
 //     if (message.author.bot || !message.guild || !Constants.vcont_channels.includes(message.channel.id)) return
 
