@@ -11,7 +11,7 @@ export default {
     if (message.author.bot || !message.guild || !Constants.vcont_channels.includes(message.channel.id)) return
 
     if (message.attachments.every((attach: any) => !attach.contentType.startsWith('video'))) {
-      if (message.content.includes('http') && (message.content.includes('vk.com') || message.content.includes('youtube.com'))) {
+      if (message.content.includes('http') && (message.content.includes('vk.com') || message.content.includes('youtu'))) {
         for (let i = 0; i < Constants.vcont_reacts.length; i++) {
           await message.react(Constants.vcont_reacts[i]).catch((why: any) => console.error(why))
         }
