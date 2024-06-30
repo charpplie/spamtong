@@ -2,9 +2,13 @@ import { Event, Events, Constants } from 'comx'
 import { EmbedBuilder } from 'discord.js'
 import axios from 'axios'
 
+const noUpdate = process.argv.slice(2).includes('--noupdate')
+
 export default {
   name: Events.ClientReady,
   callback: async (instance, client) => {
+    if (noUpdate) return
+
     const guild = client.guilds.cache.get(Constants.log_guild)!
     const channel = guild.channels.cache.get(Constants.log_channel)!
 
