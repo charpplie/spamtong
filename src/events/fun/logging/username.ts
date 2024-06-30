@@ -3,7 +3,6 @@ import { EmbedBuilder } from 'discord.js'
 
 export default {
   name: Events.GuildMemberUpdate,
-  // dev: true,
   callback: async (instance, Old, New) => {
     if (Old.user.bot) return
 
@@ -14,7 +13,7 @@ export default {
         .setFooter({ text: `${Constants.copyright}`, iconURL: instance.getOwnerIcon() })
         .setTitle(title)
         .setTimestamp()
-        .setAuthor({ name: `${Old.user.id}`})
+        .setAuthor({ name: `${Old.user.id}` })
         .setDescription(`**${Old.nickname === null ? `${Old.user.username} ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}` : `${Old.nickname} (${Old.user.username}) ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}`}**`)
 
       const guild = instance.client.guilds.cache.get(Constants.funlog_guild)!
@@ -25,10 +24,6 @@ export default {
       await channel.send({
         embeds: [embed]
       })
-
-      //   await channel.send({
-      //     content: `${new Date()} | ${Old.nickname === null ? `${Old.user.username} ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}` : `${Old.nickname} (${Old.user.username}) ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}`}`
-      //   })
     }
   }
 } as Event
