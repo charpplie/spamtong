@@ -12,7 +12,6 @@ export default {
         .setColor('DarkPurple')
         .setFooter({ text: `${Constants.copyright}`, iconURL: instance.getOwnerIcon() })
         .setTitle(title)
-        .setTimestamp()
         .setAuthor({ name: `${Old.user.id}` })
         .setDescription(`**${Old.nickname === null ? `${Old.user.username} ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}` : `${Old.nickname} (${Old.user.username}) ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}`}**`)
 

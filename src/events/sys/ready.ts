@@ -2,20 +2,23 @@ import { Event, Events, Constants } from 'comx'
 import { EmbedBuilder } from 'discord.js'
 import axios from 'axios'
 
-const noUpdate = process.argv.slice(2).includes('--noupdate')
+const args = process.argv.slice(2)
+const noUpdate = args.includes('--noUpdate')
+
+const DEV_GUILD = '1150427580734906368'
+const DEV_CHANNEL = '1173213492153688098'
 
 export default {
   name: Events.ClientReady,
+  // dev: true,
   callback: async (instance, client) => {
     if (noUpdate) return
 
-    const guild = client.guilds.cache.get(Constants.log_guild)!
-    const channel = guild.channels.cache.get(Constants.log_channel)!
+    const guild = client.guilds.cache.get(DEV_GUILD)!
+    const channel = guild.channels.cache.get(DEV_CHANNEL)!
 
     const info = await getLatestCommit(`${process.env.gitowner}`, `${process.env.gitrepo}`, `${process.env.github}`)
     const changes = (await getCommitChanges(`${process.env.gitowner}`, `${process.env.gitrepo}`, info.sha, `${process.env.github}`))!
-
-    // await channel.send(`Spamtong update ${info.sha} with ${changes![0]} additions and ${changes![1]} deletions from ${info.commit.committer.name} with the message:\n${info.commit.message}`)
 
     const embed = new EmbedBuilder()
       .setColor('DarkPurple')
