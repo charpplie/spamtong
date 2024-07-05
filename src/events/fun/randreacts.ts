@@ -14,7 +14,7 @@ let CGuilds: IGuildsPseudoRandom = {}
 
 const GUILDS = ['1150427580734906368']
 const INIT_CHANCE = 4
-const CHANCE_INC = 1
+const CHANCE_INC = 0.75
 
 const EmojiRegExp: RegExp = /<:[^>]+>/g
 
@@ -28,7 +28,6 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: Events.MessageCreate,
-  // dev: true,
   callback: async (instance, message) => {
     if (Constants.vcont_channels.includes(message.channel.id)) return
     try {

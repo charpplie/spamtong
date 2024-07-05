@@ -5,11 +5,9 @@
     "dev": "tsx --env-file=.env src/index.ts --dev"
   },
   "dependencies": {
-    "aws-sdk": "^2.1599.0",
     "axios": "^1.6.8",
     "discord.js": "^14.14.1",
     "ffmpeggy": "^3.0.1",
-    "openai": "^4.52.1",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
     "vk-io": "^4.9.1"

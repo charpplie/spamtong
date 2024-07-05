@@ -38,7 +38,6 @@ export class EventHandler {
           }
         } else if (typeof event === 'object') {
           if (event.dev === true) {
-            // console.log(`Detected event with dev mode: ${event.name}`)
             continue
           }
         }
