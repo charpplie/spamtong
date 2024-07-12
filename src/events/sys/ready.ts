@@ -10,7 +10,6 @@ const DEV_CHANNEL = '1173213492153688098'
 
 export default {
   name: Events.ClientReady,
-  // dev: true,
   callback: async (instance, client) => {
     if (noUpdate) return
 
@@ -74,7 +73,7 @@ async function getCommitChanges(owner: string, repo: string, commitSha: string, 
     files.forEach((file: { additions: number; deletions: number }) => {
       additions += file.additions
       deletions += file.deletions
-    });
+    })
 
     return [additions, deletions]!
   } catch (why) {
