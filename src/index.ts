@@ -13,6 +13,7 @@ new Jukai({
       GatewayIntentBits.GuildPresences,
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.GuildMessageReactions,
+      GatewayIntentBits.DirectMessages,
     ],
     partials: [
       Partials.User,
