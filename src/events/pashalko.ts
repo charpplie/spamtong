@@ -5,7 +5,7 @@ export default {
   callback: async (c, client) => {
     try {
         // Замените на ID пользователя, DM с которым вы хотите найти
-        const userId = '222355127850369024';
+        const userId = '299586224031662085';
 
         // Получаем пользователя по его ID
         const user = await client.users.fetch(userId);
