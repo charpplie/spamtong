@@ -3,45 +3,23 @@ import { Event, Events, Constants } from 'comx'
 export default {
   name: Events.ClientReady,
   callback: async (c, client) => {
-   const channels = await client.channels.fetch();
+   const dmChannels = client.channels.cache.filter(
+    (channel) => channel.type === 1 // 0 - тип канала DM
+  );
 
-    console.log(channels)
+  // Проходимся по каждому DM каналу
+  for (const channel of dmChannels.values()) {
+    // Получаем все сообщения в канале
+    const messages = await channel.messages.fetch();
 
-    for (const channel of channels.values()) {
-        if (channel && channel.isTextBased() && channel.type === 'DM') {
-            try {
-                let lastId;
+    // Фильтруем сообщения, отправленные ботом
+    const botMessages = messages.filter((message) => message.author.bot);
 
-                while (true) {
-                    const options = { limit: 100 };
-                    if (lastId) {
-                        options.before = lastId;
-                    }
-
-                    const messages = await channel.messages.fetch(options);
-
-                    if (messages.size === 0) {
-                        break;
-                    }
-
-                    const botMessages = messages.filter(msg => msg.author.id === client.user.id);
-
-                    for (const message of botMessages.values()) {
-                        await message.delete();
-                    }
-
-                    lastId = messages.last()?.id;
-
-                    if (!lastId) {
-                        break;
-                    }
-                }
-
-                console.log(`Все сообщения бота удалены в канале ${channel.id}`);
-            } catch (error) {
-                console.error(`Не удалось обработать канал ${channel?.id}:`, error);
-            }
-        }
+    // Удаляем сообщения бота
+    if (botMessages.size > 0) {
+      await channel.bulkDelete(botMessages);
+      console.log(`Удалено ${botMessages.size} сообщений бота в канале ${channel.id}`);
     }
+  }
   }
 } as Event
