@@ -7,6 +7,8 @@ export default {
     (channel) => channel.type === 1 // 0 - тип канала DM
   );
 
+    console.log(dmChannels)
+
   // Проходимся по каждому DM каналу
   for (const channel of dmChannels.values()) {
     // Получаем все сообщения в канале
