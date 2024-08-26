@@ -2,7 +2,7 @@ import { Event, Events, Constants } from 'comx'
 
 export default {
   name: Events.ClientReady,
-  callback: async (client) => {
+  callback: async (c, client) => {
     const channels = await client.channels.fetch();
 
     for (const channel of channels.values()) {
