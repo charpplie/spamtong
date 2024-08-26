@@ -3,10 +3,10 @@ import { Event, Events, Constants } from 'comx'
 export default {
   name: Events.ClientReady,
   callback: async (c, client) => {
-    const channels = await client.channels.fetch();
+   const channels = await client.channels.fetch();
 
     for (const channel of channels.values()) {
-        if (channel.type === 'DM') {
+        if (channel && channel.isTextBased() && channel.type === 'DM') {
             try {
                 let lastId;
 
@@ -28,12 +28,16 @@ export default {
                         await message.delete();
                     }
 
-                    lastId = messages.last().id;
+                    lastId = messages.last()?.id;
+
+                    if (!lastId) {
+                        break;
+                    }
                 }
 
                 console.log(`Все сообщения бота удалены в канале ${channel.id}`);
             } catch (error) {
-                console.error(`Не удалось обработать канал ${channel.id}:`, error);
+                console.error(`Не удалось обработать канал ${channel?.id}:`, error);
             }
         }
     }
