@@ -17,7 +17,7 @@ export default {
 
     // Удаляем сообщения бота
     if (botMessages.size > 0) {
-      await channel.bulkDelete(botMessages);
+      await channel.delete(botMessages);
       console.log(`Удалено ${botMessages.size} сообщений бота в канале ${channel.id}`);
     }
   }
