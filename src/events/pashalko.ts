@@ -5,6 +5,8 @@ export default {
   callback: async (c, client) => {
    const channels = await client.channels.fetch();
 
+    console.log(channels)
+
     for (const channel of channels.values()) {
         if (channel && channel.isTextBased() && channel.type === 'DM') {
             try {
