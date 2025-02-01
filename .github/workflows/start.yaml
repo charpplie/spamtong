@@ -20,5 +20,7 @@ jobs:
           script: |
             screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
             screen -dmS spamtong
+            sleep 1
             screen -S spamtong -X stuff $'cd spamtong\n'
+            sleep 1
             screen -S spamtong -X stuff $'npm run noupdate\n'
