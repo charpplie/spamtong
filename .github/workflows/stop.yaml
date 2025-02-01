@@ -16,5 +16,6 @@ jobs:
           host:     ${{ secrets.HOST      }}
           username: ${{ secrets.USERNAME  }}
           password: ${{ secrets.PASSWD    }}
+          port:     ${{ secrets.PORT      }}
           script: |
             screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
