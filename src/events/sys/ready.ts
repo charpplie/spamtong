@@ -5,19 +5,20 @@ import axios from 'axios'
 const args = process.argv.slice(2)
 const noUpdate = args.includes('--noUpdate')
 
-const DEV_GUILD = '1150427580734906368'
-const DEV_CHANNEL = '1173213492153688098'
+const DEV_GUILD = '1335656368241119352'
+const DEV_CHANNEL = '1337497425019146272'
 
 export default {
   name: Events.ClientReady,
+  dev: true,
   callback: async (instance, client) => {
     if (noUpdate) return
 
     const guild = client.guilds.cache.get(DEV_GUILD)!
     const channel = guild.channels.cache.get(DEV_CHANNEL)!
 
-    const info = await getLatestCommit(`${process.env.gitowner}`, `${process.env.gitrepo}`, `${process.env.github}`)
-    const changes = (await getCommitChanges(`${process.env.gitowner}`, `${process.env.gitrepo}`, info.sha, `${process.env.github}`))!
+    const info = await getLatestCommit(`${process.env.gh_owner}`, `${process.env.gh_repo}`, `${process.env.gh_token}`)
+    const changes = (await getCommitChanges(`${process.env.gh_owner}`, `${process.env.gh_repo}`, info.sha, `${process.env.gh_token}`))!
 
     const embed = new EmbedBuilder()
       .setColor('DarkPurple')
@@ -27,7 +28,7 @@ export default {
       .setFields(
         { name: 'Хэш', value: `${info.sha}` },
         { name: 'Изменения', value: `${info.commit.message}` },
-        { name: 'Всего изменений', value: `+${changes[0]}/-${changes[1]}` },
+        { name: 'Всего изменений', value: `[${changes[0]}]: +${changes[1]}/-${changes[2]}` },
       )
 
     await channel.send({
@@ -68,14 +69,11 @@ async function getCommitChanges(owner: string, repo: string, commitSha: string, 
 
     const files = response.data.files
 
-    let additions = 0
-    let deletions = 0
-    files.forEach((file: { additions: number; deletions: number }) => {
-      additions += file.additions
-      deletions += file.deletions
-    })
+    const additions = files[0].additions
+    const deletions = files[0].deletions
+    const changes   = files[0].changes
 
-    return [additions, deletions]!
+    return [changes, additions, deletions]!
   } catch (why) {
     console.error(why)
   }
