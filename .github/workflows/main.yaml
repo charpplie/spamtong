@@ -24,6 +24,6 @@ jobs:
           script: |
             screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
             screen -dmS spamtong
-            screen -S spamtong -X stuff "cd spamtong\n"
-            screen -S spamtong -X stuff "git pull\n"
-            screen -S spamtong -X stuff "npm start\n"
+            cd spamtong\n
+            git pull
+            npm start
