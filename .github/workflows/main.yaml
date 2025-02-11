@@ -22,8 +22,9 @@ jobs:
           password: ${{ secrets.PASSWD    }}
           port:     ${{ secrets.PORT      }}
           script: |
-            screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
-            screen -dmS spamtong
-            screen -S spamtong -p 0 -X stuff "cd spamtong\n"
-            screen -S spamtong -p 0 -X stuff "git pull\n"
-            screen -S spamtong -p 0 -X stuff "npm start\n"
+            tmux kill-sesion -t spamtong
+            tmux new -s spamtong
+            tmux attach -t spamtong1
+            cd spamtong
+            git pull
+            npm start
