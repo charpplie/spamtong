@@ -10,7 +10,7 @@ const DEV_CHANNEL = '1337497425019146272'
 
 export default {
   name: Events.ClientReady,
-  dev: true,
+  // dev: true,
   callback: async (instance, client) => {
     if (noUpdate) return
 
