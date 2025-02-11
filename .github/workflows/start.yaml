@@ -1,0 +1,26 @@
+name: Start
+
+on: [workflow_dispatch]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  start:
+    runs-on: self-hosted
+    steps:
+      - name: Start Spamtong session on self-hosted runner via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host:     ${{ secrets.HOST      }}
+          username: ${{ secrets.USERNAME  }}
+          password: ${{ secrets.PASSWD    }}
+          port:     ${{ secrets.PORT      }}
+          script: |
+            screen -ls | grep spamtong | cut -d. -f1 | awk '{print $1}' | xargs -r kill
+            screen -dmS spamtong
+            sleep 1
+            screen -S spamtong -X stuff $'cd spamtong\n'
+            sleep 1
+            screen -S spamtong -X stuff $'npm run noupdate\n'

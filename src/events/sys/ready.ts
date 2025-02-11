@@ -10,7 +10,7 @@ const DEV_CHANNEL = '1337497425019146272'
 
 export default {
   name: Events.ClientReady,
-  // dev: true,
+  dev: true,
   callback: async (instance, client) => {
     if (noUpdate) return
 
@@ -18,6 +18,7 @@ export default {
     const channel = guild.channels.cache.get(DEV_CHANNEL)!
 
     const info = await getLatestCommit(`${process.env.gh_owner}`, `${process.env.gh_repo}`, `${process.env.gh_token}`)
+    console.log(info.sha)
     const changes = (await getCommitChanges(`${process.env.gh_owner}`, `${process.env.gh_repo}`, info.sha, `${process.env.gh_token}`))!
 
     const embed = new EmbedBuilder()
