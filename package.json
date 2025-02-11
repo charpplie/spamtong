@@ -1,7 +1,6 @@
 {
   "scripts": {
     "start": "npm install && tsx --env-file=.env src/index.ts",
-    "noupdate": "tsx --env-file=.env src/index.ts --noUpdate",
     "dev": "tsx --env-file=.env src/index.ts --dev"
   },
   "dependencies": {
