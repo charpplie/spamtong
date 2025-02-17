@@ -25,6 +25,7 @@ export class Jukai {
 
     if (commandsDir) {
       this.commandHandler = new CommandHandler({
+        instance: this,
         client: this.client,
         token: token,
         appId: appId,

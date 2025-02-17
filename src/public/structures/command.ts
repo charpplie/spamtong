@@ -5,6 +5,7 @@ import {
   CommandInteraction,
   LocalizationMap
 } from 'discord.js'
+import { Jukai } from '../classes/jukai'
 
 export interface Command {
   name: string,
@@ -33,7 +34,7 @@ export interface Command {
   allowedUsers?: string[],
   isOwnerOnly?: boolean | false,
   cooldown?: CooldownOptions,
-  callback: (interaction: CommandInteraction) => void,
+  callback: (interaction: CommandInteraction, instance: Jukai) => void,
   autocomplete?: (interaction: AutocompleteInteraction) => void,
 }
 

@@ -1,3 +1,6 @@
 node_modules/
 .env
+.env_wls
+.wls_lastpost
+.wls_vrlastmsg
 db/

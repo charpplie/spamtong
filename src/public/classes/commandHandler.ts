@@ -3,8 +3,10 @@ import { OptionAllowedChannelTypes, Command } from '../structures/command'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import { Utils } from 'comx'
+import { Jukai } from './jukai'
 
 export class CommandHandler {
+  private instance: Jukai
   private client: Client
   private token: string
   private appId: string
@@ -16,6 +18,7 @@ export class CommandHandler {
 
   public constructor(options: Options) {
     const {
+      instance,
       client,
       token,
       appId,
@@ -23,6 +26,7 @@ export class CommandHandler {
       commandsDir
     } = options
 
+    this.instance = instance
     this.client = client
     this.token = token
     this.appId = appId
@@ -103,7 +107,7 @@ export class CommandHandler {
         if (command.isOwnerOnly && interaction.user.id !== this.owner) return
         if (command.allowedUsers && !command.allowedUsers.includes(interaction.user.id)) return
 
-        if (await this.checkcooldowns(command, interaction)) command.callback(interaction as CommandInteraction)
+        if (await this.checkcooldowns(command, interaction)) command.callback(interaction as CommandInteraction, this.instance)
       } else if (interaction.isAutocomplete()) {
         const command = this.commands.get(interaction.commandName)
         if (!command || !command.autocomplete) return
@@ -462,6 +466,7 @@ interface IGuildCommands {
 }
 
 interface Options {
+  instance: Jukai,
   client: Client,
   token: string,
   appId: string,
