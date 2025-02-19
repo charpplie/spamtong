@@ -39,8 +39,8 @@ new Jukai({
         name_override: 'ready',
         dev: isDev,
       },
-      {
-        dir: join(__dirname, 'events'),
-      },
+      // {
+      //   dir: join(__dirname, 'events'),
+      // },
     ],
 })

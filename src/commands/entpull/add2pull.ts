@@ -1,6 +1,8 @@
-import { Command, Constants } from 'comx'
+import { Command } from 'comx'
 import { CommandInteraction, TextChannel } from 'discord.js'
 import { EntPullModel } from 'models/entpull'
+
+const LOG_CHANNEL = '1173213492153688098'
 
 export default {
   name: 'add2pull',
@@ -86,7 +88,7 @@ export default {
       })
     }
 
-    const channel = interaction.guild?.channels.cache.get(Constants.log_channel)! as TextChannel
+    const channel = interaction.guild?.channels.cache.get(LOG_CHANNEL)! as TextChannel
 
     await channel.send(`Пользователь ${interaction.user.username} добавил объект ${name} в категорию ${category === 'game' ? 'Игры' : category === 'film' ? 'Фильмы' : 'Сериалы'}`)
     await interaction.editReply('Ваш объект успешно сохранен и будет использован во благо PodStolik! Спасибо за Ваш вклад <:respect:1168156721982754947>')

@@ -1,6 +1,8 @@
-import { Command, Constants } from 'comx'
+import { Command } from 'comx'
 import { CommandInteraction, TextChannel } from 'discord.js'
 import { EntPullModel } from 'models/entpull'
+
+const LOG_CHANNEL = '1173213492153688098'
 
 export default {
   name: 'removeobj',
@@ -48,7 +50,7 @@ export default {
     const name = interaction.options.get('name')?.value!
 
     const _obj = await EntPullModel.findOne({ where: { category: category, name: name } })
-    const channel = interaction.guild?.channels.cache.get(Constants.log_channel)! as TextChannel
+    const channel = interaction.guild?.channels.cache.get(LOG_CHANNEL)! as TextChannel
 
     if (_obj) {
       _obj.destroy()
