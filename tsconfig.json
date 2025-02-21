@@ -9,9 +9,6 @@
       "comx": [
         "./src/public/comx.ts"
       ],
-      "models/*": [
-        "./src/models/*"
-      ]
     }
   }
 }

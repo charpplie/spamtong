@@ -1,6 +1,3 @@
 node_modules/
+prisma/migrations/
 .env
-.env_wls
-.wls_lastpost
-.wls_vrlastmsg
-db/

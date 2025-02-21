@@ -1,0 +1,10 @@
+model Activities {
+  id        String   @id @default(cuid())
+  guildId   String
+  creatorId String
+  name      String
+  nameFmt   String
+  links     String
+  category  String
+  createdAt DateTime @default(now())
+}

@@ -1,8 +1,6 @@
 import { Command } from 'comx'
-import { CommandInteraction, TextChannel } from 'discord.js'
-import { EntPullModel } from 'models/entpull'
-
-const LOG_CHANNEL = '1173213492153688098'
+import { CommandInteraction, MessageFlags, TextChannel } from 'discord.js'
+import { g_Prisma } from 'comx'
 
 export default {
   name: 'removeobj',
@@ -41,29 +39,39 @@ export default {
       required: true,
     },
   ],
-  guilds: ['1150427580734906368'],
+  dm_permission: false,
+  guilds: ['1335656368241119352'],
   callback: async (interaction: CommandInteraction) => {
-    await interaction.deferReply({ ephemeral: true })
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-    const category = interaction.options.get('category')?.value!
-    const category_type = interaction.options.get('category')?.type!
-    const name = interaction.options.get('name')?.value!
+    const category = interaction.options.get('category')?.value! as string
+    const name = (interaction.options.get('name')?.value! as string).toLowerCase()
 
-    const _obj = await EntPullModel.findOne({ where: { category: category, name: name } })
-    const channel = interaction.guild?.channels.cache.get(LOG_CHANNEL)! as TextChannel
+    const obj = await g_Prisma.activities.findFirst({ where: { guildId: interaction.guildId!, category: category, name: name } })
 
-    if (_obj) {
-      _obj.destroy()
+    const channel = interaction.guild?.systemChannel
 
-      await channel.send(`Пользователь ${interaction.user.username} убрал объект ${name} из категории ${category === 'game'? 'Игры' : category === 'film'? 'Фильмы' : 'Сериалы'}`)
-      await interaction.editReply({
-        content: `Объект был успешно удален <:roflanpominki:1172648781213343795>. А жаль, я бы еще как-нибудь ${category === 'game' ? 'перепрошел' : 'пересмотрел'}`
-      })
+    if (obj) {
+      if (interaction.user.id != obj.creatorId) {
+        if (channel)
+          await channel.send(`Пользователь ${interaction.user.username} попытался убрать объект ${name} из категории ${category === 'game' ? 'Игры' : category === 'film' ? 'Фильмы' : 'Сериалы'} <:hmmmm:1168156798495244329>`)
+        await interaction.editReply({
+          content: 'https://tenor.com/view/kenny-south-park-acess-denied-denied-sky-gif-14035528'
+        })
+
+        return
+      } else {
+        await g_Prisma.activities.delete({ where: { id: obj.id } })
+        await interaction.editReply({
+          content: `Объект был успешно удален <:roflanpominki:1172648781213343795>. А жаль, я бы еще как-нибудь ${category === 'game' ? 'перепрошел' : 'пересмотрел'}`
+        })
+      }
     } else {
-      await channel.send(`Пользователь ${interaction.user.username} попытался убрать объект ${name} из категории ${category === 'game'? 'Игры' : category === 'film'? 'Фильмы' : 'Сериалы'} <:hmmmm:1168156798495244329>`)
       await interaction.editReply({
         content: 'Ты уверен[?](https://tenor.com/view/sus-cat-sus-cat-suspicious-cat-suspicious-gif-14666859353905804588)'
       })
+
+      return
     }
   }
 } as Command

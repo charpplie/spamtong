@@ -1,6 +1,6 @@
 import { Command } from 'comx'
-import { CommandInteraction } from 'discord.js'
-import { EntPullModel } from 'models/entpull'
+import { CommandInteraction, MessageFlags } from 'discord.js'
+import { g_Prisma } from 'comx'
 
 export default {
   name: 'getpull',
@@ -30,57 +30,29 @@ export default {
       ]
     },
   ],
-  // guilds: ['1150427580734906368'],
+  dm_permission: false,
+  guilds: ['1335656368241119352'],
   callback: async (interaction: CommandInteraction) => {
-    await interaction.deferReply({ ephemeral: true })
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-    const category = interaction.options.get('category')?.value!
+    const category = interaction.options.get('category')?.value! as string
 
-    const _obj = await EntPullModel.findAll({ where: { category: category } })
+    const objects = await g_Prisma.activities.findMany({ where: { guildId: interaction.guildId!, category: category } })
 
-    if (_obj && _obj.length !== 0) {
-      let objs: {
-        name: string,
-        creator: string,
-        links: string,
-        createdAt: string,
-      }[] = []
-      for (let i = 0; i < _obj.length; i++) {
+    if (objects.length == 0) {
+      await interaction.editReply({
+        content: `Похоже, что вы ничегошеньки не добавили в эту категорию! Вы опечалить спамтона, он хотел весело провести вечер с друзьями ${category === 'game' ? 'в какой-нибудь игрушке' : category === 'film' ? 'за просмотром классного фильма' : 'попивая чай и смотря новый сезон пацанов'}`
+      })
 
-        const name: any = _obj[i].get('name')
-        const links: any = _obj[i].get('links')
-        const creatorId: any = _obj[i].get('creatorId')
-        const rawCreatedAt: any = _obj[i].get('createdAt')
-        const createdAt = new Date(rawCreatedAt).toLocaleDateString('ru-RU')
-        const creator = interaction.guild?.members.cache.get(creatorId)?.user.username!
-
-        objs.push({
-          name: name,
-          creator: creator,
-          links: links,
-          createdAt: createdAt,
-        })
-      }
-      
-
-
+      return
+    } else {
       let response = ''
-      for (let i = 0; i < objs.length; i++) {
-        response = response + `\nИмя: ${objs[i].name}\nСссылки: ${objs[i].links}\nСоздан: ${objs[i].creator} ${objs[i].createdAt}\n`
-      }
-
-      if (response.length > 4000) {
-        await interaction.editReply({
-          content: 'Упс! Ваш контент получился больше, чем я могу отправить. А мой создатель ленивая скотина, что не сделает эмбеды со страницами. Уж извините!'
-        })
+      for (let i = 0; i < objects.length; i++) {
+        response = response + `\nИмя: ${objects[i].name}${objects[i].links == ''? '' : `\nСссылки: ${objects[i].links}`}\nСоздан: ${interaction.guild?.members.cache.get(objects[i].creatorId)} ${new Date(objects[i].createdAt).toLocaleDateString('ru-RU')}\n`
       }
 
       await interaction.editReply({
         content: response
-      })
-    } else {
-      await interaction.editReply({
-        content: `Похоже, что вы ничегошеньки не добавили в эту категорию! Вы опечалить спамтона, он хотел весело провести вечер с друзьями ${category === 'game' ? 'в какой-нибудь игрушке' : category === 'film' ? 'за просмотром классного фильма' : 'попивая чай и смотря новый сезон пацанов'}`
       })
     }
   }

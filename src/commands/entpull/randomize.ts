@@ -1,6 +1,6 @@
 import { Command, Utils } from 'comx'
 import { CommandInteraction } from 'discord.js'
-import { EntPullModel } from 'models/entpull'
+import { g_Prisma } from 'comx'
 
 export default {
   name: 'randz',
@@ -30,47 +30,25 @@ export default {
       ]
     },
   ],
-  guilds: ['1150427580734906368'],
+  guilds: ['1335656368241119352'],
   callback: async (interaction: CommandInteraction) => {
-    await interaction.deferReply({ ephemeral: false })
+    await interaction.deferReply()
 
-    const category = interaction.options.get('category')?.value!
+    const category = interaction.options.get('category')?.value! as string
 
-    const _obj = await EntPullModel.findAll({ where: { category: category } })
+    const objects = await g_Prisma.activities.findMany({ where: { category: category } })
 
-    if (_obj && _obj.length !== 0) {
-      let objs: {
-        name: string,
-        creator: string,
-        links: string,
-        createdAt: string,
-      }[] = []
-      for (let i = 0; i < _obj.length; i++) {
-
-        const name: any = _obj[i].get('name')
-        const links: any = _obj[i].get('links')
-        const creatorId: any = _obj[i].get('creatorId')
-        const rawCreatedAt: any = _obj[i].get('createdAt')
-        const createdAt = new Date(rawCreatedAt).toLocaleDateString('ru-RU')
-        const creator = interaction.guild?.members.cache.get(creatorId)?.user.username!
-
-        objs.push({
-          name: name,
-          creator: creator,
-          links: links,
-          createdAt: createdAt,
-        })
-      }
-
-      const rand = Utils.Random(objs.length)
+    if (objects.length > 0) {
+      const activity = objects[Utils.Random(objects.length)]
 
       await interaction.editReply({
-        content: `Сегодня я хочу ${category === 'game'? 'поиграть в' : 'посмотреть'} ${objs[rand].name}. Эту замечательную идею предложил наш любимый пользователь ${objs[rand].creator}`
+        content: `Сегодня я хочу ${category === 'game' ? 'поиграть в' : 'посмотреть'} ${activity.name}. Эту замечательную идею предложил наш любимый пользователь ${interaction.guild?.members.cache.get(activity.creatorId)} <:stonks:1167075410543136869>`
       })
     } else {
       await interaction.editReply({
-        content: `Похоже, что вы ничегошеньки не добавили в эту категорию! Вы опечалить спамтона, он хотел весело провести вечер с друзьями ${category === 'game'? 'в какой-нибудь игрушке' : category === 'film'? 'за просмотром классного фильма' : 'попивая чай и смотря новый сезон пацанов'}`
+        content: `Похоже, что вы ничегошеньки не добавили в эту категорию!<:invalid:1168156758586425344>\nВы опечалить спамтона, он хотел весело провести вечер с друзьями ${category === 'game' ? 'в какой-нибудь игрушке' : category === 'film' ? 'за просмотром классного фильма' : 'попивая чай и смотря новый сезон пацанов'}`
       })
+      return
     }
   }
 } as Command

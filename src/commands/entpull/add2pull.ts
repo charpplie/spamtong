@@ -1,8 +1,6 @@
 import { Command } from 'comx'
-import { CommandInteraction, TextChannel } from 'discord.js'
-import { EntPullModel } from 'models/entpull'
-
-const LOG_CHANNEL = '1173213492153688098'
+import { CommandInteraction, MessageFlags, TextChannel } from 'discord.js'
+import { g_Prisma } from 'comx'
 
 export default {
   name: 'add2pull',
@@ -31,6 +29,7 @@ export default {
         }
       ]
     },
+
     {
       name: 'name',
       name_localizations: {
@@ -41,56 +40,53 @@ export default {
       required: true,
       maxLength: 255,
     },
+
     {
       name: 'links',
       name_localizations: {
         ru: 'ссылки'
       },
-      description: 'Ссылки на объект(страница в Steam, страница на Kinopoisk и т.д.)',
+      description: 'Ссылки на объект(страница в Steam, страница на Kinopoisk и т.п.)',
       type: 'String',
       required: false,
       maxLength: 500,
     }
   ],
-  dev: true,
-  guilds: ['1150427580734906368'],
+  dm_permission: false,
+  guilds: ['1335656368241119352'],
   callback: async (interaction: CommandInteraction) => {
-    await interaction.deferReply({ ephemeral: true })
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-    const category = interaction.options.get('category')?.value!
-    const name = interaction.options.get('name')?.value!
-    const links = interaction.options.get('links')?.value!
+    const category = interaction.options.get('category')?.value! as string
+    const name = interaction.options.get('name')?.value! as string
+    const nameFmt = name.toLowerCase()
+    const links = interaction.options.get('links')?.value! as string
 
-    const _obj = await EntPullModel.findOne({ where: { category: category, name: name } })
+    const obj = await g_Prisma.activities.findFirst({ where: { guildId: interaction.guildId!, category: category, nameFmt: nameFmt } })
 
-    if (_obj) {
-      const creatorId: any = _obj.get('creatorId')
-      const createdAt: any = _obj.get('createdAt')
+    if (obj) {
       await interaction.editReply({
-        content: `Похоже, что этот объект уже был добавлен пользователем ${interaction.guild?.members.cache.get(creatorId)?.user.username} ${new Date(createdAt).toLocaleDateString('ru-RU')}`
+        content: `Похоже, что этот объект уже был добавлен пользователем ${interaction.guild?.members.cache.get(obj.creatorId)} ${new Date(obj.createdAt).toLocaleDateString('ru-RU')}`
       })
 
       return
     }
 
-    if (links) {
-      EntPullModel.create({
-        category: category,
+    await g_Prisma.activities.create({
+      data: {
+        guildId: interaction.guildId!,
+        creatorId: interaction.user.id,
         name: name,
-        links: links,
-        creatorId: interaction.user.id
-      })
-    } else {
-      EntPullModel.create({
+        nameFmt: nameFmt,
         category: category,
-        name: name,
-        creatorId: interaction.user.id
-      })
-    }
+        links: links ? links : ''
+      }
+    })
 
-    const channel = interaction.guild?.channels.cache.get(LOG_CHANNEL)! as TextChannel
+    await interaction.editReply('Ваш объект успешно сохранен и будет использован во благо PodStolik! Спасибо за ваш вклад <:respect:1168156721982754947>')
 
-    await channel.send(`Пользователь ${interaction.user.username} добавил объект ${name} в категорию ${category === 'game' ? 'Игры' : category === 'film' ? 'Фильмы' : 'Сериалы'}`)
-    await interaction.editReply('Ваш объект успешно сохранен и будет использован во благо PodStolik! Спасибо за Ваш вклад <:respect:1168156721982754947>')
+    const channel = interaction.guild?.systemChannel
+
+    if (channel) await channel.send(`Пользователь ${interaction.user.username} добавил объект ${name} в категорию ${category === 'game' ? 'Игры' : category === 'film' ? 'Фильмы' : 'Сериалы'}`)
   }
 } as Command

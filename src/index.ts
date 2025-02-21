@@ -28,19 +28,14 @@ new Jukai({
   appId: `${process.env.appId}`,
   owner: `${process.env.owner}`,
   isDev: isDev,
-  commandsDir:
-    [
-      join(__dirname, 'commands')
-    ],
+  // commandsDir:
+  //   [
+  //     join(__dirname, 'commands')
+  //   ],
   eventsDir:
     [
       {
-        dir: join(__dirname, 'models'),
-        name_override: 'ready',
-        dev: isDev,
+        dir: join(__dirname, 'events'),
       },
-      // {
-      //   dir: join(__dirname, 'events'),
-      // },
     ],
 })
