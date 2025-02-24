@@ -32,10 +32,10 @@ new Jukai({
     [
       join(__dirname, 'commands')
     ],
-  // eventsDir:
-  //   [
-  //     {
-  //       dir: join(__dirname, 'events'),
-  //     },
-  //   ],
+  eventsDir:
+    [
+      {
+        dir: join(__dirname, 'events'),
+      },
+    ],
 })
