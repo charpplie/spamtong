@@ -43,7 +43,7 @@ const emojis_delete = [
 
 export default {
   name: Events.GuildMemberUpdate,
-  dev: true,
+  // dev: true,
   callback: async (instance, Old, New) => {
     if (Old.user.bot) return
 
