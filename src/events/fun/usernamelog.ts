@@ -1,8 +1,8 @@
 import { Event, Events, Utils } from 'comx'
 import { EmbedBuilder } from 'discord.js'
 
-const GUILD = '1335656368241119352'
-const CHANNEL = '1340374435294740560'
+const GUILD = '1150427580734906368'
+const CHANNEL = '1204439974766706698'
 
 const response_new = [
   'Ого, это что новый рофельный никнейм?',
