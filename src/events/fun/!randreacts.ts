@@ -1,4 +1,4 @@
-import { Constants, Event, Events, Utils } from 'comx'
+import { Event, Events, Utils } from 'comx'
 
 interface IGuildChance {
   chance: number,
