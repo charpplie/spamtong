@@ -30,7 +30,7 @@ export default {
       ]
     },
   ],
-  guilds: ['1335656368241119352'],
+  guilds: ['1150427580734906368'],
   callback: async (interaction: CommandInteraction) => {
     await interaction.deferReply()
 
