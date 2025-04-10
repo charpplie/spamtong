@@ -12,8 +12,8 @@ interface ICollectionMeta {
 
 function Sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
-const GUILD = '1335656368241119352'
-const COLS_CHANNEL = '1340374435294740560'
+const GUILD = '1150427580734906368'
+const COLS_CHANNEL = '1359924475025424414'
 
 export default {
   name: Events.ClientReady,
