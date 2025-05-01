@@ -8,9 +8,9 @@ concurrency:
 
 jobs:
   stop:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Stop Spamtong session on self-hosted runner via SSH
+      - name: Stop Spamtong session on runner via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
           host:     ${{ secrets.HOST      }}

@@ -8,9 +8,9 @@ concurrency:
 
 jobs:
   start:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Start Spamtong session on self-hosted runner via SSH
+      - name: Start Spamtong session on runner via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
           host:     ${{ secrets.HOST      }}
