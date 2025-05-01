@@ -13,8 +13,8 @@ interface IGuildsPseudoRandom {
 let CGuilds: IGuildsPseudoRandom = {}
 
 const GUILDS = ['1150427580734906368']
-const INIT_CHANCE = 4
-const CHANCE_INC = 0.75
+const INIT_CHANCE = 2
+const CHANCE_INC = 0.15
 
 const EmojiRegExp: RegExp = /<:[^>]+>/g
 
