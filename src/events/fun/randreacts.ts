@@ -28,8 +28,9 @@ function resetGuildChances(guild: string) {
 
 export default {
   name: Events.MessageCreate,
+  // dev: true,
   callback: async (instance, message) => {
-    if (Constants.vcont_channels.includes(message.channel.id)) return
+    // if (Constants.vcont_channels.includes(message.channel.id)) return
     try {
       if (message.author.bot) return
       if (!message.guild?.id) return
