@@ -45,7 +45,7 @@ export default {
   name: Events.GuildMemberUpdate,
   // dev: true,
   callback: async (instance, Old, New) => {
-    if (Old.user.bot) return
+    if (Old.user.bot || Old.guild.id !== GUILD) return
 
     const guild = instance.client.guilds.cache.get(GUILD)!
 
