@@ -1,0 +1,1 @@
+import { Command, i18n } from 'comx'
