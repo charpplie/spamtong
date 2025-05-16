@@ -19,7 +19,7 @@ export default {
             try {
                 await Parse(instance)
             } catch (why) {
-                console.error(why)
+                console.error(`error from d2:\n${why}`)
             }
         }
     }
