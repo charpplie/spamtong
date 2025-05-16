@@ -59,6 +59,8 @@ async function Parse(instance: Jukai) {
 
         let msg = ''
 
+        console.log(active_ver_server)
+        console.log(last_known_version_server)
         if (active_ver_server != last_known_version_server) {
             msg += `[2305290] Dota 2 Staging Server ${last_known_version_server} => ${active_ver_server}\n`
             last_known_version_server = active_ver_server
