@@ -39,7 +39,7 @@ export default {
             }
 
             while (true) {
-                console.log('looking for staging updates...')
+                console.log(`Current version: ${last_known_version}. Looking for staging updates...`)
                 const resp_server = (await r.request({ url: curl }))
                 const resp = (await r.request({ url: c_url }))
 

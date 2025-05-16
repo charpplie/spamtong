@@ -31,7 +31,7 @@ export default {
             }
 
             while (true) {
-                console.log('looking for news...')
+                console.log(`Last news: ${last_guid}. Looking for news...`)
                 const parser = new Parser()
                 const resp = await parser.parseURL('https://store.steampowered.com/feeds/news/app/570/?cc=KZ&l=english')
                 const guid = resp.items[0].guid?.replace('https://store.steampowered.com/news/app/570/view/', '')!
