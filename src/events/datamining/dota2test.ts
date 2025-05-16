@@ -31,10 +31,12 @@ export default {
 
             if (active_ver_server != last_known_version_server) {
                 msg += `[247060] Dota 2 Test Server ${last_known_version_server} => ${active_ver_server}\n`
+                last_known_version_server = active_ver_server
             }
 
             if (active_ver != last_known_version) {
                 msg += `[247040] Dota 2 Test ${last_known_version} => ${active_ver}`
+                last_known_version = active_ver
             }
 
             if (msg !== '') {
