@@ -1,21 +1,22 @@
 {
+  "prisma": {
+    "schema": "./prisma"
+  },
   "scripts": {
     "start": "tsx --env-file=.env src/index.ts",
     "dev": "tsx --env-file=.env src/index.ts --dev"
   },
   "dependencies": {
-    "@prisma/client": "^6.4.0",
+    "@prisma/client": "^6.8.1",
     "axios": "^1.6.8",
-    "discord.js": "^14.18.0",
-    "ffmpeggy": "^3.0.1",
+    "discord.js": "^14.19.3",
     "i18n": "^0.15.1",
-    "rss-parser": "^3.13.0",
-    "vk-io": "^4.9.1"
+    "rss-parser": "^3.13.0"
   },
   "devDependencies": {
     "@types/i18n": "^0.13.12",
     "@types/node": "^20.12.4",
-    "prisma": "^6.4.0",
+    "prisma": "^6.8.1",
     "tsx": "^4.9.1"
   }
 }
