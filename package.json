@@ -9,6 +9,7 @@
     "discord.js": "^14.18.0",
     "ffmpeggy": "^3.0.1",
     "i18n": "^0.15.1",
+    "rss-parser": "^3.13.0",
     "vk-io": "^4.9.1"
   },
   "devDependencies": {
