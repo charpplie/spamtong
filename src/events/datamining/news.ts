@@ -32,6 +32,8 @@ export default {
                 await channel.send(`News ${last_guid} => ${guid}\nLink: ${resp.items[0].guid}`)
                 last_guid = guid
             }
+
+            await Utils.Sleep(60000)
         }
 
         // let last_known_version_server = 0
