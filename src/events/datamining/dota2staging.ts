@@ -39,6 +39,7 @@ export default {
             }
 
             while (true) {
+                console.log('looking for staging updates...')
                 const resp_server = (await r.request({ url: curl }))
                 const resp = (await r.request({ url: c_url }))
 
