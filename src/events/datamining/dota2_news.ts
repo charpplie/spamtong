@@ -12,7 +12,7 @@ const appId = 'dota2_news'
 
 export default {
     name: Events.ClientReady,
-    dev: true,
+    // dev: true,
     callback: async (instance) => {
         while (true) {
             try {
