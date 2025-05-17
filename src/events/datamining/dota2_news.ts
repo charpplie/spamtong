@@ -57,6 +57,6 @@ async function Parse(channel: TextChannel) {
             await g_Prisma.cVersions.update({ where: { id: obj?.id, appId: appId }, data: { lastVersion: `${last_guid}` } })
         }
 
-        await Utils.Sleep(60000)
+        await Utils.Sleep(15000)
     }
 }
