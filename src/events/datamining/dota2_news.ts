@@ -48,7 +48,6 @@ async function Parse(channel: TextChannel) {
 
     while (true) {
         const resp = (await r.request({ url: curl }))
-        console.log(resp.data.appnews.newsitems[0].gid)
         const guid = resp.data.appnews.newsitems[0].gid
 
         if (guid != last_guid) {
