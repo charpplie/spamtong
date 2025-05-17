@@ -2,13 +2,11 @@ import { Event, Events, Utils, g_Prisma } from 'comx'
 import { TextChannel } from 'discord.js'
 import { default as axios } from 'axios'
 import https from 'https'
-import { Jukai } from '../../public/classes/jukai'
 
 const GUILD = '1150427580734906368'
 const CHANNEL = '1173213492153688098'
 
 const curl = 'https://api.steampowered.com/IGCVersion_570/GetServerVersion/v1/'
-const c_url = 'https://api.steampowered.com/IGCVersion_570/GetClientVersion/v1/'
 
 const appId = '570'
 
@@ -17,7 +15,10 @@ export default {
     callback: async (instance) => {
         while (true) {
             try {
-                await Parse(instance)
+                const guild = instance.client.guilds.cache.get(GUILD)!
+                const channel = guild.channels.cache.get(CHANNEL)! as TextChannel
+
+                await Parse(channel)
             } catch (why) {
                 console.error(`error from d2:\n${why}`)
             }
@@ -25,10 +26,7 @@ export default {
     }
 } as Event
 
-async function Parse(instance: Jukai) {
-    const guild = instance.client.guilds.cache.get(GUILD)!
-    const channel = guild.channels.cache.get(CHANNEL)! as TextChannel
-
+async function Parse(channel: TextChannel) {
     const r = axios.create({ timeout: 60000, httpsAgent: new https.Agent({ keepAlive: true }), headers: { 'Content-Type': 'application/json' } })
 
     const obj = await g_Prisma.cVersions.findFirst({ where: { appId: appId } })
@@ -50,23 +48,21 @@ async function Parse(instance: Jukai) {
     }
 
     while (true) {
-        console.log(`Current version: ${last_known_version}. Looking for client updates...`)
-        const resp_server = (await r.request({ url: curl }))
-        const resp = (await r.request({ url: c_url }))
+        const resp = (await r.request({ url: curl }))
 
-        const active_ver_server = resp_server.data.result.active_version
+        const active_ver_server = resp.data.result.deploy_version
         const active_ver = resp.data.result.active_version
 
         let msg = ''
 
         if (active_ver_server != last_known_version_server) {
-            msg += `[373310] Dota 2 Server ${last_known_version_server} => ${active_ver_server}\n`
+            msg += `[2305290] Dota 2 Server ${last_known_version_server} => ${active_ver_server}\n`
             last_known_version_server = active_ver_server
             await g_Prisma.cVersions.update({ where: { id: obj?.id, appId: appId }, data: { lastVersionServer: `${last_known_version_server}` } })
         }
 
         if (active_ver != last_known_version) {
-            msg += `[570] Dota 2 ${last_known_version} => ${active_ver}`
+            msg += `[2305270] Dota 2 ${last_known_version} => ${active_ver}`
             last_known_version = active_ver
             await g_Prisma.cVersions.update({ where: { id: obj?.id, appId: appId }, data: { lastVersion: `${last_known_version}` } })
         }
@@ -75,6 +71,6 @@ async function Parse(instance: Jukai) {
             await channel.send(msg)
         }
 
-        await Utils.Sleep(60000)
+        await Utils.Sleep(15000)
     }
 }

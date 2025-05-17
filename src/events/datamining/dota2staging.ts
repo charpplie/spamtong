@@ -18,7 +18,7 @@ export default {
                 const guild = instance.client.guilds.cache.get(GUILD)!
                 const channel = guild.channels.cache.get(CHANNEL)! as TextChannel
 
-                await Parse(guild, channel)
+                await Parse(channel)
             } catch (why) {
                 console.error(`error from d2staging:\n${why}`)
             }
@@ -26,7 +26,7 @@ export default {
     }
 } as Event
 
-async function Parse(guild: any, channel: TextChannel) {
+async function Parse(channel: TextChannel) {
     const r = axios.create({ timeout: 60000, httpsAgent: new https.Agent({ keepAlive: true }), headers: { 'Content-Type': 'application/json' } })
 
     const obj = await g_Prisma.cVersions.findFirst({ where: { appId: appId } })
