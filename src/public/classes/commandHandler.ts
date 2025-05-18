@@ -3,7 +3,7 @@ import { OptionAllowedChannelTypes, Command } from '../structures/command'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import { Utils } from 'comx'
-import { Jukai } from './jukai'
+import { Jukai } from './bot'
 
 export class CommandHandler {
   private instance: Jukai

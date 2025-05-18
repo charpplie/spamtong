@@ -8,14 +8,12 @@
   },
   "dependencies": {
     "@prisma/client": "^6.8.1",
+    "@types/i18n": "^0.13.12",
+    "@types/node": "^22.15.18",
     "axios": "^1.9.0",
     "discord.js": "^14.19.3",
-    "i18n": "^0.15.1"
-  },
-  "devDependencies": {
-    "@types/i18n": "^0.13.12",
-    "@types/node": "^20.17.47",
-    "prisma": "^6.8.1",
+    "i18n": "^0.15.1",
+    "prisma": "^6.8.2",
     "tsx": "^4.19.4"
   }
 }

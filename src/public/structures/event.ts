@@ -1,5 +1,5 @@
 import { Events } from 'discord.js'
-import { Jukai } from '../classes/jukai'
+import { Jukai } from '../classes/bot'
 
 interface Event {
   name: Events | string,

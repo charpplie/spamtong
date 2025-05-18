@@ -5,7 +5,7 @@ import {
   CommandInteraction,
   LocalizationMap
 } from 'discord.js'
-import { Jukai } from '../classes/jukai'
+import { Jukai } from '../classes/bot'
 
 export interface Command {
   name: string,

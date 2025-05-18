@@ -1,5 +1,5 @@
 import { GatewayIntentBits, Partials } from 'discord.js'
-import { Jukai } from './public/classes/jukai'
+import { Jukai } from './public/classes/bot'
 import { join } from 'path'
 
 const isDev = process.argv.slice(2).includes('--dev')

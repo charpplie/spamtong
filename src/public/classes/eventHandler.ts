@@ -1,7 +1,7 @@
 import { Event, EventsDir } from '../structures/event'
 import { Client } from 'discord.js'
 import { Utils } from '../comx'
-import { Jukai } from './jukai'
+import { Jukai } from './bot'
 
 export class EventHandler {
   private instance: Jukai
