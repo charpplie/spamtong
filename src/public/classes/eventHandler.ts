@@ -1,10 +1,10 @@
 import { Event, EventsDir } from '../structures/event'
 import { Client } from 'discord.js'
 import { Utils } from '../comx'
-import { Jukai } from './bot'
+import { BotManager } from './botManager'
 
 export class EventHandler {
-  private instance: Jukai
+  private instance: BotManager
   private client: Client
   private isDev: boolean
 
@@ -61,7 +61,7 @@ export class EventHandler {
 }
 
 interface Options {
-  instance: Jukai,
+  instance: BotManager,
   client: Client,
   events: EventsDir[],
   isDev: boolean,

@@ -1,0 +1,7 @@
+// model vcont_favs {
+//     id        String @id @default(cuid())
+//     guildId   String
+//     messageId String
+//     userId    String
+//     dmId      String
+// }

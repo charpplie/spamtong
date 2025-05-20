@@ -8,6 +8,7 @@ export interface IAppInfo {
     fmt_name: string,
     interval: number,
     channel: string,
+    shouldDump: boolean,
 }
 
 export const Apps: IAppInfo[] = [
@@ -18,6 +19,7 @@ export const Apps: IAppInfo[] = [
         fmt_name: 'Dota 2',
         interval: REQ_INTERVAL_MAIN,
         channel: '1374375965618208899',
+        shouldDump: false,
     },
     {
         url: 'https://api.steampowered.com/IGCVersion_2305270/GetServerVersion/v1/',
@@ -26,6 +28,7 @@ export const Apps: IAppInfo[] = [
         fmt_name: 'Dota 2 Staging',
         interval: REQ_INTERVAL_MAIN,
         channel: '1374375965618208899',
+        shouldDump: false,
     },
     {
         url: 'https://api.steampowered.com/IGCVersion_247040/GetServerVersion/v1/',
@@ -34,6 +37,7 @@ export const Apps: IAppInfo[] = [
         fmt_name: 'Dota 2 Experimental',
         interval: REQ_INTERVAL_MAIN,
         channel: '1374375965618208899',
+        shouldDump: false,
     },
     {
         url: 'https://api.steampowered.com/IGCVersion_1422450/GetServerVersion/v1/',
@@ -42,6 +46,7 @@ export const Apps: IAppInfo[] = [
         fmt_name: 'Deadlock',
         interval: REQ_INTERVAL_MAIN,
         channel: '1374376029518434405',
+        shouldDump: true,
     },
     {
         url: 'https://api.steampowered.com/IGCVersion_3488080/GetServerVersion/v1/',
@@ -50,6 +55,7 @@ export const Apps: IAppInfo[] = [
         fmt_name: 'Deadlock Experimental',
         interval: REQ_INTERVAL_MAIN,
         channel: '1374376029518434405',
+        shouldDump: false,
     },
     {
         url: 'https://api.steampowered.com/IGCVersion_440/GetServerVersion/v1/',
@@ -58,5 +64,6 @@ export const Apps: IAppInfo[] = [
         fmt_name: 'Team Fortress 2',
         interval: REQ_INTERVAL_SECONDARY,
         channel: '1374376059293667368',
+        shouldDump: false,
     },
 ]

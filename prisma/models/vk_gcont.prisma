@@ -1,0 +1,6 @@
+// model vk_gcont {
+//     id         String @id @default(cuid())
+//     guildId    String
+//     groupId    String
+//     lastPostId String
+// }

@@ -3,7 +3,7 @@ import { CommandHandler } from './commandHandler'
 import { EventHandler } from './eventHandler'
 import { EventsDir } from '../structures/event'
 
-export class Jukai {
+export class BotManager {
   private commandHandler?: CommandHandler
   private eventHandler?: EventHandler
   private owner: string

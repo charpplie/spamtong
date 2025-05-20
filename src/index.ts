@@ -1,10 +1,10 @@
 import { GatewayIntentBits, Partials } from 'discord.js'
-import { Jukai } from './public/classes/bot'
+import { BotManager } from './public/classes/botManager'
 import { join } from 'path'
 
 const isDev = process.argv.slice(2).includes('--dev')
 
-new Jukai({
+new BotManager({
   client: {
     intents: [
       GatewayIntentBits.Guilds,

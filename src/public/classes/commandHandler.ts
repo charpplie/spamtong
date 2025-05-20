@@ -3,10 +3,10 @@ import { OptionAllowedChannelTypes, Command } from '../structures/command'
 import { readdirSync } from 'fs'
 import { join } from 'path'
 import { Utils } from 'comx'
-import { Jukai } from './bot'
+import { BotManager } from './botManager'
 
 export class CommandHandler {
-  private instance: Jukai
+  private instance: BotManager
   private client: Client
   private token: string
   private appId: string
@@ -466,7 +466,7 @@ interface IGuildCommands {
 }
 
 interface Options {
-  instance: Jukai,
+  instance: BotManager,
   client: Client,
   token: string,
   appId: string,

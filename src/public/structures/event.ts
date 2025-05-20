@@ -1,10 +1,10 @@
 import { Events } from 'discord.js'
-import { Jukai } from '../classes/bot'
+import { BotManager } from '../classes/botManager'
 
 interface Event {
   name: Events | string,
   dev?: boolean | false,
-  callback: (instance: Jukai, ...args: any[]) => void,
+  callback: (instance: BotManager, ...args: any[]) => void,
 }
 
 interface EventsDir {
