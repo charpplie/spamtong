@@ -1,0 +1,6 @@
+model CVersions {
+    id                String @id @default(cuid())
+    appId             String
+    lastVersion       String
+    lastVersionServer String
+}
