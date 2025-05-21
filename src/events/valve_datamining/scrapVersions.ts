@@ -11,7 +11,7 @@ export default {
     // dev: true,
     callback: async (instance) => {
         const guild = instance.client.guilds.cache.get(GUILD)!
-        const channel = guild.channels.cache.get(CHANNEL) as TextChannel
+        // const channel = guild.channels.cache.get(CHANNEL) as TextChannel
 
         // channel.send('\`21312313 Dota 2 Staging 3124234 => 213123\`')
         for (const app of Apps) {

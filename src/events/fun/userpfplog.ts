@@ -1,6 +1,6 @@
 import { Event, Events, i18n, Utils } from 'comx'
 import { TextChannel, User, EmbedBuilder } from 'discord.js'
-import { default as axios } from 'axios'
+import axios from 'axios'
 import { createWriteStream } from 'fs'
 import { exec } from 'child_process'
 
@@ -28,41 +28,33 @@ export default {
     name: Events.UserUpdate,
     // dev: true,
     callback: async (instance, oldUser: User, newUser: User) => {
-        if (oldUser.bot) return
+        try {
+            if (oldUser.bot) return
 
-        const guild = instance.client.guilds.cache.get(GUILD)!
+            const guild = instance.client.guilds.cache.get(GUILD)!
 
-        if (!guild.members.cache.get(oldUser.id)) return
+            if (!guild.members.cache.get(oldUser.id)) return
 
-        const channel = guild.channels.cache.get(CHANNEL) as TextChannel
+            const channel = guild.channels.cache.get(CHANNEL) as TextChannel
 
-        if (newUser.avatar === null) {
-            const embed = new EmbedBuilder()
-                .setColor('DarkPurple')
-                .setFooter({ text: i18n.__({ phrase: 'g.copyright', locale: 'en' }), iconURL: instance.getOwnerIcon() })
-                .setTitle(`${oldUser.username} убрал аватарку`)
+            if (newUser.avatar === null) {
+                const embed = new EmbedBuilder()
+                    .setColor('DarkPurple')
+                    .setFooter({ text: i18n.__({ phrase: 'g.copyright', locale: 'en' }), iconURL: instance.getOwnerIcon() })
+                    .setTitle(`${oldUser.username} убрал аватарку`)
 
-            await channel.send({
-                embeds: [embed]
-            })
-            return
-        }
+                await channel.send({
+                    embeds: [embed]
+                })
+                return
+            }
 
-        if (oldUser.avatar !== newUser.avatar) {
-            const filePath = `../dota_images/img/${newUser.avatar}.webp`
-            const url = newUser.avatarURL()!
+            if (oldUser.avatar !== newUser.avatar) {
+                const filePath = `../dota_images/img/${newUser.avatar}.webp`
+                const url = newUser.avatarURL()!
 
-            await download_img(url, filePath).then(async () => {
-                exec('cd ../dota_images && git add . && git commit -m "img upload"', (err, stdout, stderr) => {
-                    if (err) {
-                        console.error(err)
-                        return
-                    }
-
-                    console.log(stdout)
-                    console.log(stderr)
-
-                    exec('cd ../dota_images && git push', async (err, stdout, stderr) => {
+                await download_img(url, filePath).then(async () => {
+                    exec('cd ../dota_images && git add . && git commit -m "img upload"', (err, stdout, stderr) => {
                         if (err) {
                             console.error(err)
                             return
@@ -71,18 +63,31 @@ export default {
                         console.log(stdout)
                         console.log(stderr)
 
-                        const embed = new EmbedBuilder()
-                            .setColor('DarkPurple')
-                            .setImage(`${BASE_URL}${newUser.avatar}.webp`)
-                            .setFooter({ text: i18n.__({ phrase: 'g.copyright', locale: 'en' }), iconURL: instance.getOwnerIcon() })
-                            .setTitle(`${oldUser.username} поменял аватарку`)
+                        exec('cd ../dota_images && git push', async (err, stdout, stderr) => {
+                            if (err) {
+                                console.error(err)
+                                return
+                            }
 
-                        await channel.send({
-                            embeds: [embed]
+                            console.log(stdout)
+                            console.log(stderr)
+
+                            const embed = new EmbedBuilder()
+                                .setColor('DarkPurple')
+                                .setImage(`${BASE_URL}${newUser.avatar}.webp`)
+                                .setFooter({ text: i18n.__({ phrase: 'g.copyright', locale: 'en' }), iconURL: instance.getOwnerIcon() })
+                                .setTitle(`${oldUser.username} поменял аватарку`)
+                                .setDescription(`${oldUser.avatar === null ? '' : `[Old](${BASE_URL}${oldUser.avatar}.webp) |`} [New](${BASE_URL}${newUser.avatar}.webp)`)
+
+                            await channel.send({
+                                embeds: [embed]
+                            })
                         })
                     })
                 })
-            })
+            }
+        } catch (why) {
+            console.error(why)
         }
 
         // const url = newUser.avatarURL({ forceStatic: true })!

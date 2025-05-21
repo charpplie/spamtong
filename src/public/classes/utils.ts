@@ -124,3 +124,11 @@ export class CUtils {
     return hash
   }
 }
+
+export class CGitHubUtils {
+  constructor() {}
+
+  public async pushToRepo() {
+    
+  }
+}
