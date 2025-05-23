@@ -1,32 +1,24 @@
 import { Event, Events, Prisma, Utils } from 'comx'
-import { Apps } from './!apps'
-import { __scrap } from './!func'
+import { AppIds, AppInfos } from './!apps'
+import { __scrapVersions } from './!func'
 import { TextChannel } from 'discord.js'
 import SteamUser from 'steam-user'
 
 const GUILD = '1335656368241119352'
 const CHANNEL = '1340374435294740560'
 
-const apps = [
-    '570',
-    '2305270',
-    '247040',
-    '1422450',
-    '3488080',
-    '440',
-    '232250',
-    '3488100',
-    '1422460',
-    '247060',
-    '2305290',
-    '373310',
-]
+const CHANNEL_TG = '-1002308379884' //main
+// const CHANNEL_TG = '-1002566844049'
 
 export default {
     name: Events.ClientReady,
-    // dev: true,
+    dev: true,
     callback: async (instance) => {
+        console.log('a')
         const guild = instance.client.guilds.cache.get(GUILD)!
+        // const channel = guild.channels.cache.get(CHANNEL) as TextChannel
+
+        // await __scrapVersions(AppInfos[0], channel, CHANNEL_TG)
 
         const user = new SteamUser()
         user.logOn({ anonymous: true })
@@ -60,20 +52,22 @@ export default {
 
                         if (appChanges.length !== 0) {
                             for (const app of appChanges) {
-                                if (apps.includes(app.appid.toString())) {
-                                    
-                                    const idx = Apps.findIndex(entry => entry.appid === app.appid.toString() || entry.appid_server === app.appid.toString())
-                                    const channel = guild.channels.cache.get(Apps[idx].channel) as TextChannel
+                                if (AppIds.includes(app.appid.toString())) {
 
-                                    await __scrap(Apps[idx], channel)
+                                    const idx = AppInfos.findIndex(entry => entry.appid === app.appid.toString() || entry.appid_server === app.appid.toString())
+                                    const channel = guild.channels.cache.get(AppInfos[idx].channel) as TextChannel
+
+                                    await __scrapVersions(AppInfos[idx], channel, CHANNEL_TG)
                                 }
                             }
                         }
 
                         lastChangeNumber = currentChangeNumber
-                        await Prisma.cVersions.update({ where: { id: obj!.id, appId: '0'}, data: {
-                            lastChangeNumber: lastChangeNumber
-                        }})
+                        await Prisma.cVersions.update({
+                            where: { id: obj!.id, appId: '0' }, data: {
+                                lastChangeNumber: lastChangeNumber
+                            }
+                        })
                     })
 
                     await Utils.Sleep(10000)
@@ -82,13 +76,5 @@ export default {
                 }
             }
         })
-        // const channel = guild.channels.cache.get(CHANNEL) as TextChannel
-
-        // channel.send('\`21312313 Dota 2 Staging 3124234 => 213123\`')
-        // for (const app of Apps) {
-        //     const channel = guild.channels.cache.get(app.channel) as TextChannel
-
-        //     __scrap(app, channel)
-        // }
     }
 } as Event

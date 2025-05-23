@@ -4,7 +4,7 @@ import { join } from 'path'
 
 const isDev = process.argv.slice(2).includes('--dev')
 
-export const g_Bot = new BotManager({
+const g_Bot = new BotManager({
   client: {
     intents: [
       GatewayIntentBits.Guilds,
@@ -30,7 +30,7 @@ export const g_Bot = new BotManager({
   isDev: isDev,
   commandsDir:
     [
-      join(__dirname, isDev? 'dev_commands' : 'commands')
+      join(__dirname, 'commands')
     ],
   eventsDir:
     [

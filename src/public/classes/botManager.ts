@@ -24,27 +24,27 @@ export class BotManager {
     this.client = new Client(client)
     this.owner = owner
 
-    this.client.login(token)
+    this.client.login(token).then(() => {
+      if (commandsDir) {
+        this.commandHandler = new CommandHandler({
+          instance: this,
+          client: this.client,
+          token: token,
+          appId: appId,
+          owner: owner,
+          commandsDir: commandsDir,
+        })
+      }
 
-    if (commandsDir) {
-      this.commandHandler = new CommandHandler({
-        instance: this,
-        client: this.client,
-        token: token,
-        appId: appId,
-        owner: owner,
-        commandsDir: commandsDir,
-      })
-    }
-
-    if (eventsDir) {
-      this.eventHandler = new EventHandler({
-        instance: this,
-        client: this.client,
-        events: eventsDir,
-        isDev: isDev,
-      })
-    }
+      if (eventsDir) {
+        this.eventHandler = new EventHandler({
+          instance: this,
+          client: this.client,
+          events: eventsDir,
+          isDev: isDev,
+        })
+      }
+    })
   }
 
   public getOwnerIcon(): string {

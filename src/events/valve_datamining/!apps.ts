@@ -7,7 +7,34 @@ export interface IAppInfo {
     shouldDump: boolean,
 }
 
-export const Apps: IAppInfo[] = [
+export const AppIds = [
+    // dota2
+    // dota2 staging
+    // dota2 test
+    // deadlock
+    // deadlock test
+    // tf2
+    // cs2
+
+    // Clients
+    '570',
+    '2305270',
+    '247040',
+    '1422450',
+    '3488080',
+    '440',
+    // '730',
+
+    // Servers
+    '373310',
+    '2305290',
+    '247060',
+    '1422460',
+    '3488100',
+    '232250',
+]
+
+export const AppInfos: IAppInfo[] = [
     {
         url: 'https://api.steampowered.com/IGCVersion_570/GetServerVersion/v1/',
         appid: '570',

@@ -1,0 +1,7 @@
+// model vk_icont {
+//     id String @id @default(cuid())
+//     messageId String
+//     photoId String
+//     lastPhotoId String
+//     userRates Json
+// }
