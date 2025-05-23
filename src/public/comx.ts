@@ -3,9 +3,8 @@ import { PrismaClient } from '@prisma/client'
 import { I18n } from 'i18n'
 import { join } from 'path'
 
-export const g_Prisma = new PrismaClient()
-
-export const Utils = new CUtils()
+export const Utils  = new CUtils()
+export const Prisma = new PrismaClient()
 
 export const i18n = new I18n({
     locales: [

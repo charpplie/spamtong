@@ -1,6 +1,6 @@
 import { Command, Utils } from 'comx'
 import { CommandInteraction } from 'discord.js'
-import { g_Prisma } from 'comx'
+import { Prisma } from 'comx'
 
 export default {
   name: 'randz',
@@ -36,7 +36,7 @@ export default {
 
     const category = interaction.options.get('category')?.value! as string
 
-    const objects = await g_Prisma.activities.findMany({ where: { category: category } })
+    const objects = await Prisma.activities.findMany({ where: { category: category } })
 
     if (objects.length > 0) {
       const activity = objects[Utils.Random(objects.length)]

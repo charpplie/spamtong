@@ -3,4 +3,5 @@ model CVersions {
     appId             String
     lastVersion       String
     lastVersionServer String
+    lastChangeNumber  Int    @default(0)
 }

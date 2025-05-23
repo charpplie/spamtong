@@ -24,6 +24,8 @@ export class BotManager {
     this.client = new Client(client)
     this.owner = owner
 
+    this.client.login(token)
+
     if (commandsDir) {
       this.commandHandler = new CommandHandler({
         instance: this,
@@ -43,8 +45,6 @@ export class BotManager {
         isDev: isDev,
       })
     }
-
-    this.client.login(token)
   }
 
   public getOwnerIcon(): string {

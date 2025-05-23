@@ -4,7 +4,7 @@ import { join } from 'path'
 
 const isDev = process.argv.slice(2).includes('--dev')
 
-new BotManager({
+export const g_Bot = new BotManager({
   client: {
     intents: [
       GatewayIntentBits.Guilds,

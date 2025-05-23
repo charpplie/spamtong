@@ -1,6 +1,6 @@
 import { Command } from 'comx'
 import { CommandInteraction, MessageFlags, TextChannel } from 'discord.js'
-import { g_Prisma } from 'comx'
+import { Prisma } from 'comx'
 
 export default {
   name: 'removeobj',
@@ -47,7 +47,7 @@ export default {
     const category = interaction.options.get('category')?.value! as string
     const name = (interaction.options.get('name')?.value! as string).toLowerCase()
 
-    const obj = await g_Prisma.activities.findFirst({ where: { guildId: interaction.guildId!, category: category, name: name } })
+    const obj = await Prisma.activities.findFirst({ where: { guildId: interaction.guildId!, category: category, name: name } })
 
     const channel = interaction.guild?.systemChannel
 
@@ -61,7 +61,7 @@ export default {
 
         return
       } else {
-        await g_Prisma.activities.delete({ where: { id: obj.id } })
+        await Prisma.activities.delete({ where: { id: obj.id } })
         await interaction.editReply({
           content: `Объект был успешно удален <:roflanpominki:1172648781213343795>. А жаль, я бы еще как-нибудь ${category === 'game' ? 'перепрошел' : 'пересмотрел'}`
         })

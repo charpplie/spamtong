@@ -1,6 +1,6 @@
 import { Command } from 'comx'
 import { CommandInteraction, MessageFlags } from 'discord.js'
-import { g_Prisma } from 'comx'
+import { Prisma } from 'comx'
 
 export default {
   name: 'getpull',
@@ -37,7 +37,7 @@ export default {
 
     const category = interaction.options.get('category')?.value! as string
 
-    const objects = await g_Prisma.activities.findMany({ where: { guildId: interaction.guildId!, category: category } })
+    const objects = await Prisma.activities.findMany({ where: { guildId: interaction.guildId!, category: category } })
 
     if (objects.length == 0) {
       await interaction.editReply({

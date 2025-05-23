@@ -1,6 +1,6 @@
 import { Command } from 'comx'
 import { CommandInteraction, MessageFlags, TextChannel } from 'discord.js'
-import { g_Prisma } from 'comx'
+import { Prisma } from 'comx'
 
 export default {
   name: 'add2pull',
@@ -62,7 +62,7 @@ export default {
     const nameFmt = name.toLowerCase()
     const links = interaction.options.get('links')?.value! as string
 
-    const obj = await g_Prisma.activities.findFirst({ where: { guildId: interaction.guildId!, category: category, nameFmt: nameFmt } })
+    const obj = await Prisma.activities.findFirst({ where: { guildId: interaction.guildId!, category: category, nameFmt: nameFmt } })
 
     if (obj) {
       await interaction.editReply({
@@ -72,7 +72,7 @@ export default {
       return
     }
 
-    await g_Prisma.activities.create({
+    await Prisma.activities.create({
       data: {
         guildId: interaction.guildId!,
         creatorId: interaction.user.id,
