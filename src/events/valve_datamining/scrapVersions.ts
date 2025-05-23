@@ -37,7 +37,7 @@ export default {
             let lastChangeNumber = 0
 
             if (obj) {
-                lastChangeNumber = obj.lastChangeNumber
+                lastChangeNumber = obj.lastChangeNumber!
             } else {
                 await Prisma.cVersions.create({
                     data: {
