@@ -31,6 +31,7 @@ export async function __scrap(app: IAppInfo, channel: TextChannel) {
                     appId: appid,
                     lastVersion: last_known_version,
                     lastVersionServer: last_known_version_server,
+                    lastChangeNumber: 0
                 }
             })
         }

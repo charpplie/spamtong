@@ -44,6 +44,7 @@ export default {
                         appId: '0',
                         lastVersion: '0',
                         lastVersionServer: '0',
+                        lastChangeNumber: 0
                     }
                 })
             }

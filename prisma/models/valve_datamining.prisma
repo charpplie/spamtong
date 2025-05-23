@@ -3,5 +3,5 @@ model CVersions {
     appId             String
     lastVersion       String
     lastVersionServer String
-    lastChangeNumber  Int?
+    lastChangeNumber  Int
 }
