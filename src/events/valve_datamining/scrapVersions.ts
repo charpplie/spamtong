@@ -58,8 +58,6 @@ export default {
                             console.error(error)
                         }
 
-                        console.log(`[${(new Date).toLocaleDateString()}] ${currentChangeNumber}`)
-
                         if (appChanges.length !== 0) {
                             for (const app of appChanges) {
                                 if (apps.includes(app.appid.toString())) {
