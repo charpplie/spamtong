@@ -12,9 +12,8 @@ const CHANNEL_TG = '-1002308379884' //main
 
 export default {
     name: Events.ClientReady,
-    // dev: true,
+    dev: true,
     callback: async (instance) => {
-        console.log('a')
         const guild = instance.client.guilds.cache.get(GUILD)!
         // const channel = guild.channels.cache.get(CHANNEL) as TextChannel
 
@@ -41,14 +40,18 @@ export default {
                 })
             }
 
+            // console.log(lastChangeNumber)
+
             obj = await Prisma.cVersions.findFirst({ where: { appId: '0' } })
 
             while (true) {
                 try {
-                    await user.getProductChanges(lastChangeNumber, async (error, currentChangeNumber, appChanges) => {
+                    await user.getProductChanges(29158837, async (error, currentChangeNumber, appChanges) => {
                         if (error) {
                             console.error(error)
                         }
+
+                        console.log(appChanges)
 
                         if (appChanges.length !== 0) {
                             for (const app of appChanges) {
