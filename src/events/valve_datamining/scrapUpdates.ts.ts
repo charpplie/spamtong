@@ -46,12 +46,12 @@ export default {
 
             while (true) {
                 try {
-                    await user.getProductChanges(29158837, async (error, currentChangeNumber, appChanges) => {
+                    await user.getProductChanges(lastChangeNumber, async (error, currentChangeNumber, appChanges) => {
                         if (error) {
                             console.error(error)
                         }
 
-                        console.log(appChanges)
+                        // console.log(appChanges)
 
                         if (appChanges.length !== 0) {
                             for (const app of appChanges) {
