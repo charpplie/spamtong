@@ -12,7 +12,7 @@ const CHANNEL_TG = '-1002308379884' //main
 
 export default {
     name: Events.ClientReady,
-    dev: true,
+    // dev: true,
     callback: async (instance) => {
         const guild = instance.client.guilds.cache.get(GUILD)!
         // const channel = guild.channels.cache.get(CHANNEL) as TextChannel
