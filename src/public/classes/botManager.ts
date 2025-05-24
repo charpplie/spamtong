@@ -44,6 +44,8 @@ export class BotManager {
           isDev: isDev,
         })
       }
+    }).catch(err => {
+      console.log(err)
     })
   }
 

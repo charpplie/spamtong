@@ -63,7 +63,7 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
         }
 
         if (msg != '') {
-            // await channelDiscord.send(msg)
+            await channelDiscord.send(msg)
             await axios.post(`${TgBaseUrl}/sendMessage`, {
                 chat_id: channelTelegramId,
                 text: msg_tg,
