@@ -25,6 +25,7 @@ export class BotManager {
     this.owner = owner
 
     this.client.login(token).then(() => {
+      console.log('ok')
       if (commandsDir) {
         this.commandHandler = new CommandHandler({
           instance: this,
