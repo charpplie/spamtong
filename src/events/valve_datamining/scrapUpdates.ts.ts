@@ -53,7 +53,7 @@ export default {
 
                         // console.log(appChanges)
 
-                        if (appChanges.length !== 0) {
+                        if (appChanges && appChanges.length !== 0) {
                             for (const app of appChanges) {
                                 if (AppIds.includes(app.appid.toString())) {
 
