@@ -60,7 +60,7 @@ export default {
                                     const idx = AppInfos.findIndex(entry => entry.appid === app.appid.toString() || entry.appid_server === app.appid.toString())
                                     const channel = guild.channels.cache.get(AppInfos[idx].channel) as TextChannel
 
-                                    console.error(`[${(new Date).toLocaleString()}] ${AppInfos[idx].fmt_name}`)
+                                    console.log(`[${(new Date).toLocaleString()}] ${AppInfos[idx].fmt_name}`)
 
                                     await __scrapVersions(AppInfos[idx], channel, CHANNEL_TG)
                                 }
