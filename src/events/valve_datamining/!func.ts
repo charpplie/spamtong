@@ -24,16 +24,32 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
         let last_known_version_server = '0'
         let last_known_version = '0'
 
+        let pendingDs = true
+        let pendingTg = true
+
         if (obj) {
             last_known_version_server = obj.lastVersionServer
             last_known_version = obj.lastVersion
+
+            let pendingDs = obj.pendingDs
+            let pendingTg = obj.pendingTg
+
+            await Prisma.cVersions.update({
+                where: { id: obj?.id, appId: appid },
+                data: {
+                    pendingDs: true,
+                    pendingTg: true,
+                }
+            })
         } else {
             await Prisma.cVersions.create({
                 data: {
                     appId: appid,
                     lastVersion: last_known_version,
                     lastVersionServer: last_known_version_server,
-                    lastChangeNumber: 0
+                    lastChangeNumber: 0,
+                    pendingDs: true,
+                    pendingTg: true,
                 }
             })
         }
@@ -48,8 +64,6 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
         let msg = ''
         let msg_tg = ''
 
-        console.log(active_ver_server)
-
         if (active_ver_server != last_known_version_server) {
             msg += `\`${appid_server} — ${fmt_name} Server  ${last_known_version_server} => ${active_ver_server}\`\n`
             msg_tg += `\`[v]\`  *${appid_server} — ${fmt_name} Server*  \`${last_known_version_server} => ${active_ver_server}\`\n`
@@ -63,14 +77,37 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
         }
 
         if (msg != '') {
-            await channelDiscord.send(msg)
-            await axios.post(`${TgBaseUrl}/sendMessage`, {
-                chat_id: channelTelegramId,
-                text: msg_tg,
-                parse_mode: 'markdown',
-            }).catch(err => {
-                console.error(err)
-            })
+            if (obj?.pendingDs) {
+                const rDs = await channelDiscord.send(msg)
+
+                if (rDs) {
+                    await Prisma.cVersions.update({
+                        where: { id: obj?.id, appId: appid },
+                        data: {
+                            pendingDs: false,
+                        }
+                    })
+                }
+            }
+
+            if (obj?.pendingTg) {
+                const rTg = await axios.post(`${TgBaseUrl}/sendMessage`, {
+                    chat_id: channelTelegramId,
+                    text: msg_tg,
+                    parse_mode: 'markdown',
+                }).catch(err => {
+                    console.error(err)
+                })
+
+                if (rTg?.data.ok) {
+                    await Prisma.cVersions.update({
+                        where: { id: obj?.id, appId: appid },
+                        data: {
+                            pendingTg: false,
+                        }
+                    })
+                }
+            }
         }
     } catch (err) {
         console.error(`[${(new Date()).toLocaleString()}] Error from ${app.fmt_name}:\n${err}`)

@@ -7,8 +7,8 @@ import SteamUser from 'steam-user'
 const GUILD = '1335656368241119352'
 // const CHANNEL = '1340374435294740560'
 
-const CHANNEL_TG = '-1002308379884' //main
-// const CHANNEL_TG = '-1002566844049'
+// const CHANNEL_TG = '-1002308379884'
+const CHANNEL_TG = '-1002566844049'
 
 export default {
     name: Events.ClientReady,
@@ -16,6 +16,29 @@ export default {
     callback: async (instance) => {
         const guild = instance.client.guilds.cache.get(GUILD)!
         // const channel = guild.channels.cache.get(CHANNEL) as TextChannel
+
+        const pendingApps = await Prisma.cVersions.findMany({
+            where: {
+                OR: [
+                    {
+                        pendingDs: true,
+                    },
+                    {
+                        pendingTg: true,
+                    }
+                ]
+            }
+        })
+
+        if (pendingApps) {
+            for (const app of pendingApps) {
+                const idx = AppInfos.findIndex(entry => entry.appid === app.appId.toString() || entry.appid_server === app.appId.toString())
+                const channel = guild.channels.cache.get(AppInfos[idx].channel) as TextChannel
+                await __scrapVersions(AppInfos[0], channel, CHANNEL_TG)
+            }
+        }
+
+        // console.log(pendingApps)
 
         // await __scrapVersions(AppInfos[0], channel, CHANNEL_TG)
 
@@ -35,12 +58,12 @@ export default {
                         appId: '0',
                         lastVersion: '0',
                         lastVersionServer: '0',
-                        lastChangeNumber: 0
+                        lastChangeNumber: 0,
+                        pendingDs: false,
+                        pendingTg: false,
                     }
                 })
             }
-
-            // console.log(lastChangeNumber)
 
             obj = await Prisma.cVersions.findFirst({ where: { appId: '0' } })
 
@@ -50,8 +73,6 @@ export default {
                         if (error) {
                             console.error(error)
                         }
-
-                        // console.log(appChanges)
 
                         if (appChanges && appChanges.length !== 0) {
                             for (const app of appChanges) {
