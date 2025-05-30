@@ -30,13 +30,13 @@ export default {
             }
         })
 
-        console.log(pendingApps)
+        // console.log(pendingApps)
 
         if (pendingApps) {
             for (const app of pendingApps) {
                 const idx = AppInfos.findIndex(entry => entry.appid === app.appId.toString() || entry.appid_server === app.appId.toString())
                 const channel = guild.channels.cache.get(AppInfos[idx].channel) as TextChannel
-                console.log(AppInfos[idx])
+                // console.log(AppInfos[idx])
                 await __scrapVersions(AppInfos[idx], channel, CHANNEL_TG, true)
             }
         }
