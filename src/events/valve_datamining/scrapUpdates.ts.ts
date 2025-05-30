@@ -34,7 +34,7 @@ export default {
             for (const app of pendingApps) {
                 const idx = AppInfos.findIndex(entry => entry.appid === app.appId.toString() || entry.appid_server === app.appId.toString())
                 const channel = guild.channels.cache.get(AppInfos[idx].channel) as TextChannel
-                await __scrapVersions(AppInfos[0], channel, CHANNEL_TG)
+                await __scrapVersions(AppInfos[0], channel, CHANNEL_TG, true)
             }
         }
 

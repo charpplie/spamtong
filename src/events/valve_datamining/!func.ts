@@ -6,7 +6,7 @@ import https from 'https'
 
 const TgBaseUrl = `https://api.telegram.org/bot${process.env.token_tg}`
 
-export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel, channelTelegramId: string) {
+export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel, channelTelegramId: string, retry: boolean = false) {
     try {
         await Utils.Sleep(1000)
 
@@ -31,16 +31,18 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
             last_known_version_server = obj.lastVersionServer
             last_known_version = obj.lastVersion
 
-            let pendingDs = obj.pendingDs
-            let pendingTg = obj.pendingTg
-
-            await Prisma.cVersions.update({
+            if (retry) {
+                pendingDs = obj.pendingDs
+                pendingTg = obj.pendingTg
+            } else {
+                await Prisma.cVersions.update({
                 where: { id: obj?.id, appId: appid },
                 data: {
                     pendingDs: true,
                     pendingTg: true,
                 }
             })
+            }
         } else {
             await Prisma.cVersions.create({
                 data: {
@@ -77,7 +79,7 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
         }
 
         if (msg != '') {
-            if (obj?.pendingDs) {
+            if (pendingDs) {
                 const rDs = await channelDiscord.send(msg)
 
                 if (rDs) {
@@ -90,7 +92,7 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
                 }
             }
 
-            if (obj?.pendingTg) {
+            if (pendingTg) {
                 const rTg = await axios.post(`${TgBaseUrl}/sendMessage`, {
                     chat_id: channelTelegramId,
                     text: msg_tg,
