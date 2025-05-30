@@ -17,26 +17,26 @@ export default {
         const guild = instance.client.guilds.cache.get(GUILD)!
         // const channel = guild.channels.cache.get(CHANNEL) as TextChannel
 
-        const pendingApps = await Prisma.cVersions.findMany({
-            where: {
-                OR: [
-                    {
-                        pendingDs: true,
-                    },
-                    {
-                        pendingTg: true,
-                    }
-                ]
-            }
-        })
+        // const pendingApps = await Prisma.cVersions.findMany({
+        //     where: {
+        //         OR: [
+        //             {
+        //                 pendingDs: true,
+        //             },
+        //             {
+        //                 pendingTg: true,
+        //             }
+        //         ]
+        //     }
+        // })
 
-        if (pendingApps) {
-            for (const app of pendingApps) {
-                const idx = AppInfos.findIndex(entry => entry.appid === app.appId.toString() || entry.appid_server === app.appId.toString())
-                const channel = guild.channels.cache.get(AppInfos[idx].channel) as TextChannel
-                await __scrapVersions(AppInfos[0], channel, CHANNEL_TG)
-            }
-        }
+        // if (pendingApps) {
+        //     for (const app of pendingApps) {
+        //         const idx = AppInfos.findIndex(entry => entry.appid === app.appId.toString() || entry.appid_server === app.appId.toString())
+        //         const channel = guild.channels.cache.get(AppInfos[idx].channel) as TextChannel
+        //         await __scrapVersions(AppInfos[0], channel, CHANNEL_TG)
+        //     }
+        // }
 
         // console.log(pendingApps)
 
