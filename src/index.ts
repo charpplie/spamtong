@@ -28,10 +28,10 @@ const g_Bot = new BotManager({
   appId: `${process.env.appId}`,
   owner: `${process.env.owner}`,
   isDev: isDev,
-  // commandsDir:
-  //   [
-  //     join(__dirname, 'commands')
-  //   ],
+  commandsDir:
+    [
+      join(__dirname, 'commands')
+    ],
   eventsDir:
     [
       {
