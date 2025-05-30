@@ -36,12 +36,12 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
                 pendingTg = obj.pendingTg
             } else {
                 await Prisma.cVersions.update({
-                where: { id: obj?.id, appId: appid },
-                data: {
-                    pendingDs: true,
-                    pendingTg: true,
-                }
-            })
+                    where: { id: obj?.id, appId: appid },
+                    data: {
+                        pendingDs: true,
+                        pendingTg: true,
+                    }
+                })
             }
         } else {
             await Prisma.cVersions.create({
@@ -77,19 +77,6 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
         }
 
         if (msg != '' || msg_tg != '') {
-            if (pendingDs) {
-                const rDs = await channelDiscord.send(msg)
-
-                if (rDs) {
-                    await Prisma.cVersions.update({
-                        where: { id: obj?.id, appId: appid },
-                        data: {
-                            pendingDs: false,
-                        }
-                    })
-                }
-            }
-
             if (pendingTg) {
                 const rTg = await axios.post(`${TgBaseUrl}/sendMessage`, {
                     chat_id: channelTelegramId,
@@ -104,6 +91,19 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
                         where: { id: obj?.id, appId: appid },
                         data: {
                             pendingTg: false,
+                        }
+                    })
+                }
+            }
+
+            if (pendingDs) {
+                const rDs = await channelDiscord.send(msg)
+
+                if (rDs) {
+                    await Prisma.cVersions.update({
+                        where: { id: obj?.id, appId: appid },
+                        data: {
+                            pendingDs: false,
                         }
                     })
                 }
