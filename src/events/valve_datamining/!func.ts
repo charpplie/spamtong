@@ -67,18 +67,16 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
         let msg_tg = ''
 
         if (active_ver_server != last_known_version_server) {
-            msg += `\`${appid_server} — ${fmt_name} Server  ${last_known_version_server} => ${active_ver_server}\`\n`
-            msg_tg += `\`[v]\`  *${appid_server} — ${fmt_name} Server*  \`${last_known_version_server} => ${active_ver_server}\`\n`
-            await Prisma.cVersions.update({ where: { id: obj!.id, appId: appid }, data: { lastVersionServer: `${active_ver_server}` } })
+            if (pendingDs) msg += `\`${appid_server} — ${fmt_name} Server  ${last_known_version_server} => ${active_ver_server}\`\n`
+            if (pendingTg) msg_tg += `\`[v]\`  *${appid_server} — ${fmt_name} Server*  \`${last_known_version_server} => ${active_ver_server}\`\n`
         }
 
         if (active_ver != last_known_version) {
-            msg += `\`${appid} — ${fmt_name}  ${last_known_version} => ${active_ver}\``
-            msg_tg += `\`[v]\`  *${appid} — ${fmt_name}*  \`${last_known_version} => ${active_ver}\``
-            await Prisma.cVersions.update({ where: { id: obj!.id, appId: appid }, data: { lastVersion: `${active_ver}` } })
+            if (pendingDs) msg += `\`${appid} — ${fmt_name}  ${last_known_version} => ${active_ver}\``
+            if (pendingTg) msg_tg += `\`[v]\`  *${appid} — ${fmt_name}*  \`${last_known_version} => ${active_ver}\``
         }
 
-        if (msg != '') {
+        if (msg != '' || msg_tg != '') {
             if (pendingDs) {
                 const rDs = await channelDiscord.send(msg)
 
@@ -110,6 +108,9 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
                     })
                 }
             }
+
+            await Prisma.cVersions.update({ where: { id: obj!.id, appId: appid }, data: { lastVersionServer: `${active_ver_server}` } })
+            await Prisma.cVersions.update({ where: { id: obj!.id, appId: appid }, data: { lastVersion: `${active_ver}` } })
         }
     } catch (err) {
         console.error(`[${(new Date()).toLocaleString()}] Error from ${app.fmt_name}:\n${err}`)
