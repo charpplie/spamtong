@@ -30,6 +30,8 @@ export default {
             }
         })
 
+        console.log(pendingApps)
+
         if (pendingApps) {
             for (const app of pendingApps) {
                 const idx = AppInfos.findIndex(entry => entry.appid === app.appId.toString() || entry.appid_server === app.appId.toString())
