@@ -34,6 +34,24 @@ export const AppIds = [
     '232250',
 ]
 
+export const ClientAppIds = [
+    '570',
+    '2305270',
+    '247040',
+    '1422450',
+    '3488080',
+    '440',
+]
+
+export const ServerAppIds = [
+    '373310',
+    '2305290',
+    '247060',
+    '1422460',
+    '3488100',
+    '232250',
+]
+
 export const AppInfos: IAppInfo[] = [
     {
         url: 'https://api.steampowered.com/IGCVersion_570/GetServerVersion/v1/',
@@ -72,6 +90,14 @@ export const AppInfos: IAppInfo[] = [
         appid: '3488080',
         appid_server: '3488100',
         fmt_name: 'Deadlock Experimental',
+        channel: '1374376029518434405',
+        shouldDump: false,
+    },
+    {
+        url: 'https://api.steampowered.com/IGCVersion_3781850/GetServerVersion/v1/',
+        appid: '3781850',
+        appid_server: '3781870',
+        fmt_name: 'Deadlock Staging',
         channel: '1374376029518434405',
         shouldDump: false,
     },
