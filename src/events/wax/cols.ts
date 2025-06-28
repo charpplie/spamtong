@@ -1,9 +1,9 @@
 import { Event, Events, Utils } from 'comx'
 import { TextChannel } from 'discord.js'
-import { readFile, writeFile, existsSync, writeFileSync, readFileSync } from 'fs'
+import { existsSync, writeFileSync, readFileSync } from 'fs'
+import { createHash } from 'crypto'
 import axios from 'axios'
 import https from 'https'
-import { createHash } from 'crypto'
 
 interface ICollectionMeta {
   [key: string]: string,
@@ -20,16 +20,18 @@ const COLS_CHANNEL = '913130017117044807'
 
 const BaseUrl = 'https://wax.api.atomicassets.io/atomicassets/v1/collections?page=1&limit=1&order=desc&sort=created'
 
+const FILENAME = './last_col'
+
 export default {
   name: Events.ClientReady,
   // dev: true,
   callback: async (instance) => {
     let last_hash = ''
 
-    if (!existsSync('./last_col')) {
-      writeFileSync('./last_col', 'test')
+    if (!existsSync(FILENAME)) {
+      writeFileSync(FILENAME, 'test')
     } else {
-      last_hash = readFileSync('./last_col', 'utf8')
+      last_hash = readFileSync(FILENAME, 'utf8')
     }
 
     const guild = instance.client.guilds.cache.get(GUILD)!
@@ -40,7 +42,9 @@ export default {
     let col_meta: ICollectionMeta = { name: '', desc: '', url: '' }
 
     while (true) {
-      let resp = (await r.request({ url: BaseUrl }))
+      let resp = (await r.request({ url: BaseUrl }).catch(() => { }))
+
+      if (!resp) continue
 
       col_meta.desc = ''
       col_meta.url = ''
@@ -54,7 +58,7 @@ export default {
 
       if (col_meta.url.includes('http')) {
         await channel.send(`@everyone\nCollection: ${col_meta.name}\n\nDescription: ${col_meta.desc}\n\nURL: ${col_meta.url}`)
-        writeFileSync('./last_col', new_hash)
+        writeFileSync(FILENAME, new_hash)
         last_hash = new_hash
       }
 

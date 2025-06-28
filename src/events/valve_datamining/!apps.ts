@@ -36,24 +36,6 @@ export const AppIds = [
     '232250',
 ]
 
-export const ClientAppIds = [
-    '570',
-    '2305270',
-    '247040',
-    '1422450',
-    '3488080',
-    '440',
-]
-
-export const ServerAppIds = [
-    '373310',
-    '2305290',
-    '247060',
-    '1422460',
-    '3488100',
-    '232250',
-]
-
 export const AppInfos: IAppInfo[] = [
     {
         url: 'https://api.steampowered.com/IGCVersion_570/GetServerVersion/v1/',

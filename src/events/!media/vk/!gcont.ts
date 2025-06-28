@@ -1,10 +1,6 @@
 import { ChannelType, EmbedBuilder, TextChannel } from 'discord.js'
-import { Event, Events, Utils, Constants } from 'comx'
-import { GIContModel } from 'models/media/vk/gcont'
-import { unlinkSync, createWriteStream } from 'fs'
+import { Event, Events, Utils, Prisma } from 'comx'
 import { vk } from './!vk'
-import axios from 'axios'
-import { join } from 'path'
 
 export default {
   name: Events.ClientReady,

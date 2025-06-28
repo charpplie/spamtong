@@ -1,0 +1,6 @@
+model bsky_profiles {
+    id         String @id @default(cuid())
+    did        String
+    handle     String
+    postsCount Int
+}
