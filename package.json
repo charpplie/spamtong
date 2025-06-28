@@ -3,7 +3,7 @@
     "schema": "./prisma"
   },
   "scripts": {
-    "start": "npm install && tsx --env-file=.env src/index.ts",
+    "start": "tsx --env-file=.env src/index.ts",
     "dev": "tsx --env-file=.env src/index.ts --dev"
   },
   "dependencies": {

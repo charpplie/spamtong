@@ -1,9 +1,7 @@
-model CVersions {
-    id                String  @id @default(cuid())
-    appId             String
-    lastVersion       String
-    lastVersionServer String
-    lastChangeNumber  Int
-    pendingDs         Boolean
-    pendingTg         Boolean
+model cversions {
+    id            Int    @id @default(autoincrement())
+    appId         String
+    version       String
+    versionServer String
+    changeNumber  Int?
 }
