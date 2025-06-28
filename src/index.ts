@@ -30,7 +30,7 @@ const g_Bot = new BotManager({
   isDev: isDev,
   commandsDir:
     [
-      join(__dirname, isDev? 'dev_commands' : 'commands')
+      join(__dirname, 'commands')
     ],
   eventsDir:
     [

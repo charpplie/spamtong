@@ -2,7 +2,7 @@ import { TextChannel, Message, Snowflake } from 'discord.js'
 import { Dirent, readFileSync } from 'fs'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios from 'axios'
 
 export class CUtils {
   constructor() { }
@@ -110,47 +110,25 @@ export class CUtils {
     }
   }
 
-  public async safeAxios<T = any, D = any>(url: string, options: safeAxiosOptions, config?: AxiosRequestConfig<D>): Promise<AxiosResponse<T, D>> {
-    const {
-      maxRetries,
-      retryDelay
-    } = options
+  public hashCode(str: string): number {
+    let hash = 0
 
-    let retries = 0
+    if (str.length == 0) return hash
 
-    while (retries < maxRetries) {
-      try {
-        const response: AxiosResponse<T, D> = await axios(url, config)
-        return response
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error(`Axios request failed (retry ${retries + 1}/${maxRetries}):`, error.message)
-          if (error.response) {
-            console.error('Response data:', error.response.data)
-            console.error('Response status:', error.response.status)
-            console.error('Response headers:', error.response.headers)
-          } else if (error.request) {
-            console.error('No response received:', error.request)
-          } else {
-            console.error('Error setting up request:', error.message)
-          }
-        } else {
-          console.error(`Unexpected error during request (retry ${retries + 1}/${maxRetries}):`, error)
-        }
-
-        retries++
-
-        if (retries < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, retryDelay))
-        }
-      }
+    for (let i = 0; i < str.length; i++) {
+      let char = str.charCodeAt(i)
+      hash = ((hash << 5) - hash) + char
+      hash = hash & hash
     }
 
-    throw new Error(`Failed to fetch from ${url} after ${maxRetries} attempts.`)
+    return hash
   }
 }
 
-interface safeAxiosOptions {
-  maxRetries: number,
-  retryDelay: number
+export class CGitHubUtils {
+  constructor() {}
+
+  public async pushToRepo() {
+    
+  }
 }

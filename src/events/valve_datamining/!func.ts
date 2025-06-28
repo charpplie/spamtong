@@ -1,12 +1,14 @@
 import { Prisma, Utils } from 'comx'
 import { IAppInfo } from './!apps'
 import { TextChannel } from 'discord.js'
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import https from 'https'
 
-export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel, channelTelegramId: string, isServer: boolean) {
+const TgBaseUrl = `https://api.telegram.org/bot${process.env.token_tg}`
+
+export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel, channelTelegramId: string, retry: boolean = false) {
     try {
-        await Utils.Sleep(500)
+        await Utils.Sleep(1000)
 
         const {
             url,
@@ -15,130 +17,102 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
             fmt_name,
         } = app
 
-        let obj = await Prisma.cversions.findFirst({ where: { appId: appid } })
-
-        if (!obj) {
-            await Prisma.cversions.create({
-                data: {
-                    appId: appid,
-                    version: '0',
-                    versionServer: '0'
-                }
-            })
-
-            obj = await Prisma.cversions.findFirst({ where: { appId: appid } })
-        }
-
-        const last_known_version = isServer ? obj!.versionServer : obj!.version
-
         const r = axios.create({ timeout: 60000, httpsAgent: new https.Agent({ keepAlive: true }), headers: { 'Content-Type': 'application/json' } })
 
-        const resp = await Utils.retry(() => r.request({ url }), 0)
+        let obj = await Prisma.cVersions.findFirst({ where: { appId: appid } })
 
-        const active_version = isServer ? resp.data.result.deploy_version : resp.data.result.active_version
+        let last_known_version_server = '0'
+        let last_known_version = '0'
 
-        let data: IAppMsgData | undefined
+        let pendingDs = true
+        let pendingTg = true
 
-        if (active_version != last_known_version) {
-            data = {
-                newVer: active_version,
-                oldVer: last_known_version!,
-                type: 'STEAM_API',
-                appId: isServer ? appid : appid_server,
-                fmtName: fmt_name,
-                isServer: isServer,
+        if (obj) {
+            last_known_version_server = obj.lastVersionServer
+            last_known_version = obj.lastVersion
+
+            if (retry) {
+                pendingDs = obj.pendingDs
+                pendingTg = obj.pendingTg
+            } else {
+                await Prisma.cVersions.update({
+                    where: { id: obj?.id, appId: appid },
+                    data: {
+                        pendingDs: true,
+                        pendingTg: true,
+                    }
+                })
             }
+        } else {
+            await Prisma.cVersions.create({
+                data: {
+                    appId: appid,
+                    lastVersion: last_known_version,
+                    lastVersionServer: last_known_version_server,
+                    lastChangeNumber: 0,
+                    pendingDs: true,
+                    pendingTg: true,
+                }
+            })
         }
 
-        if (data) {
-            while (true) {
-                try {
-                    await sendMsgTg(data, channelTelegramId)
-                    break
-                } catch (why) {
-                    console.error(why)
-                    await Utils.Sleep(2000)
+        obj = await Prisma.cVersions.findFirst({ where: { appId: appid } })
+
+        const resp = (await r.request({ url: url }))
+
+        const active_ver_server = resp.data.result.deploy_version
+        const active_ver = resp.data.result.active_version
+
+        let msg = ''
+        let msg_tg = ''
+
+        if (active_ver_server != last_known_version_server) {
+            if (pendingDs) msg += `\`${appid_server} — ${fmt_name} Server  ${last_known_version_server} => ${active_ver_server}\`\n`
+            if (pendingTg) msg_tg += `\`[v]\`  *${appid_server} — ${fmt_name} Server*  \`${last_known_version_server} => ${active_ver_server}\`\n`
+        }
+
+        if (active_ver != last_known_version) {
+            if (pendingDs) msg += `\`${appid} — ${fmt_name}  ${last_known_version} => ${active_ver}\``
+            if (pendingTg) msg_tg += `\`[v]\`  *${appid} — ${fmt_name}*  \`${last_known_version} => ${active_ver}\``
+        }
+
+        if (msg != '' || msg_tg != '') {
+            if (pendingTg) {
+                const rTg = await axios.post(`${TgBaseUrl}/sendMessage`, {
+                    chat_id: channelTelegramId,
+                    text: msg_tg,
+                    parse_mode: 'markdown',
+                }).catch(err => {
+                    console.error(err)
+                })
+
+                if (rTg?.data.ok) {
+                    await Prisma.cVersions.update({
+                        where: { id: obj?.id, appId: appid },
+                        data: {
+                            pendingTg: false,
+                        }
+                    })
                 }
             }
 
-            while (true) {
-                try {
-                    await sendMsgDs(data, channelDiscord)
-                    break
-                } catch (why) {
-                    console.error(why)
-                    await Utils.Sleep(2000)
+            if (pendingDs) {
+                const rDs = await channelDiscord.send(msg)
+
+                if (rDs) {
+                    await Prisma.cVersions.update({
+                        where: { id: obj?.id, appId: appid },
+                        data: {
+                            pendingDs: false,
+                        }
+                    })
                 }
             }
+
+            await Prisma.cVersions.update({ where: { id: obj!.id, appId: appid }, data: { lastVersionServer: `${active_ver_server}` } })
+            await Prisma.cVersions.update({ where: { id: obj!.id, appId: appid }, data: { lastVersion: `${active_ver}` } })
         }
     } catch (err) {
         console.error(`[${(new Date()).toLocaleString()}] Error from ${app.fmt_name}:\n${err}`)
-    }
-}
-
-interface IAppMsgData {
-    newVer: string,
-    oldVer: string,
-    type: MsgType,
-    appId: string,
-    fmtName?: string,
-    isServer?: boolean,
-}
-
-type MsgType = 'STEAM_API'
-
-const TgBaseUrl = `https://api.telegram.org/bot${process.env.token_tg}`
-
-async function sendMsgTg(data: IAppMsgData, chatId: string): Promise<boolean> {
-    try {
-        let msg = ''
-
-        switch (data.type) {
-            case 'STEAM_API': {
-                msg = `\`[v]\`  *${data.appId} — ${data.fmtName}${data.isServer ? ' Server' : ''}*  \`${data.oldVer} => ${data.newVer}\``
-                break
-            }
-        }
-
-        const r = await axios.post(`${TgBaseUrl}/sendMessage`, {
-            chat_id: chatId,
-            text: msg,
-            parse_mode: 'markdown',
-        })
-
-        if (r.data.ok) {
-            return true
-        }
-
-        return false
-    } catch (why) {
-        console.error(why)
-
-        return false
-    }
-}
-
-async function sendMsgDs(data: IAppMsgData, channel: TextChannel): Promise<boolean> {
-    try {
-        let msg = ''
-
-        switch (data.type) {
-            case 'STEAM_API': {
-                msg = `\`${data.appId} — ${data.fmtName}${data.isServer ? ' Server' : ''}  ${data.oldVer} => ${data.newVer}\``
-                break
-            }
-        }
-
-        const r = await channel.send(msg)
-
-        if (r) {
-            return true
-        }
-
-        return false
-    } catch (why) {
-        console.error(why)
-
-        return false
     }
 }
