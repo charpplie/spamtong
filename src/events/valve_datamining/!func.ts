@@ -40,7 +40,7 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
                 retryDelay: 1000,
             },
             {
-                method: 'POST'
+                method: 'GET'
             }
         )
 
