@@ -3,10 +3,22 @@ import { Event, Events, Utils } from 'comx'
 const TgBaseUrl = `https://api.telegram.org/bot${process.env.token_tg}`
 const TgMainChannel = '-1002258088628'
 
+interface INames {
+    [key: string]: string
+}
+
+const Names: INames = {
+    '445661951238995998': 'Никита',
+    '783443296382746672': 'Максим',
+    '299586224031662085': 'Руслан',
+    '440868250335576074': 'Артем Младший',
+    '222355127850369024': 'Артем Старший'
+}
+
 export default {
     name: Events.MessageCreate,
     callback: async (instance, msg) => {
-        if (msg.guild.id != '1150427580734906368') return
+        if (msg.guild.id != '1150427580734906368' || msg.author.bot) return
 
         if (msg.content.includes('@everyone') || msg.content.includes('@here')) {
             try {
@@ -19,7 +31,7 @@ export default {
                         method: 'POST',
                         data: {
                             chat_id: TgMainChannel,
-                            text: `${msg.author.username} потревожил нас из другого измерения:\n${msg.content}`,
+                            text: `${Names[msg.author.id]} потревожил нас из другого измерения:\n${msg.content}`,
                             parse_mode: 'markdown',
                         }
                     })
