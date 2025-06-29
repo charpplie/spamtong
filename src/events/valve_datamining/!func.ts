@@ -67,6 +67,7 @@ export async function __scrapVersions(app: IAppInfo, channelDiscord: TextChannel
                     retryDelay: 1000,
                 },
                 {
+                    method: 'POST',
                     data: {
                         chat_id: channelTelegramId,
                         text: msg_tg,
