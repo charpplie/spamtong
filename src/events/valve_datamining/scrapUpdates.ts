@@ -6,8 +6,8 @@ import SteamUser from 'steam-user'
 
 const GUILD = '1335656368241119352'
 
-// const CHANNEL_TG = '-1002308379884'
-const CHANNEL_TG = '-1002566844049'
+const CHANNEL_TG = '-1002308379884'
+// const CHANNEL_TG = '-1002566844049'
 
 export default {
     name: Events.ClientReady,
