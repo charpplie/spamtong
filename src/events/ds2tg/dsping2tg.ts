@@ -46,6 +46,7 @@ async function sendMessage(method: Method, msg: any, data: {}): Promise<AxiosRes
 
 export default {
     name: Events.MessageCreate,
+    // dev: true,
     callback: async (instance, msg) => {
         if (msg.guild.id != '1150427580734906368'
         || msg.author.bot
@@ -67,7 +68,7 @@ export default {
             let audio: IMedia[] = []
 
             msg.attachments.forEach(async (attachment: any) => {
-                const type = attachment.contentType.includes('image') ? 'photo' : attachment.contentType.includes('video') ? 'video' : attachment.contentType.includes('audio') ? 'audio' : 'unkown'
+                const type = attachment.contentType.includes('gif') ? 'document' : attachment.contentType.includes('image') ? 'photo' : attachment.contentType.includes('video') ? 'video' : attachment.contentType.includes('audio') ? 'audio' : 'unkown'
 
                 if (type != 'unkown' && type != 'audio') {
                     media.push(
