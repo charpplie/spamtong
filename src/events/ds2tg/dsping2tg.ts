@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios'
 import { Event, Events, Utils } from 'comx'
 
 const TgBaseUrl = `https://api.telegram.org/bot${process.env.token_tg}`
-// const TgMainChannel = '-1002258088628'
-const TgMainChannel = '-4729112297'
+const TgMainChannel = '-1002258088628'
+// const TgMainChannel = '-4729112297'
 
 interface INames {
     [key: string]: string
