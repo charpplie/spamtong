@@ -16,7 +16,7 @@ const Names: INames = {
 
 export default {
     name: 'message',
-    dev: true,
+    // dev: true,
     callback: async (instance, ctx) => {
         const message = ctx.update.message!
 
