@@ -21,7 +21,7 @@ export default {
         const message = ctx.update.message!
 
         console.log(message.chat.id)
-        if (message.chat.id !== RADIO_DSTG_TG_GROUP as unknown as Number) return
+        if (`${message.chat.id}` !== RADIO_DSTG_TG_GROUP) return
         const guild = instance.client.guilds.cache.get(RADIO_DSTG_DS_GUILD)
         const channel = guild?.channels.cache.get(RADIO_DSTG_DS_CHANNEL) as TextChannel
 
