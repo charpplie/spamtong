@@ -97,7 +97,7 @@ export default {
     name: Events.MessageCreate,
     // dev: true,
     callback: async (instance, message: Message) => {
-        if (message.author.bot || (message.guild && message.guild.id != RADIO_DSTG_DS_GUILD) || message.channel.id != RADIO_DSTG_DS_CHANNEL) return
+        if (message.content.length === 0 || message.author.bot || (message.guild && message.guild.id != RADIO_DSTG_DS_GUILD) || message.channel.id != RADIO_DSTG_DS_CHANNEL) return
 
         const name = Names[message.author.id]
 
