@@ -1,6 +1,6 @@
 import { EventTg } from 'comx'
 import { TextChannel } from 'discord.js'
-import { RADIO_DSTG_DS_CHANNEL, RADIO_DSTG_DS_GUILD } from 'eshared'
+import { RADIO_DSTG_DS_CHANNEL, RADIO_DSTG_DS_GUILD, RADIO_DSTG_TG_GROUP } from 'eshared'
 
 interface INames {
     [key: string]: string
@@ -18,10 +18,13 @@ export default {
     name: 'message',
     // dev: true,
     callback: async (instance, ctx) => {
+        const message = ctx.update.message!
+
+        if (message.chat.id as unknown as string !== RADIO_DSTG_TG_GROUP) return
         const guild = instance.client.guilds.cache.get(RADIO_DSTG_DS_GUILD)
         const channel = guild?.channels.cache.get(RADIO_DSTG_DS_CHANNEL) as TextChannel
 
-        const message = ctx.update.message!
+        console.log(message.chat.id)
 
         const name = Names[message.from.id]
 
