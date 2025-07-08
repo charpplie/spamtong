@@ -1,4 +1,4 @@
-import { Event, Events, Utils, i18n } from 'comx'
+import { Event, Events, Utils } from 'comx'
 import { EmbedBuilder } from 'discord.js'
 
 const GUILD = '1150427580734906368'
@@ -55,7 +55,7 @@ export default {
 
       const embed = new EmbedBuilder()
         .setColor('DarkPurple')
-        .setFooter({ text: `${i18n.__({ phrase: 'g.copyright', locale: 'en'})}`, iconURL: instance.getOwnerIcon() })
+        .setFooter({ text: `${Utils.locale('g.copyright', 'en')}`, iconURL: instance.getOwnerIcon() })
         .setTitle(title)
         // .setAuthor({ name: `${Old.user.id}` })
         .setDescription(`${Old.nickname === null ? `${Old.user.username} ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}` : `${Old.nickname} (${Old.user.username}) ${New.nickname === null ? ` убрал никнейм` : ` сменил имя на ${New.nickname}`}`}`)

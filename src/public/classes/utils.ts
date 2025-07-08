@@ -3,9 +3,43 @@ import { Dirent, readFileSync } from 'fs'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { I18n } from 'i18n'
+import { FFmpeggy } from 'ffmpeggy'
+import ffmpegBin from 'ffmpeg-static'
+
+const i18n = new I18n({
+  locales: [
+    'en',
+    'ru'
+  ],
+  directory: join(__dirname, '../../locales'),
+  defaultLocale: 'en',
+  retryInDefaultLocale: true,
+  objectNotation: true,
+  register: global,
+  updateFiles: false,
+  logWarnFn: function (msg) {
+    console.log(msg)
+  },
+  logErrorFn: function (msg) {
+    console.log(msg)
+  },
+  missingKeyFn: function (locale, value) {
+    return value
+  },
+})
 
 export class CUtils {
-  constructor() { }
+  public ffmpegg: FFmpeggy
+
+  public constructor() {
+    FFmpeggy.DefaultConfig = {
+      ...FFmpeggy.DefaultConfig,
+      'ffmpegBin': ffmpegBin as string,
+    }
+
+    this.ffmpegg = new FFmpeggy()
+  }
 
   public async readObjects<T>(dir: string): Promise<T[]> {
     const stack: string[] = [dir]
@@ -42,7 +76,7 @@ export class CUtils {
   }
 
   private shouldSkipFile(file: Dirent): boolean {
-    return file.name.startsWith('!') || (!file.isDirectory() && !(file.name.endsWith('.ts') || !file.name.endsWith('.js')))
+    return file.name.startsWith('!') || (!file.isDirectory() && !file.name.endsWith('.ts'))
   }
 
   public Sleep(ms: number): Promise<unknown> {
@@ -147,6 +181,10 @@ export class CUtils {
     }
 
     throw new Error(`Failed to fetch from ${url} after ${maxRetries} attempts.`)
+  }
+
+  public locale(phrase: string, locale: string): string {
+    return i18n.__({ phrase: phrase, locale: locale })
   }
 }
 

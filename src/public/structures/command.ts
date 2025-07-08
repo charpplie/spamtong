@@ -6,6 +6,7 @@ import {
   LocalizationMap
 } from 'discord.js'
 import { BotManager } from '../classes/botManager'
+import { Context } from 'grammy'
 
 export interface Command {
   name: string,
@@ -34,6 +35,7 @@ export interface Command {
   allowedUsers?: string[],
   isOwnerOnly?: boolean | false,
   cooldown?: CooldownOptions,
+  dev?: boolean | false,
   callback: (interaction: CommandInteraction, instance: BotManager) => void,
   autocomplete?: (interaction: AutocompleteInteraction) => void,
 }
@@ -96,3 +98,10 @@ type OptionAllowedChannelType =
   | 'StageVoice'
   | 'Forum'
   | 'Media'
+
+export interface CommandTg {
+  name: string,
+  description: string,
+  dev?: boolean | false,
+  callback: (instance: BotManager, ctx: Context) => void,
+}

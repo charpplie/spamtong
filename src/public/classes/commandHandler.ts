@@ -1,16 +1,15 @@
 import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from 'discord.js'
-import { OptionAllowedChannelTypes, Command } from '../structures/command'
-import { readdirSync } from 'fs'
-import { join } from 'path'
-import { Utils } from 'comx'
+import { OptionAllowedChannelTypes, Command, CommandTg } from '../structures/command'
 import { BotManager } from './botManager'
+import { Utils } from 'comx'
+import { Bot, Composer } from 'grammy'
+import { BotCommand } from 'grammy/types'
 
 export class CommandHandler {
   private instance: BotManager
   private client: Client
   private token: string
   private appId: string
-  private owner: string
   private commands: Collection<string, Command> = new Collection<string, Command>()
   private cooldowns: Collection<string, number> = new Collection<string, number>()
   private slashCommandsGlobal: SlashCommandBuilder[] = []
@@ -22,7 +21,6 @@ export class CommandHandler {
       client,
       token,
       appId,
-      owner,
       commandsDir
     } = options
 
@@ -30,9 +28,8 @@ export class CommandHandler {
     this.client = client
     this.token = token
     this.appId = appId
-    this.owner = owner
 
-    this.client.on('ready', async () => {
+    this.client.once('ready', async () => {
       this.readSlashCommands(commandsDir).then(() => this.registerSlashCommands())
     })
   }
@@ -42,6 +39,8 @@ export class CommandHandler {
       const commands = await Utils.readObjects<Command>(commandDir)
 
       for (const command of commands) {
+        if ((command.dev && !this.instance.config.isDev) || (!command.dev && this.instance.config.isDev)) continue
+
         if (command.name) this.commands.set(command.name, command)
 
         const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
@@ -51,36 +50,18 @@ export class CommandHandler {
         else this.slashCommandsGlobal.push(data)
       }
     }
-    // const __readSlashCommands = async (dir: string) => {
-    //   const files = readdirSync(dir, {
-    //     withFileTypes: true,
-    //   })
-
-    //   for (const file of files) {
-    //     const filePath = join(dir, file.name)
-
-    //     if (file.name.charAt(0) === '!') continue
-    //     if (!file.isDirectory() && !file.name.endsWith('.ts')) continue
-    //     if (file.isDirectory()) { await __readSlashCommands(filePath); continue }
-
-    //     const command = (await import(filePath)).default
-    //     if (command) this.commands.set(command.name, command)
-
-    //     const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
-    //     this.assignCommandInfo(command, data)
-
-    //     if (command.guilds) this.slashCommandsGuilds.push(data)
-    //     else this.slashCommandsGlobal.push(data)
-    //   }
-    // }
-
-    // for (const commandDir of commandsDir) await __readSlashCommands(commandDir)
   }
 
   private async registerSlashCommands() {
     const rest = new REST({ version: '10' }).setToken(this.token)
 
-    if (this.slashCommandsGlobal) await rest.put(Routes.applicationCommands(`${this.appId}`), { body: this.slashCommandsGlobal, })
+    if (this.slashCommandsGlobal) {
+      try {
+        await rest.put(Routes.applicationCommands(`${this.appId}`), { body: this.slashCommandsGlobal, })
+      } catch (why) {
+        console.error(why)
+      }
+    }
 
     if (this.slashCommandsGuilds) {
       const guildCommands: IGuildCommands = {}
@@ -96,7 +77,11 @@ export class CommandHandler {
         }
       })
 
-      for (const guild in guildCommands) await rest.put(Routes.applicationGuildCommands(`${this.appId}`, guild), { body: guildCommands[guild] })
+      try {
+        for (const guild in guildCommands) await rest.put(Routes.applicationGuildCommands(`${this.appId}`, guild), { body: guildCommands[guild] })
+      } catch (why) {
+        console.error(why)
+      }
     }
 
     this.client.on('interactionCreate', async (interaction: Interaction) => {
@@ -104,7 +89,8 @@ export class CommandHandler {
         const command = this.commands.get(interaction.commandName)
         if (!command) return
 
-        if (command.isOwnerOnly && interaction.user.id !== this.owner) return
+        if (command.isOwnerOnly && interaction.user.id !== this.instance.configDs.owner) return
+        if (command.dev && !this.instance.configDs.devs.includes(interaction.user.id)) return
         if (command.allowedUsers && !command.allowedUsers.includes(interaction.user.id)) return
 
         if (await this.checkcooldowns(command, interaction)) command.callback(interaction as CommandInteraction, this.instance)
@@ -112,7 +98,7 @@ export class CommandHandler {
         const command = this.commands.get(interaction.commandName)
         if (!command || !command.autocomplete) return
 
-        try { await command.autocomplete(interaction) } catch (why) { }
+        try { command.autocomplete(interaction) } catch (why) { }
       }
     })
   }
@@ -120,7 +106,7 @@ export class CommandHandler {
   private async checkcooldowns(command: Command, interaction: CommandInteraction): Promise<boolean> {
     if (!command.cooldown) return true
 
-    if (command.cooldown.ownerBypass && interaction.user.id === this.owner) return true
+    if (command.cooldown.ownerBypass && interaction.user.id === this.instance.configDs.owner) return true
 
     if (!this.cooldowns.has(command.name)) this.cooldowns.set(command.name, new Collection<string, number[]>() as any)
 
@@ -470,6 +456,62 @@ interface Options {
   client: Client,
   token: string,
   appId: string,
-  owner: string,
+  commandsDir: string[],
+}
+
+// export class CommandHandlerTg {
+//   private instance: BotManager
+//   private client: Bot
+//   private commands: Collection<string, CommandTg> = new Collection<string, CommandTg>()
+//   private commandsArray: BotCommand[] = []
+
+//   public constructor(options: OptionsTg) {
+//     const {
+//       instance,
+//       client,
+//       commandsDir,
+//     } = options
+
+//     this.instance = instance
+//     this.client = client
+//     this.readCommands(commandsDir).then(() => this.registerCommands())
+//   }
+
+//   private async readCommands(commandsDir: string[]) {
+//     for (const commandDir of commandsDir) {
+//       const commands = await Utils.readObjects<CommandTg>(commandDir)
+
+//       for (const command of commands) {
+//         if ((command.dev && !this.instance.config.isDev) || (!command.dev && this.instance.config.isDev)) continue
+
+//         if (command.name) {
+//           this.commands.set(command.name, command)
+          
+//           this.commandsArray.push({
+//             command: command.name,
+//             description: command.description,
+//           })
+//         }
+//       }
+//     }
+//   }
+
+//   private async registerCommands() {
+//     await this.client.api.setMyCommands(this.commandsArray)
+
+//     for (const command of this.commandsArray) {
+//       this.client.use(command.command, async (ctx) => {
+//         const cmd = this.commands.get(command.command)
+//         if (!cmd) return
+
+//         cmd.callback(this.instance, ctx)
+//       })
+//     }
+//   }
+// }
+
+interface OptionsTg {
+  instance: BotManager,
+  client: Bot,
   commandsDir: string[],
 }

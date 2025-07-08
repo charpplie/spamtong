@@ -9,6 +9,9 @@
       "comx": [
         "./src/public/comx.ts"
       ],
+      "eshared": [
+        "./src/public/events_shared.ts"
+      ],
     }
   }
 }

@@ -1,59 +1,37 @@
-import { Event, EventsDir } from '../structures/event'
 import { Client } from 'discord.js'
+import { Event, EventTg } from '../structures/event'
 import { Utils } from '../comx'
 import { BotManager } from './botManager'
+import { Bot, Context, Filter, FilterQuery, Middleware } from 'grammy'
 
 export class EventHandler {
   private instance: BotManager
   private client: Client
-  private isDev: boolean
 
   public constructor(options: Options) {
     const {
       instance,
       client,
       events,
-      isDev,
     } = options
 
     this.instance = instance
     this.client = client
-    this.isDev = isDev
 
     this.registerEvents(events)
   }
 
-  private async registerEvents(eventsDir: EventsDir[]) {
+  private async registerEvents(eventsDir: string[]) {
     for (const eventDir of eventsDir) {
-      const events = await Utils.readObjects<Event | Function>(eventDir.dir)
+      const events = await Utils.readObjects<Event>(eventDir)
 
       for (const event of events) {
-        if (this.isDev && typeof event === 'object') {
-          if (eventDir.dev) {
-            if (event.dev === false) {
-              continue
-            }
-          } else if (!event.dev) {
-            continue
-          }
-        } else if (typeof event === 'object') {
-          if (event.dev === true) {
-            continue
-          }
-        }
+        if ((event.dev && !this.instance.config.isDev) || (!event.dev && this.instance.config.isDev)) continue
 
-        if (eventDir.name_override) {
-          if (typeof event === 'function') {
-            this.client.on(eventDir.name_override, async (...args: any[]) => {
-              event(this.instance, ...args)
-            })
-          }
-        } else {
-          if (typeof event === 'object' && typeof event.name === 'string' && typeof event.callback === 'function') {
-            this.client.on(event.name, async (...args: any[]) => {
-              event.callback(this.instance, ...args)
-            })
-          }
+        if (typeof event === 'object') {
+          this.client.on(event.name as string, async (...args: any[]) => {
+            event.callback(this.instance, ...args)
+          })
         }
       }
     }
@@ -63,6 +41,45 @@ export class EventHandler {
 interface Options {
   instance: BotManager,
   client: Client,
-  events: EventsDir[],
-  isDev: boolean,
+  events: string[],
+}
+
+export class EventHandlerTg {
+  private instance: BotManager
+  private client: Bot
+
+  public constructor(options: OptionsTg) {
+    const {
+      instance,
+      client,
+      events,
+    } = options
+
+    this.instance = instance
+    this.client = client
+
+    this.registerEvents(events)
+  }
+
+  private async registerEvents(eventsDir: string[]) {
+    for (const eventDir of eventsDir) {
+      const events = await Utils.readObjects<EventTg>(eventDir)
+
+      for (const event of events) {
+        if ((event.dev && !this.instance.config.isDev) || (!event.dev && this.instance.config.isDev)) continue
+
+        if (typeof event === 'object') {
+          this.client.on(event.name, async (ctx) => {
+            event.callback(this.instance, ctx)
+          })
+        }
+      }
+    }
+  }
+}
+
+interface OptionsTg {
+  instance: BotManager,
+  client: Bot,
+  events: string[]
 }

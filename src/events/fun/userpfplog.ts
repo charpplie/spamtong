@@ -1,4 +1,4 @@
-import { Event, Events, i18n, Utils } from 'comx'
+import { Event, Events, Utils } from 'comx'
 import { TextChannel, User, EmbedBuilder } from 'discord.js'
 import axios from 'axios'
 import { createWriteStream } from 'fs'
@@ -40,7 +40,7 @@ export default {
             if (newUser.avatar === null) {
                 const embed = new EmbedBuilder()
                     .setColor('DarkPurple')
-                    .setFooter({ text: i18n.__({ phrase: 'g.copyright', locale: 'en' }), iconURL: instance.getOwnerIcon() })
+                    .setFooter({ text: Utils.locale('g.copyright', 'en'), iconURL: instance.getOwnerIcon() })
                     .setTitle(`${oldUser.username} убрал аватарку`)
 
                 await channel.send({
@@ -75,7 +75,7 @@ export default {
                             const embed = new EmbedBuilder()
                                 .setColor('DarkPurple')
                                 .setImage(`${BASE_URL}${newUser.avatar}.webp`)
-                                .setFooter({ text: i18n.__({ phrase: 'g.copyright', locale: 'en' }), iconURL: instance.getOwnerIcon() })
+                                .setFooter({ text: Utils.locale('g.copyright', 'en'), iconURL: instance.getOwnerIcon() })
                                 .setTitle(`${oldUser.username} поменял аватарку`)
                                 .setDescription(`${oldUser.avatar === null ? '' : `[Old](${BASE_URL}${oldUser.avatar}.webp) |`} [New](${BASE_URL}${newUser.avatar}.webp)`)
 
