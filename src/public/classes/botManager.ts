@@ -80,9 +80,7 @@ export class BotManager {
       console.error(why)
     })
 
-    await this.tgClient.start().catch(why => {
-      console.error(why)
-    })
+    await this.tgClient.start()
   }
 
   public getOwnerIcon(): string {
