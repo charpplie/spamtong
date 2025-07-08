@@ -16,11 +16,12 @@ const Names: INames = {
 
 export default {
     name: 'message',
-    // dev: true,
+    dev: true,
     callback: async (instance, ctx) => {
         const message = ctx.update.message!
 
-        if (message.chat.id as unknown as string !== RADIO_DSTG_TG_GROUP) return
+        console.log(message.chat.id)
+        if (message.chat.id !== RADIO_DSTG_TG_GROUP as unknown as Number) return
         const guild = instance.client.guilds.cache.get(RADIO_DSTG_DS_GUILD)
         const channel = guild?.channels.cache.get(RADIO_DSTG_DS_CHANNEL) as TextChannel
 
