@@ -1,4 +1,4 @@
-import { EventTg } from 'comx'
+import { EventTg, Prisma } from 'comx'
 import { TextChannel } from 'discord.js'
 import { RADIO_DSTG_DS_CHANNEL, RADIO_DSTG_DS_GUILD, RADIO_DSTG_TG_GROUP } from 'eshared'
 
@@ -25,7 +25,8 @@ export default {
         const guild = instance.client.guilds.cache.get(RADIO_DSTG_DS_GUILD)
         const channel = guild?.channels.cache.get(RADIO_DSTG_DS_CHANNEL) as TextChannel
 
-        const name = Names[message.from.id]
+        const emoji = await Prisma.radio_emojis.findFirst({ where: { userId: `${message.from.id}` } })
+        const name = `${Names[message.from.id]}${emoji?.emoji ?? ''}`
 
         if (message.text) {
             if (message.text.length > 2000) {
