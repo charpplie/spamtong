@@ -1,0 +1,5 @@
+model msdevblogs {
+    id String @id @default(cuid())
+    blog String
+    lastPost String
+}
