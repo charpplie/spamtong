@@ -16,7 +16,7 @@ const IdDs2Tg: IUserIds = {
 export default {
     name: 'set_emoji',
     description: 'set_emoji',
-    isOwnerOnly: true,
+    // isOwnerOnly: true,
     guilds: ['1150427580734906368'],
     // guilds: ['1335656368241119352'],
     options: [
