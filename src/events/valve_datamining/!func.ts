@@ -1,7 +1,6 @@
 import { Prisma, Utils } from 'comx'
 import { IAppInfo } from './!apps'
 import { TextChannel } from 'discord.js'
-import axios from 'axios'
 
 const TgBaseUrl = `https://api.telegram.org/bot${process.env.token_tg}`
 
