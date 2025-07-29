@@ -28,7 +28,7 @@ const BotConfig: IBotConfig = {
       closeTimeout: 12000,
     },
     token: `${process.env.token}`,
-    appId: isDev ? '1334933369837846548' : '1334933369837846548',
+    appId: isDev ? '1334933369837846548' : '912326828574773299',
     owner: '783443296382746672',
     commandsDir: join(__dirname, 'commands'),
     eventsDir: join(__dirname, 'events'),
