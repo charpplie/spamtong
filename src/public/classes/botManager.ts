@@ -1,54 +1,37 @@
 import { Client, ClientOptions } from 'discord.js'
 import { Bot } from 'grammy'
+import { IBotConfig } from '../../../config'
 import { CommandHandler } from './commandHandler'
 import { EventHandler, EventHandlerTg } from './eventHandler'
 
 export class BotManager {
-  public config!: SharedConfig
-  public configDs!: DiscordConfig
-  public configTg!: TelegramConfig
+  private config: IBotConfig
 
+  public isDev: boolean
   public client: Client
   public tgClient: Bot
 
-  public  constructor(options: Options) {
+  public constructor(config: IBotConfig) {
+    this.config = config
+    this.isDev = config.isDev
+
     const {
-      discordOptions,
-      telegramOptions
-    } = options
+      Discord,
+      Telegram,
+    } = config
 
-    this.config = {
-      isDev: options.sharedOptions.isDev
+    this.client = new Client(Discord.client)
+    this.tgClient = new Bot(Telegram.token)
+
+    if (Discord.commandsDir) {
+      new CommandHandler(this, this.client, config.Discord)
     }
 
-    this.configDs = {
-      owner: discordOptions.owner,
-      devs: discordOptions.devs,
-    }
-
-    this.configTg = {
-      owner: telegramOptions.owner,
-      devs: telegramOptions.devs,
-    }
-
-    this.client = new Client(discordOptions.client)
-    this.tgClient = new Bot(telegramOptions.token)
-
-    if (discordOptions.commandsDir) {
-      new CommandHandler({
-        instance: this,
-        client: this.client,
-        token: discordOptions.token,
-        appId: discordOptions.appId,
-        commandsDir: discordOptions.commandsDir,
-      })
-    }
-
-    if (discordOptions.eventsDir) {
+    if (Discord.eventsDir) {
       new EventHandler({
         instance: this,
         client: this.client,
-        events: discordOptions.eventsDir,
+        events: Discord.eventsDir,
       })
     }
 
@@ -60,31 +43,24 @@ export class BotManager {
     //   })
     // }
 
-    if (telegramOptions.eventsDir) {
+    if (Telegram.eventsDir) {
       new EventHandlerTg({
         instance: this,
         client: this.tgClient,
-        events: telegramOptions.eventsDir,
+        events: Telegram.eventsDir,
       })
     }
 
-    this.init(discordOptions.token)
+    this.init(Discord.token)
   }
-  
+
   private async init(token: string) {
-    await this.login(token)
-  }
-
-  private async login(token: string) {
-    await this.client.login(token).catch(why => {
-      console.error(why)
-    })
-
+    await this.client.login(token)
     await this.tgClient.start()
   }
 
   public getOwnerIcon(): string {
-    return this.client.users.cache.get(this.configDs.owner)?.avatarURL({ forceStatic: true })!
+    return this.client.users.cache.get(this.config.Discord.owner)?.avatarURL({ forceStatic: true })!
   }
 }
 

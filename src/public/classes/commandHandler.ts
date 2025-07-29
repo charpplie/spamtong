@@ -1,63 +1,51 @@
 import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from 'discord.js'
-import { OptionAllowedChannelTypes, Command, CommandTg } from '../structures/command'
+import { OptionAllowedChannelTypes, Command } from '../structures/command'
+import { IDiscordConfig } from '../../../config'
 import { BotManager } from './botManager'
 import { Utils } from 'comx'
-import { Bot, Composer } from 'grammy'
-import { BotCommand } from 'grammy/types'
+import { Bot } from 'grammy'
 
 export class CommandHandler {
   private instance: BotManager
   private client: Client
-  private token: string
-  private appId: string
+  private config: IDiscordConfig
   private commands: Collection<string, Command> = new Collection<string, Command>()
   private cooldowns: Collection<string, number> = new Collection<string, number>()
   private slashCommandsGlobal: SlashCommandBuilder[] = []
   private slashCommandsGuilds: SlashCommandBuilder[] = []
 
-  public constructor(options: Options) {
-    const {
-      instance,
-      client,
-      token,
-      appId,
-      commandsDir
-    } = options
-
+  public constructor(instance: BotManager, client: Client, config: IDiscordConfig) {
     this.instance = instance
     this.client = client
-    this.token = token
-    this.appId = appId
+    this.config = config
 
     this.client.once('ready', async () => {
-      this.readSlashCommands(commandsDir).then(() => this.registerSlashCommands())
+      this.readSlashCommands(config.commandsDir).then(() => this.registerSlashCommands())
     })
   }
 
-  private async readSlashCommands(commandsDir: string[]) {
-    for (const commandDir of commandsDir) {
-      const commands = await Utils.readObjects<Command>(commandDir)
+  private async readSlashCommands(commandsDir: string) {
+    const commands = await Utils.readObjects<Command>(commandsDir)
 
-      for (const command of commands) {
-        if ((command.dev && !this.instance.config.isDev) || (!command.dev && this.instance.config.isDev)) continue
+    for (const command of commands) {
+      if ((command.dev && !this.instance.isDev) || (!command.dev && this.instance.isDev)) continue
 
-        if (command.name) this.commands.set(command.name, command)
+      if (command.name) this.commands.set(command.name, command)
 
-        const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
-        this.assignCommandInfo(command, data)
+      const data = new SlashCommandBuilder().setName(command.name).setDescription(command.description)
+      this.assignCommandInfo(command, data)
 
-        if (command.guilds) this.slashCommandsGuilds.push(data)
-        else this.slashCommandsGlobal.push(data)
-      }
+      if (command.guilds) this.slashCommandsGuilds.push(data)
+      else this.slashCommandsGlobal.push(data)
     }
   }
 
   private async registerSlashCommands() {
-    const rest = new REST({ version: '10' }).setToken(this.token)
+    const rest = new REST({ version: '10' }).setToken(this.config.token)
 
     if (this.slashCommandsGlobal) {
       try {
-        await rest.put(Routes.applicationCommands(`${this.appId}`), { body: this.slashCommandsGlobal, })
+        await rest.put(Routes.applicationCommands(`${this.config.appId}`), { body: this.slashCommandsGlobal, })
       } catch (why) {
         console.error(why)
       }
@@ -78,7 +66,7 @@ export class CommandHandler {
       })
 
       try {
-        for (const guild in guildCommands) await rest.put(Routes.applicationGuildCommands(`${this.appId}`, guild), { body: guildCommands[guild] })
+        for (const guild in guildCommands) await rest.put(Routes.applicationGuildCommands(`${this.config.appId}`, guild), { body: guildCommands[guild] })
       } catch (why) {
         console.error(why)
       }
@@ -89,8 +77,8 @@ export class CommandHandler {
         const command = this.commands.get(interaction.commandName)
         if (!command) return
 
-        if (command.isOwnerOnly && interaction.user.id !== this.instance.configDs.owner) return
-        if (command.dev && !this.instance.configDs.devs.includes(interaction.user.id)) return
+        if (command.isOwnerOnly && interaction.user.id !== this.config.owner) return
+        if (command.dev && !this.config.devs.includes(interaction.user.id)) return
         if (command.allowedUsers && !command.allowedUsers.includes(interaction.user.id)) return
 
         if (await this.checkcooldowns(command, interaction)) command.callback(interaction as CommandInteraction, this.instance)
@@ -106,7 +94,7 @@ export class CommandHandler {
   private async checkcooldowns(command: Command, interaction: CommandInteraction): Promise<boolean> {
     if (!command.cooldown) return true
 
-    if (command.cooldown.ownerBypass && interaction.user.id === this.instance.configDs.owner) return true
+    if (command.cooldown.ownerBypass && interaction.user.id === this.config.owner) return true
 
     if (!this.cooldowns.has(command.name)) this.cooldowns.set(command.name, new Collection<string, number[]>() as any)
 
@@ -456,7 +444,10 @@ interface Options {
   client: Client,
   token: string,
   appId: string,
-  commandsDir: string[],
+  commandsDir: string,
+  owner: string
+  isDev: boolean
+  devs: string | string[]
 }
 
 // export class CommandHandlerTg {
@@ -486,7 +477,7 @@ interface Options {
 
 //         if (command.name) {
 //           this.commands.set(command.name, command)
-          
+
 //           this.commandsArray.push({
 //             command: command.name,
 //             description: command.description,
@@ -513,5 +504,5 @@ interface Options {
 interface OptionsTg {
   instance: BotManager,
   client: Bot,
-  commandsDir: string[],
+  commandsDir: string,
 }

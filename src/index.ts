@@ -1,14 +1,13 @@
 import { GatewayIntentBits, Partials } from 'discord.js'
 import { BotManager } from './public/classes/botManager'
+import { IBotConfig, IConfig } from '../config'
 import { join } from 'path'
 
 const isDev = process.argv.slice(2).includes('--dev')
 
-const g_Bot = new BotManager({
-  sharedOptions: {
-    isDev: isDev,
-  },
-  discordOptions: {
+const BotConfig: IBotConfig = {
+  isDev: isDev,
+  Discord: {
     client: {
       intents: [
         GatewayIntentBits.Guilds,
@@ -29,29 +28,33 @@ const g_Bot = new BotManager({
       closeTimeout: 12000,
     },
     token: `${process.env.token}`,
-    appId: `${process.env.appId}`,
-    owner: `${process.env.owner}`,
-    devs: [`${process.env.owner}`],
-    commandsDir:
-      [
-        join(__dirname, 'commands')
-      ],
-    eventsDir:
-      [
-        join(__dirname, 'events'),
-      ],
+    appId: isDev ? '1334933369837846548' : '1334933369837846548',
+    owner: '783443296382746672',
+    commandsDir: join(__dirname, 'commands'),
+    eventsDir: join(__dirname, 'events'),
+    devs: '783443296382746672'
   },
-  telegramOptions: {
+  Telegram: {
     token: `${process.env.token_tg}`,
-    owner: ``,
-    devs: [``],
-    commandsDir:
-      [
-        join(__dirname, 'commands_tg')
-      ],
-    eventsDir:
-      [
-        join(__dirname, 'events_tg'),
-      ],
-  }
-});
+    commandsDir: join(__dirname, 'commands_tg'),
+    eventsDir: join(__dirname, 'events_tg'),
+    devs: '',
+  },
+}
+
+const g_Bot = new BotManager(BotConfig)
+
+export const Config: IConfig = {
+  EvO: {
+    Radio: {
+      Discord: {
+        Guild: isDev ? '1335656368241119352' : '1150427580734906368',
+        Channel: isDev ? '1340374435294740560' : '1391480237627412502',
+      },
+      Telegram: {
+        Channel: isDev ? '-1002800988001' : '-4887194388',
+      },
+    },
+  },
+  CmO: {}
+}

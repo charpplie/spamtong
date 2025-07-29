@@ -1,6 +1,5 @@
-import { EventTg, Prisma } from 'comx'
+import { EventTg, Prisma, Config } from 'comx'
 import { TextChannel } from 'discord.js'
-import { RADIO_DSTG_DS_CHANNEL, RADIO_DSTG_DS_GUILD, RADIO_DSTG_TG_GROUP } from 'eshared'
 
 interface INames {
     [key: string]: string
@@ -20,17 +19,18 @@ export default {
     callback: async (instance, ctx) => {
         const message = ctx.update.message!
 
-        if (`${message.chat.id}` !== RADIO_DSTG_TG_GROUP) return
+        if (`${message.chat.id}` !== Config.EvO.Radio.Telegram.Channel) return
 
-        const guild = instance.client.guilds.cache.get(RADIO_DSTG_DS_GUILD)
-        const channel = guild?.channels.cache.get(RADIO_DSTG_DS_CHANNEL) as TextChannel
+        const guild = instance.client.guilds.cache.get(Config.EvO.Radio.Discord.Guild)
+        const channel = guild?.channels.cache.get(Config.EvO.Radio.Discord.Channel) as TextChannel
 
-        const emoji = await Prisma.radio_emojis.findFirst({ where: { userId: `${message.from.id}` } })
-        const name = `${Names[message.from.id]}${emoji?.emoji ?? ''}`
+        const emoji_obj = await Prisma.radio_emojis.findFirst({ where: { userId: `${message.from.id}` } })
+        const emoji = emoji_obj?.emoji ?? ''
+        const name = `${Names[message.from.id]}`
 
         if (message.text) {
             if (message.text.length > 2000) {
-                await channel.send(`${name} потревожил нас из другого измерения:`)
+                await channel.send(`**<${name}${emoji}>** потревожил нас из другого измерения:`)
 
                 if (message.text.length > 4000) {
                     const p1 = message.text.slice(0, 2000)
@@ -48,7 +48,7 @@ export default {
                     await channel.send(p2)
                 }
             } else {
-                await channel.send(`${name}: ${message.text}`)
+                await channel.send(`**<${name}${emoji}>** ${message.text}`)
             }
         }
     }

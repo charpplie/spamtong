@@ -1,5 +1,4 @@
-import { Event, Events, Prisma } from 'comx'
-import { RADIO_DSTG_DS_CHANNEL, RADIO_DSTG_DS_GUILD, RADIO_DSTG_TG_GROUP } from 'eshared'
+import { Event, Events, Prisma, Config } from 'comx'
 import { Message } from 'discord.js'
 import { Bot } from 'grammy'
 import { InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo } from 'grammy/types'
@@ -97,15 +96,16 @@ export default {
     name: Events.MessageCreate,
     // dev: true,
     callback: async (instance, message: Message) => {
-        if (message.content.length === 0 || message.author.bot || (message.guild && message.guild.id != RADIO_DSTG_DS_GUILD) || message.channel.id != RADIO_DSTG_DS_CHANNEL) return
+        if (message.content.length === 0 || message.author.bot || (message.guild && message.guild.id != Config.EvO.Radio.Discord.Guild) || message.channel.id != Config.EvO.Radio.Discord.Channel) return
 
         const name = Names[message.author.id]
-        const emoji = await Prisma.radio_emojis.findFirst({ where: { userId: message.author.id } })
+        const emoji_obj = await Prisma.radio_emojis.findFirst({ where: { userId: message.author.id } })
+        const emoji = emoji_obj?.emoji ?? ''
 
         if (message.content.length > 4000) {
-            await instance.tgClient.api.sendMessage(RADIO_DSTG_TG_GROUP, `${name}${emoji?.emoji ?? ''} потревожил нас из другого измерения:`, { parse_mode: 'Markdown' })
+            await instance.tgClient.api.sendMessage(Config.EvO.Radio.Telegram.Channel, `${name}${emoji} потревожил нас из другого измерения:`, { parse_mode: 'Markdown' }) // wtf is this loL?>
         } else {
-            await instance.tgClient.api.sendMessage(RADIO_DSTG_TG_GROUP, `${name}${emoji?.emoji ?? ''}: ${message.content}`, { parse_mode: 'Markdown' })
+            await instance.tgClient.api.sendMessage(Config.EvO.Radio.Telegram.Channel, `*<${name}${emoji}>* ${message.content}`, { parse_mode: 'Markdown' })
         }
     }
 } as Event

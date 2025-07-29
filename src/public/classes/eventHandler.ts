@@ -2,7 +2,7 @@ import { Client } from 'discord.js'
 import { Event, EventTg } from '../structures/event'
 import { Utils } from '../comx'
 import { BotManager } from './botManager'
-import { Bot, Context, Filter, FilterQuery, Middleware } from 'grammy'
+import { Bot } from 'grammy'
 
 export class EventHandler {
   private instance: BotManager
@@ -21,27 +21,26 @@ export class EventHandler {
     this.registerEvents(events)
   }
 
-  private async registerEvents(eventsDir: string[]) {
-    for (const eventDir of eventsDir) {
-      const events = await Utils.readObjects<Event>(eventDir)
+  private async registerEvents(eventsDir: string) {
+    const events = await Utils.readObjects<Event>(eventsDir)
 
-      for (const event of events) {
-        if ((event.dev && !this.instance.config.isDev) || (!event.dev && this.instance.config.isDev)) continue
+    for (const event of events) {
+      if ((event.dev && !this.instance.isDev) || (!event.dev && this.instance.isDev)) continue
 
-        if (typeof event === 'object') {
-          this.client.on(event.name as string, async (...args: any[]) => {
-            event.callback(this.instance, ...args)
-          })
-        }
+      if (typeof event === 'object') {
+        this.client.on(event.name as string, async (...args: any[]) => {
+          event.callback(this.instance, ...args)
+        })
       }
     }
+
   }
 }
 
 interface Options {
   instance: BotManager,
   client: Client,
-  events: string[],
+  events: string,
 }
 
 export class EventHandlerTg {
@@ -61,25 +60,24 @@ export class EventHandlerTg {
     this.registerEvents(events)
   }
 
-  private async registerEvents(eventsDir: string[]) {
-    for (const eventDir of eventsDir) {
-      const events = await Utils.readObjects<EventTg>(eventDir)
+  private async registerEvents(eventsDir: string) {
+    const events = await Utils.readObjects<EventTg>(eventsDir)
 
-      for (const event of events) {
-        if ((event.dev && !this.instance.config.isDev) || (!event.dev && this.instance.config.isDev)) continue
+    for (const event of events) {
+      if ((event.dev && !this.instance.isDev) || (!event.dev && this.instance.isDev)) continue
 
-        if (typeof event === 'object') {
-          this.client.on(event.name, async (ctx) => {
-            event.callback(this.instance, ctx)
-          })
-        }
+      if (typeof event === 'object') {
+        this.client.on(event.name, async (ctx) => {
+          event.callback(this.instance, ctx)
+        })
       }
     }
+
   }
 }
 
 interface OptionsTg {
   instance: BotManager,
   client: Bot,
-  events: string[]
+  events: string,
 }
