@@ -1,0 +1,6 @@
+model youtube {
+    id String @id @default(cuid())
+    channelId String
+    videoCount String
+    lastVideo String
+}

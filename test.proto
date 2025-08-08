@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+message CMsgClientPICSChangesSinceRequest {
+	optional uint32 since_change_number = 1;
+}

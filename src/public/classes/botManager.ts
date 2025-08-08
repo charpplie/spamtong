@@ -1,6 +1,6 @@
 import { Client, ClientOptions } from 'discord.js'
 import { Bot } from 'grammy'
-import { IBotConfig } from '../../../config'
+import { IBotConfig } from '../structures/config'
 import { CommandHandler } from './commandHandler'
 import { EventHandler, EventHandlerTg } from './eventHandler'
 

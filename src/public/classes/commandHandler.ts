@@ -1,6 +1,6 @@
 import { APIApplicationCommandOptionChoice, Client, Collection, CommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from 'discord.js'
 import { OptionAllowedChannelTypes, Command } from '../structures/command'
-import { IDiscordConfig } from '../../../config'
+import { IDiscordConfig } from '../structures/config'
 import { BotManager } from './botManager'
 import { Utils } from 'comx'
 import { Bot } from 'grammy'

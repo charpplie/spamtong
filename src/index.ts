@@ -1,6 +1,6 @@
 import { GatewayIntentBits, Partials } from 'discord.js'
 import { BotManager } from './public/classes/botManager'
-import { IBotConfig, IConfig } from '../config'
+import { IBotConfig, IConfig } from './public/structures/config'
 import { join } from 'path'
 
 const isDev = process.argv.slice(2).includes('--dev')
@@ -55,6 +55,26 @@ export const Config: IConfig = {
         Channel: isDev ? '-1002800988001' : '-4887194388',
       },
     },
+    Yt: {
+      Guild: isDev ? '1335656368241119352' : '1150427580734906368',
+      Channel: isDev ? '1340374435294740560' : '1155440414443180032',
+      YtChannels: [
+        '',
+      ]
+    },
+    Vcont: {
+      // Guild: isDev ? '1335656368241119352' : '1150427580734906368',
+      Channel: isDev ? '1340374435294740560' : '1181427849303965768',
+      Reactions: [
+        '1️⃣',
+        '2️⃣',
+        '3️⃣',
+        '4️⃣',
+        '5️⃣',
+        // '⭐',
+
+      ]
+    }
   },
   CmO: {}
 }

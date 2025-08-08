@@ -23,17 +23,33 @@ export interface IBotConfig {
     Telegram: ITelegramConfig,
 }
 
+interface IRadioConfig {
+    Discord: {
+        Guild: string,
+        Channel: string,
+    },
+    Telegram: {
+        Channel: string
+    },
+}
+
+interface IYTParserConfig {
+    Guild: string,
+    Channel: string,
+    YtChannels: string[],
+}
+
+interface IVContConfig {
+    // Guild: string,
+    Channel: string,
+    Reactions: string[]
+}
+
 export interface IConfig {
     EvO: {
-        Radio: {
-            Discord: {
-                Guild: string,
-                Channel: string,
-            },
-            Telegram: {
-                Channel: string
-            },
-        },
+        Radio: IRadioConfig,
+        Yt: IYTParserConfig,
+        Vcont: IVContConfig,
     },
     CmO: {},
 }
