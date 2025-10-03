@@ -32,7 +32,7 @@ const BotConfig: IBotConfig = {
     owner: '783443296382746672',
     commandsDir: join(__dirname, 'commands'),
     eventsDir: join(__dirname, 'events'),
-    devs: '783443296382746672'
+    devs: ['783443296382746672', '1350181921946075229']
   },
   Telegram: {
     token: `${process.env.token_tg}`,

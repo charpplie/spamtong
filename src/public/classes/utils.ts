@@ -6,6 +6,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { I18n } from 'i18n'
 import { FFmpeggy } from 'ffmpeggy'
 import ffmpegBin from 'ffmpeg-static'
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
 
 const i18n = new I18n({
   locales: [
@@ -185,6 +186,26 @@ export class CUtils {
 
   public locale(phrase: string, locale: string): string {
     return i18n.__({ phrase: phrase, locale: locale })
+  }
+
+  private static algo = 'aes-256-cbc'
+  private static key = randomBytes(32)
+  private static iv = randomBytes(16)
+  private static key_zero = '00000000000000000000000000000000'
+  private static iv_zero = '0000000000000000'
+
+  public encrypt(str: string, zeros: boolean = false): string {
+    const cipher = createCipheriv(CUtils.algo, zeros ? CUtils.key_zero : CUtils.key, zeros ? CUtils.iv_zero : CUtils.iv)
+    let encrypted = cipher.update(str, 'utf-8', 'hex')
+    encrypted += cipher.final('hex')
+    return encrypted
+  }
+
+  public decrypt(str: string, zeros: boolean = false): string {
+    const decipher = createDecipheriv(CUtils.algo, zeros ? CUtils.key_zero : CUtils.key, zeros ? CUtils.iv_zero : CUtils.iv)
+    let decrypted = decipher.update(str, 'hex', 'utf-8')
+    decrypted += decipher.final('utf-8')
+    return decrypted
   }
 }
 

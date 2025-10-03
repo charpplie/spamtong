@@ -1,0 +1,6 @@
+model wls_private {
+    id String @id @default(cuid())
+    discord String
+    telegram String
+    added Boolean
+}
