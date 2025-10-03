@@ -4,7 +4,9 @@
   },
   "scripts": {
     "start": "tsx --env-file=.env src/index.ts",
-    "dev": "tsx --env-file=.env src/index.ts --dev"
+    "dev": "tsx --env-file=.env src/index.ts --dev",
+    "wls": "",
+    "wls_dev": "tsx --env-file=.env src/sbots/wls/index.ts --dev --wls"
   },
   "dependencies": {
     "@prisma/client": "^6.8.1",

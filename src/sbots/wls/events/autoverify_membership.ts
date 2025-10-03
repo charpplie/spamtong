@@ -1,18 +1,23 @@
-const ROLE_ID = '1422947433209663568'
-const CHAT_ID = '-1002800988001'
-
-
 import { Event, Events, Prisma, Utils } from 'comx'
+
+// //dev
+// const ROLE_ID = '1422947433209663568'
+// const CHAT_ID = '-1002800988001'
+// const GUILD_ID = '1335656368241119352'
+
+// main
+const ROLE_ID = '1422976063587352576'
+const CHAT_ID = ''
+const GUILD_ID = '1421557240476729417'
 
 export default {
     name: Events.ClientReady,
-    dev: true,
+    // dev: true,
     callback: async (instance) => {
-        const guild = await instance.client.guilds.cache.get('1335656368241119352')
+        const guild = await instance.client.guilds.cache.get(GUILD_ID)
         const role = guild?.roles.cache.find(role => role.id == ROLE_ID)!
         while (true) {
-            await Utils.Sleep(12000)
-            console.log('1')
+            await Utils.Sleep(300000)
 
             const users = await Prisma.wls_private.findMany({ where: { added: true } })
 

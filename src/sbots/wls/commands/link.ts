@@ -3,9 +3,9 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'disc
 
 export default {
     name: 'link',
-    description: 'test link',
-    dev: true,
-    guilds: ['1335656368241119352'],
+    description: 'Привязать Telegram к Discord аккаунта',
+    // dev: true,
+    guilds: ['1421557240476729417'],
     callback: async (interaction, instance) => {
         await interaction.deferReply({ flags: MessageFlags.Ephemeral, withResponse: true })
 
@@ -13,12 +13,12 @@ export default {
         const user = await Prisma.wls_private.findFirst({ where: { discord: id } })
 
         if (user) {
-            const rereg = new ButtonBuilder().setCustomId('rereg').setLabel('рега заново').setStyle(ButtonStyle.Primary)
+            const rereg = new ButtonBuilder().setCustomId('rereg').setLabel('Запросить повторную регистрацию').setStyle(ButtonStyle.Primary)
 
             const row: any = new ActionRowBuilder().addComponents(rereg)
 
             const response = await interaction.editReply({
-                content: 'Братанчик, ты уже зареган.\nЭто не так? Можешь начать процесс регистрации заново с помощью кнопОчки ниже или написать любому администратору для решения этого вопроса, лох ебанный',
+                content: 'Вы уже зарегистрированы.\nЭто не так? Можете начать процесс регистрации заново с помощью кнопки ниже или написать любому администратору для решения данного вопроса',
                 components: [row],
 
             })
@@ -33,10 +33,10 @@ export default {
 
                 if (confirmation?.customId == 'rereg') {
                     await Prisma.wls_private.delete({ where: { id: user.id } })
-                    await confirmation.reply({ content: 'Можешь пробовать еще раз', flags: MessageFlags.Ephemeral})
+                    await confirmation.reply({ content: 'Успешно! Можете пробовать пройти регистрацию повторно', flags: MessageFlags.Ephemeral })
                 }
             } catch {
-                await interaction.editReply({ content: 'Confirmation not received within 1 minute, cancelling', components: [] });
+                await interaction.editReply({ content: 'Confirmation not received within 1 minute, cancelling', components: [] })
             }
         } else {
             await Prisma.wls_private.create({
@@ -48,7 +48,7 @@ export default {
             })
 
             const hash = Utils.encrypt(`${interaction.user.id}`, true)
-            await interaction.editReply(`Услышал брат, отправь вот этот вот текстик ${hash} вот этому ботику в телеграмике @wholelottalocsobot`)
+            await interaction.editReply(`Запрос на регистрацию получен. Для прохождения регистрации отправьте данный код авторизации \`\`\`${hash}\`\`\` нашему боту в Telegram - @wholelottalocsobot`)
         }
     }
 } as Command
