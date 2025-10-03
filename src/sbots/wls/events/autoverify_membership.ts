@@ -7,7 +7,7 @@ import { Event, Events, Prisma, Utils } from 'comx'
 
 // main
 const ROLE_ID = '1422976063587352576'
-const CHAT_ID = ''
+const CHAT_ID = '-1002800988001'
 const GUILD_ID = '1421557240476729417'
 
 export default {
