@@ -5,7 +5,7 @@
   "scripts": {
     "start": "tsx --env-file=.env src/index.ts",
     "dev": "tsx --env-file=.env src/index.ts --dev",
-    "wls": "",
+    "wls": "tsx --env-file=.env src/sbots/wls/index.ts --wls",
     "wls_dev": "tsx --env-file=.env src/sbots/wls/index.ts --dev --wls"
   },
   "dependencies": {

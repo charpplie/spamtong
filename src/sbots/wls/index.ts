@@ -27,7 +27,7 @@ const BotConfig: IBotConfig = {
       ],
       closeTimeout: 12000,
     },
-    token: `${process.env.token}`,
+    token: `${process.env.token_wls}`,
     appId: isDev ? '1334933369837846548' : '912326828574773299',
     owner: '783443296382746672',
     commandsDir: join(__dirname, 'commands'),
@@ -35,7 +35,7 @@ const BotConfig: IBotConfig = {
     devs: ['783443296382746672', '1350181921946075229']
   },
   Telegram: {
-    token: `${process.env.token_tg}`,
+    token: `${process.env.token_tg_wls}`,
     commandsDir: join(__dirname, 'commands_tg'),
     eventsDir: join(__dirname, 'events_tg'),
     devs: '',

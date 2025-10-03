@@ -3,7 +3,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'disc
 
 export default {
     name: 'link',
-    description: 'Привязать Telegram к Discord аккаунта',
+    description: 'Привязать Telegram к Discord аккаунту',
     // dev: true,
     guilds: ['1421557240476729417'],
     callback: async (interaction, instance) => {
