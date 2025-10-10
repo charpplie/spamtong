@@ -26,8 +26,6 @@ export default {
                 const tguser = await instance.tgClient.api.getChatMember(CHAT_ID, user.telegram as unknown as number)
                 const dsuser = guild?.members.cache.get(user.discord)
 
-                console.log(tguser)
-
                 if (!tguser || tguser.status == 'left' || tguser.status == 'restricted' || tguser.status == 'kicked') {
                     if (!dsuser) {
                         await Prisma.wls_private.delete({ where: { id: user.id } })

@@ -83,7 +83,18 @@ export default {
   callback: async (instance, message) => {
     if (message.author.bot || !message.guild.id || message.channel.id != Config.EvO.Vcont.Channel) return
 
-    if (message.attachments.every((attach: any) => attach.contentType.startsWith('video') || message.content.contains('vk.com') || message.content.contains('youtube.com'))) {
+
+    if (message.attachments.size == 0) {
+      if (message.content.includes('vk') || message.content.includes('youtube')) {
+        for (let i = 0; i < Config.EvO.Vcont.Reactions.length; i++) {
+          await message.react(Config.EvO.Vcont.Reactions[i]).catch((why: any) => console.error(why))
+        }
+      }
+
+      return
+    }
+
+    if (message.attachments.every((attach: any) => attach.contentType.includes('video'))) {
       for (let i = 0; i < Config.EvO.Vcont.Reactions.length; i++) {
         await message.react(Config.EvO.Vcont.Reactions[i]).catch((why: any) => console.error(why))
       }
