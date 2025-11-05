@@ -24,7 +24,7 @@ export default {
 
         if (!msg || !msg.content.startsWith(MSG_VALIDATE_SEQ) || msg.author.id != AUTHOR_ID) {
             msg = await channel.send(MSG_VALIDATE_SEQ + MSG_CONTENT)
-            writeFileSync(PING_ROLES_FILENAME, msg.id)
+            // writeFileSync(PING_ROLES_FILENAME, msg.id)
 
             for (let EmojiSet in EmojiSets) {
                 await msg.react(EmojiSet)
