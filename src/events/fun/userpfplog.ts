@@ -54,9 +54,12 @@ export default {
 
             if (oldUser.avatar !== newUser.avatar) {
                 const filePath = `/root/dota_images/img/${newUser.avatar}.webp`
+                console.log(filePath)
                 const url = newUser.avatarURL()!
 
-                await download_img(url, filePath).then(async () => {
+                await download_img(url, filePath)
+                
+                async () => {
                     exec('cd /root/dota_images && git add . && git commit -m "img upload"', (err, stdout, stderr) => {
                         if (err) {
                             console.error(err)
@@ -87,7 +90,7 @@ export default {
                             })
                         })
                     })
-                })
+                }
             }
         } catch (why) {
             console.error(why)
