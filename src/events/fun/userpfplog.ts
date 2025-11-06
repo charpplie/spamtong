@@ -1,7 +1,7 @@
 import { Event, Events, Utils } from 'comx'
 import { TextChannel, User, EmbedBuilder } from 'discord.js'
 import axios from 'axios'
-import { createWriteStream } from 'fs'
+import { createWriteStream, existsSync } from 'fs'
 import { exec } from 'child_process'
 
 // const GUILD = '1335656368241119352'
@@ -54,11 +54,25 @@ export default {
 
             if (oldUser.avatar !== newUser.avatar) {
                 const filePath = `/root/dota_images/img/${newUser.avatar}.webp`
-                console.log(filePath)
+                if (existsSync(filePath)) {
+                    const embed = new EmbedBuilder()
+                        .setColor('DarkPurple')
+                        .setImage(`${BASE_URL}${newUser.avatar}.webp`)
+                        .setFooter({ text: Utils.locale('g.copyright', 'en'), iconURL: instance.getOwnerIcon() })
+                        .setTitle(`${oldUser.username} поменял аватарку`)
+                        .setDescription(`${oldUser.avatar === null ? '' : `[Old](${BASE_URL}${oldUser.avatar}.webp) |`} [New](${BASE_URL}${newUser.avatar}.webp)`)
+
+                    await channel.send({
+                        embeds: [embed]
+                    })
+
+                    return
+                }
+                
                 const url = newUser.avatarURL()!
 
                 await download_img(url, filePath)
-                
+
                 async () => {
                     exec('cd /root/dota_images && git add . && git commit -m "img upload"', (err, stdout, stderr) => {
                         if (err) {
