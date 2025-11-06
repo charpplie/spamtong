@@ -5,6 +5,10 @@ import { BotManager } from './botManager'
 import { Utils } from 'comx'
 import { Bot } from 'grammy'
 
+interface IGuildCommands {
+  [guild: string]: SlashCommandBuilder[]
+}
+
 export class CommandHandler {
   private instance: BotManager
   private client: Client
@@ -19,7 +23,7 @@ export class CommandHandler {
     this.client = client
     this.config = config
 
-    this.client.once('ready', async () => {
+    this.client.once('clientReady', async () => {
       this.readSlashCommands(config.commandsDir).then(() => this.registerSlashCommands())
     })
   }
@@ -433,10 +437,6 @@ export class CommandHandler {
       }
     })
   }
-}
-
-interface IGuildCommands {
-  [guild: string]: SlashCommandBuilder[]
 }
 
 interface Options {

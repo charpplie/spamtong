@@ -1,4 +1,4 @@
-// import { Event, Events } from 'comx'
+// import { Event, Events, Utils } from 'comx'
 // import axios from 'axios'
 // import { TextChannel } from 'discord.js'
 
@@ -10,19 +10,21 @@
 //     name: Events.ClientReady,
 //     dev: true,
 //     callback: async (instance) => {
-//         const guild = instance.client.guilds.cache.get('1335656368241119352')
-//         const channel = guild?.channels.cache.get('1340374435294740560') as TextChannel
+//         // const guild = instance.client.guilds.cache.get('1335656368241119352')
+//         // const channel = guild?.channels.cache.get('1340374435294740560') as TextChannel
 
-//         const rDs = await channel.send('test')
+//         // const rDs = await channel.send('test')
 
-//         const rTg = await axios.post(`${TgBaseUrl}/sendMessage`, {
-//             chat_id: CHANNEL,
-//             text: 'test',
-//             parse_mode: 'markdown',
-//         })
+//         // const rTg = await axios.post(`${TgBaseUrl}/sendMessage`, {
+//         //     chat_id: CHANNEL,
+//         //     text: 'test',
+//         //     parse_mode: 'markdown',
+//         // })
 
-//         if (rDs && rTg?.data.ok) {
-//             console.log('Ok')
-//         }
+//         // if (rDs && rTg?.data.ok) {
+//         //     console.log('Ok')
+//         // }
+
+//         console.log(Utils.locale('g.copyright', 'en'))
 //     }
 // } as Event

@@ -13,7 +13,7 @@ const i18n = new I18n({
     'en',
     'ru'
   ],
-  directory: join(__dirname, '../../locales'),
+  directory: './locales',
   defaultLocale: 'en',
   retryInDefaultLocale: true,
   objectNotation: true,

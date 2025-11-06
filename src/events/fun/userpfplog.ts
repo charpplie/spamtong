@@ -4,6 +4,9 @@ import axios from 'axios'
 import { createWriteStream } from 'fs'
 import { exec } from 'child_process'
 
+// const GUILD = '1335656368241119352'
+// const CHANNEL = '1340374435294740560'
+
 const GUILD = '1150427580734906368'
 const CHANNEL = '1204439974766706698'
 

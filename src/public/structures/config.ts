@@ -1,5 +1,7 @@
 import { ClientOptions } from 'discord.js'
 
+
+
 export interface IDiscordConfig {
     client: ClientOptions,
     token: string,
@@ -22,6 +24,8 @@ export interface IBotConfig {
     Discord: IDiscordConfig,
     Telegram: ITelegramConfig,
 }
+
+
 
 interface IRadioConfig {
     Discord: {
@@ -48,7 +52,7 @@ interface IVContConfig {
 export interface IConfig {
     EvO: {
         Radio: IRadioConfig,
-        Yt: IYTParserConfig,
+        // Yt: IYTParserConfig,
         Vcont: IVContConfig,
     },
     CmO: {},
