@@ -17,6 +17,7 @@ const BotConfig: IBotConfig = {
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildVoiceStates,
       ],
       partials: [
         Partials.User,
