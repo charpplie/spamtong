@@ -55,7 +55,8 @@ export class BotManager {
   }
 
   private async init(token: string) {
-    await this.client.login(token)
+    console.log('bot starting')
+    await this.client.login(token).then(() => console.log('bot started'))
     await this.tgClient.start()
   }
 

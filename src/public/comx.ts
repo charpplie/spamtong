@@ -2,7 +2,7 @@ import { CUtils } from './classes/utils'
 import { PrismaClient } from '@prisma/client'
 
 export const Utils = new CUtils()
-export const Prisma = new PrismaClient()
+// export const Prisma = new PrismaClient()
 
 export { Config } from '../config'
 export { Command, CommandTg } from './structures/command'
