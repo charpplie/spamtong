@@ -5,7 +5,7 @@ export default {
     name: Events.MessageCreate,
     // dev: true,
     callback: async (instance, message) => {
-        // if (!CHANNELS.includes(message.channelId)) return
+        if (!CHANNELS.includes(message.channelId)) return
 
         // const guild = instance.client.guilds.cache.get(GUILD)!
         // const channel = guild.channels.cache.get(message.channelId)! as TextChannel
