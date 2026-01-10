@@ -11,6 +11,7 @@ export const EmojiSets: IEmojiSet = {
     '1437863993883627761' : '1437864173521338449', //l4d2
     '1446562055032406016' : '1446562172883833075', // drg
     '1450063972110831689' : '1450064217062244434', //deadlock
+    '1459572551629148200' : '1459572729333284885', //lethal company
 }
 
 export const EmojiKeys = Object.keys(EmojiSets)
