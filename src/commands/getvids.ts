@@ -7,7 +7,7 @@ export default {
     dev: true,
     guilds: ['1335656368241119352'],
     callback: async (interaction, instance) => {
-        await interaction.deferReply({ flags: MessageFlags.Ephemeral })
+        await interaction.deferReply()
 
         const guild = await instance.client.guilds.fetch('1335656368241119352')
         const channel = await guild.channels.fetch('1340374435294740560') as TextChannel
