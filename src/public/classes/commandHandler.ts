@@ -3,7 +3,15 @@ import { OptionAllowedChannelTypes, Command } from '../structures/command'
 import { IDiscordConfig } from '../structures/config'
 import { BotManager } from './botManager'
 import { Utils } from 'comx'
-import { Bot } from 'grammy'
+// import { Bot } from 'grammy'
+
+const COOLDOWN_MULTIPLIERS: Record<string, number> = {
+  'Seconds': 1000,
+  'Minutes': 60000,
+  'Hours': 3600000,
+  'Days': 86400000,
+  'Weeks': 604800000,
+}
 
 interface IGuildCommands {
   [guild: string]: SlashCommandBuilder[]
@@ -47,30 +55,32 @@ export class CommandHandler {
   private async registerSlashCommands() {
     const rest = new REST({ version: '10' }).setToken(this.config.token)
 
-    if (this.slashCommandsGlobal) {
+    if (this.slashCommandsGlobal.length > 0) {
       try {
-        await rest.put(Routes.applicationCommands(`${this.config.appId}`), { body: this.slashCommandsGlobal, })
+        await rest.put(Routes.applicationCommands(`${this.config.appId}`), { body: this.slashCommandsGlobal })
       } catch (why) {
         console.error(why)
       }
     }
 
-    if (this.slashCommandsGuilds) {
+    if (this.slashCommandsGuilds.length > 0) {
       const guildCommands: IGuildCommands = {}
 
-      this.slashCommandsGuilds.forEach(async (_commmand) => {
-        const command = this.commands.get(_commmand.name)
-
-        if (command && command.guilds) {
-          command.guilds.forEach(async (guild) => {
-            if (!guildCommands[guild]) guildCommands[guild] = []
-            guildCommands[guild].push(_commmand)
-          })
+      for (const slashCmd of this.slashCommandsGuilds) {
+        const command = this.commands.get(slashCmd.name)
+        if (command?.guilds) {
+          for (const guild of command.guilds) {
+            (guildCommands[guild] ??= []).push(slashCmd)
+          }
         }
-      })
+      }
 
       try {
-        for (const guild in guildCommands) await rest.put(Routes.applicationGuildCommands(`${this.config.appId}`, guild), { body: guildCommands[guild] })
+        await Promise.all(
+          Object.entries(guildCommands).map(([guild, commands]) =>
+            rest.put(Routes.applicationGuildCommands(`${this.config.appId}`, guild), { body: commands })
+          )
+        )
       } catch (why) {
         console.error(why)
       }
@@ -137,6 +147,7 @@ export class CommandHandler {
 
     const timestamps: any = this.cooldowns.get(command.name)
     const now = Date.now()
+    
     if (timestamps.has(cooldownKey)) {
       const end = timestamps.get(cooldownKey)[1]
       if (now < end) {
@@ -144,37 +155,13 @@ export class CommandHandler {
           content: `Please be patient! You will be able to use ${command.name} again <t:${Math.round(end / 1000)}:R>`,
           ephemeral: true,
         })
-
         return false
       }
-    } else {
-      let cooldownAmount = 0
-      switch (multiplier) {
-        case 'Seconds': {
-          cooldownAmount = amount * 1000
-          break
-        }
-        case 'Minutes': {
-          cooldownAmount = amount * 60 * 1000
-          break
-        }
-        case 'Hours': {
-          cooldownAmount = amount * 60 * 60 * 1000
-          break
-        }
-        case 'Days': {
-          cooldownAmount = amount * 24 * 60 * 60 * 1000
-          break
-        }
-        case 'Weeks': {
-          cooldownAmount = amount * 7 * 24 * 60 * 60 * 1000
-          break
-        }
-      }
-
-      timestamps.set(cooldownKey, [now, now + cooldownAmount])
-      setTimeout(() => timestamps.delete(cooldownKey), cooldownAmount)
     }
+
+    const cooldownAmount = amount * (COOLDOWN_MULTIPLIERS[multiplier] ?? 1000)
+    timestamps.set(cooldownKey, [now, now + cooldownAmount])
+    setTimeout(() => timestamps.delete(cooldownKey), cooldownAmount)
 
     return true
   }
@@ -193,262 +180,100 @@ export class CommandHandler {
     if (command.nsfw) data.setNSFW(command.nsfw)
   }
 
+  private setBaseFields(opt: any, o: any) {
+    opt.setName(o.name)
+      .setNameLocalizations(o.name_localizations ?? {})
+      .setDescription(o.description)
+      .setDescriptionLocalizations(o.description_localizations ?? {})
+      .setRequired(o.required ?? false)
+    return opt
+  }
+
   private assingCommandOptions(command: Command, data: SlashCommandBuilder) {
     if (!command.options) return
 
-    command.options.forEach((option) => {
-      const { name, name_localizations, description, description_localizations, type, required, choices, maxLength, minLength, maxValue, minValue, channelTypes, autocomplete } = option
-      switch (type) {
-        case 'String': {
-          if (minLength !== undefined && maxLength !== undefined) {
-            data.addStringOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : []))
-                .setMinLength(minLength)
-                .setMaxLength(maxLength)
-            )
-          } else if (minLength !== undefined) {
-            data.addStringOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : []))
-                .setMinLength(minLength)
-            )
-          } else if (maxLength !== undefined) {
-            data.addStringOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : []))
-                .setMaxLength(maxLength)
-            )
-          } else {
-            data.addStringOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<string>[] : [])),
-            )
-          }
+    for (const o of command.options) {
+      switch (o.type) {
+        case 'String':
+          data.addStringOption(opt => {
+            this.setBaseFields(opt, o).setAutocomplete(o.autocomplete ?? false)
+            if (o.choices) opt.addChoices(...(o.choices as APIApplicationCommandOptionChoice<string>[]))
+            if (o.minLength !== undefined) opt.setMinLength(o.minLength)
+            if (o.maxLength !== undefined) opt.setMaxLength(o.maxLength)
+            return opt
+          })
           break
-        }
-        case 'Integer': {
-          if (minValue !== undefined && maxValue !== undefined) {
-            data.addIntegerOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-                .setMinValue(minValue)
-                .setMaxValue(maxValue)
-            )
-          } else if (minValue !== undefined) {
-            data.addIntegerOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-                .setMinValue(minValue)
-            )
-          } else if (maxValue !== undefined) {
-            data.addIntegerOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-                .setMaxValue(maxValue)
-            )
-          } else {
-            data.addIntegerOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-            )
-          }
+        case 'Integer':
+          data.addIntegerOption(opt => {
+            this.setBaseFields(opt, o).setAutocomplete(o.autocomplete ?? false)
+            if (o.choices) opt.addChoices(...(o.choices as APIApplicationCommandOptionChoice<number>[]))
+            if (o.minValue !== undefined) opt.setMinValue(o.minValue)
+            if (o.maxValue !== undefined) opt.setMaxValue(o.maxValue)
+            return opt
+          })
           break
-        }
-        case 'Number': {
-          if (minValue !== undefined && maxValue !== undefined) {
-            data.addNumberOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-                .setMinValue(minValue)
-                .setMaxValue(maxValue)
-            )
-          } else if (minValue !== undefined) {
-            data.addNumberOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-                .setMinValue(minValue)
-            )
-          } else if (maxValue !== undefined) {
-            data.addNumberOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-                .setMaxValue(maxValue)
-            )
-          } else {
-            data.addNumberOption(optionData =>
-              optionData
-                .setName(name)
-                .setNameLocalizations((name_localizations ? name_localizations : {}))
-                .setDescription(description)
-                .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-                .setRequired(required || false)
-                .setAutocomplete(autocomplete || false)
-                .addChoices(...(choices ? choices as APIApplicationCommandOptionChoice<number>[] : []))
-            )
-          }
+        case 'Number':
+          data.addNumberOption(opt => {
+            this.setBaseFields(opt, o).setAutocomplete(o.autocomplete ?? false)
+            if (o.choices) opt.addChoices(...(o.choices as APIApplicationCommandOptionChoice<number>[]))
+            if (o.minValue !== undefined) opt.setMinValue(o.minValue)
+            if (o.maxValue !== undefined) opt.setMaxValue(o.maxValue)
+            return opt
+          })
           break
-        }
         case 'Boolean':
-          data.addBooleanOption(optionData =>
-            optionData
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-              .setRequired(required || false)
-          )
+          data.addBooleanOption(opt => this.setBaseFields(opt, o))
           break
         case 'User':
-          data.addUserOption(optionData =>
-            optionData
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-              .setRequired(required || false)
-          )
+          data.addUserOption(opt => this.setBaseFields(opt, o))
           break
         case 'Channel':
-          data.addChannelOption(optionData =>
-            optionData
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-              .setRequired(required || false)
-              .addChannelTypes(...(channelTypes ? channelTypes.map(channelType => OptionAllowedChannelTypes[channelType]) : []))
-          )
+          data.addChannelOption(opt => {
+            this.setBaseFields(opt, o)
+            if (o.channelTypes) opt.addChannelTypes(...o.channelTypes.map(t => OptionAllowedChannelTypes[t]))
+            return opt
+          })
           break
         case 'Role':
-          data.addRoleOption(optionData =>
-            optionData
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-              .setRequired(required || false)
-          )
+          data.addRoleOption(opt => this.setBaseFields(opt, o))
           break
         case 'Mentionable':
-          data.addMentionableOption(optionData =>
-            optionData
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-              .setRequired(required || false)
-          )
+          data.addMentionableOption(opt => this.setBaseFields(opt, o))
           break
         case 'Attachment':
-          data.addAttachmentOption(optionData =>
-            optionData
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
-              .setRequired(required || false)
-          )
+          data.addAttachmentOption(opt => this.setBaseFields(opt, o))
           break
         case 'Subcommand':
-          data.addSubcommand(subcommand =>
-            subcommand
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
+          data.addSubcommand(sub => sub
+            .setName(o.name)
+            .setNameLocalizations(o.name_localizations ?? {})
+            .setDescription(o.description)
+            .setDescriptionLocalizations(o.description_localizations ?? {})
           )
           break
         case 'SubcommandGroup':
-          data.addSubcommandGroup(subcommandGroup =>
-            subcommandGroup
-              .setName(name)
-              .setNameLocalizations((name_localizations ? name_localizations : {}))
-              .setDescription(description)
-              .setDescriptionLocalizations((description_localizations ? description_localizations : {}))
+          data.addSubcommandGroup(grp => grp
+            .setName(o.name)
+            .setNameLocalizations(o.name_localizations ?? {})
+            .setDescription(o.description)
+            .setDescriptionLocalizations(o.description_localizations ?? {})
           )
           break
       }
-    })
+    }
   }
 }
 
-interface Options {
-  instance: BotManager,
-  client: Client,
-  token: string,
-  appId: string,
-  commandsDir: string,
-  owner: string
-  isDev: boolean
-  devs: string | string[]
-}
+// interface Options {
+//   instance: BotManager,
+//   client: Client,
+//   token: string,
+//   appId: string,
+//   commandsDir: string,
+//   owner: string
+//   isDev: boolean
+//   devs: string | string[]
+// }
 
 // export class CommandHandlerTg {
 //   private instance: BotManager
@@ -501,8 +326,8 @@ interface Options {
 //   }
 // }
 
-interface OptionsTg {
-  instance: BotManager,
-  client: Bot,
-  commandsDir: string,
-}
+// interface OptionsTg {
+//   instance: BotManager,
+//   client: Bot,
+//   commandsDir: string,
+// }

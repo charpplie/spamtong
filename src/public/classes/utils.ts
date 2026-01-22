@@ -1,8 +1,6 @@
 import { TextChannel, Message, Snowflake } from 'discord.js'
-import { Dirent, readFileSync } from 'fs'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { I18n } from 'i18n'
 import { FFmpeggy } from 'ffmpeggy'
 import ffmpegBin from 'ffmpeg-static'
@@ -30,6 +28,9 @@ const i18n = new I18n({
   },
 })
 
+const RANDOM_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+const RANDOM_CHARS_LENGTH = RANDOM_CHARS.length
+
 export class CUtils {
   public ffmpegg: FFmpeggy
 
@@ -42,9 +43,10 @@ export class CUtils {
     this.ffmpegg = new FFmpeggy()
   }
 
-  public async readObjects<T>(dir: string): Promise<T[]> {
+  public async readObjects<T>(dir: string, concurrency: number = 10): Promise<T[]> {
     const stack: string[] = [dir]
     const objects: T[] = []
+    const filesToImport: string[] = []
 
     while (stack.length > 0) {
       const currentDir = stack.pop()
@@ -54,18 +56,13 @@ export class CUtils {
         const files = await readdir(currentDir, { withFileTypes: true })
 
         for (const file of files) {
-          if (this.shouldSkipFile(file)) continue
+          if (file.name.startsWith('!') || (!file.isDirectory() && !file.name.endsWith('.ts'))) continue
 
           const filePath = join(currentDir, file.name)
           if (file.isDirectory()) {
             stack.push(filePath)
           } else {
-            try {
-              const object: T = (await import('file://' + filePath)).default
-              objects.push(object)
-            } catch (error) {
-              console.error(`Error importing file ${filePath}: ${error}`)
-            }
+            filesToImport.push(filePath)
           }
         }
       } catch (error) {
@@ -73,11 +70,32 @@ export class CUtils {
       }
     }
 
-    return objects
-  }
+    const importWithConcurrency = async () => {
+      let index = 0
+      const queue: Promise<void>[] = []
 
-  private shouldSkipFile(file: Dirent): boolean {
-    return file.name.startsWith('!') || (!file.isDirectory() && !file.name.endsWith('.ts'))
+      const worker = async () => {
+        while (index < filesToImport.length) {
+          const filePath = filesToImport[index++]
+          try {
+            const object: T = (await import('file://' + filePath)).default
+            objects.push(object)
+          } catch (error) {
+            console.error(`Error importing file ${filePath}: ${error}`)
+          }
+        }
+      }
+
+      for (let i = 0; i < Math.min(concurrency, filesToImport.length); i++) {
+        queue.push(worker())
+      }
+
+      await Promise.all(queue)
+    }
+
+    await importWithConcurrency()
+
+    return objects
   }
 
   public Sleep(ms: number): Promise<unknown> {
@@ -89,14 +107,12 @@ export class CUtils {
   }
 
   public RandomText(length: number): string {
-    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     let randomText = ''
 
     for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length)
-      randomText += characters.charAt(randomIndex)
+      randomText += RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS_LENGTH)]
     }
-
+    
     return randomText
   }
 
@@ -145,44 +161,44 @@ export class CUtils {
   //   }
   // }
 
-  public async safeAxios<T = any, D = any>(url: string, options: safeAxiosOptions, config?: AxiosRequestConfig<D>): Promise<AxiosResponse<T, D>> {
-    const {
-      maxRetries,
-      retryDelay
-    } = options
+  // public async safeAxios<T = any, D = any>(url: string, options: safeAxiosOptions, config?: AxiosRequestConfig<D>): Promise<AxiosResponse<T, D>> {
+  //   const {
+  //     maxRetries,
+  //     retryDelay
+  //   } = options
 
-    let retries = 0
+  //   let retries = 0
 
-    while (retries < maxRetries) {
-      try {
-        const response: AxiosResponse<T, D> = await axios(url, config)
-        return response
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error(`Axios request failed (retry ${retries + 1}/${maxRetries}):`, error.message)
-          if (error.response) {
-            console.error('Response data:', error.response.data)
-            console.error('Response status:', error.response.status)
-            console.error('Response headers:', error.response.headers)
-          } else if (error.request) {
-            console.error('No response received:', error.request)
-          } else {
-            console.error('Error setting up request:', error.message)
-          }
-        } else {
-          console.error(`Unexpected error during request (retry ${retries + 1}/${maxRetries}):`, error)
-        }
+  //   while (retries < maxRetries) {
+  //     try {
+  //       const response: AxiosResponse<T, D> = await axios(url, config)
+  //       return response
+  //     } catch (error) {
+  //       if (axios.isAxiosError(error)) {
+  //         console.error(`Axios request failed (retry ${retries + 1}/${maxRetries}):`, error.message)
+  //         if (error.response) {
+  //           console.error('Response data:', error.response.data)
+  //           console.error('Response status:', error.response.status)
+  //           console.error('Response headers:', error.response.headers)
+  //         } else if (error.request) {
+  //           console.error('No response received:', error.request)
+  //         } else {
+  //           console.error('Error setting up request:', error.message)
+  //         }
+  //       } else {
+  //         console.error(`Unexpected error during request (retry ${retries + 1}/${maxRetries}):`, error)
+  //       }
 
-        retries++
+  //       retries++
 
-        if (retries < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, retryDelay))
-        }
-      }
-    }
+  //       if (retries < maxRetries) {
+  //         await new Promise(resolve => setTimeout(resolve, retryDelay))
+  //       }
+  //     }
+  //   }
 
-    throw new Error(`Failed to fetch from ${url} after ${maxRetries} attempts.`)
-  }
+  //   throw new Error(`Failed to fetch from ${url} after ${maxRetries} attempts.`)
+  // }
 
   public locale(phrase: string, locale: string): string {
     return i18n.__({ phrase: phrase, locale: locale })
@@ -191,25 +207,25 @@ export class CUtils {
   private static algo = 'aes-256-cbc'
   private static key = randomBytes(32)
   private static iv = randomBytes(16)
-  private static key_zero = '00000000000000000000000000000000'
-  private static iv_zero = '0000000000000000'
+  private static keyZero = Buffer.from('00000000000000000000000000000000', 'hex')
+  private static ivZero = Buffer.from('0000000000000000', 'hex')
 
   public encrypt(str: string, zeros: boolean = false): string {
-    const cipher = createCipheriv(CUtils.algo, zeros ? CUtils.key_zero : CUtils.key, zeros ? CUtils.iv_zero : CUtils.iv)
-    let encrypted = cipher.update(str, 'utf-8', 'hex')
-    encrypted += cipher.final('hex')
-    return encrypted
+    const key = zeros ? CUtils.keyZero : CUtils.key
+    const iv = zeros ? CUtils.ivZero : CUtils.iv
+    const cipher = createCipheriv(CUtils.algo, key, iv)
+    return cipher.update(str, 'utf-8', 'hex') + cipher.final('hex')
   }
 
   public decrypt(str: string, zeros: boolean = false): string {
-    const decipher = createDecipheriv(CUtils.algo, zeros ? CUtils.key_zero : CUtils.key, zeros ? CUtils.iv_zero : CUtils.iv)
-    let decrypted = decipher.update(str, 'hex', 'utf-8')
-    decrypted += decipher.final('utf-8')
-    return decrypted
+    const key = zeros ? CUtils.keyZero : CUtils.key
+    const iv = zeros ? CUtils.ivZero : CUtils.iv
+    const decipher = createDecipheriv(CUtils.algo, key, iv)
+    return decipher.update(str, 'hex', 'utf-8') + decipher.final('utf-8')
   }
 }
 
-interface safeAxiosOptions {
-  maxRetries: number,
-  retryDelay: number
-}
+// interface safeAxiosOptions {
+//   maxRetries: number,
+//   retryDelay: number
+// }
