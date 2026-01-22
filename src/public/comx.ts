@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client'
 
 export const Utils = new CUtils()
 export const Heleprs = new CHelpers()
-// export const Prisma = new PrismaClient()
+export const Prisma = new PrismaClient()
 
 export { Config } from '../config'
 export { Command, CommandTg } from './structures/command'
