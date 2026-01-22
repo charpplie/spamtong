@@ -4,13 +4,13 @@ import { MessageFlags, TextChannel } from 'discord.js'
 export default {
     name: 'getvids',
     description: 'getvids test',
-    dev: true,
-    guilds: ['1335656368241119352'],
+    // dev: true,
+    guilds: ['1150427580734906368'],
     callback: async (interaction, instance) => {
         await interaction.deferReply()
 
-        const guild = await instance.client.guilds.fetch('1335656368241119352')
-        const channel = await guild.channels.fetch('1340374435294740560') as TextChannel
+        const guild = await instance.client.guilds.fetch('1150427580734906368')
+        const channel = await guild.channels.fetch('1181427849303965768') as TextChannel
 
         const messages = await Utils.fetchMessages(channel, 1000)
 
