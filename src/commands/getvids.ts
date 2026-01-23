@@ -41,7 +41,7 @@ const hasUserReacted = async (message: any, userId: string): Promise<boolean> =>
 export default {
     name: 'getvids',
     description: 'getvids test',
-    dev: true,
+    // dev: true,
     // guilds: ['1335656368241119352'],
     guilds: ['1150427580734906368'],
     callback: async (interaction, instance) => {
