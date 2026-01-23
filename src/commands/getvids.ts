@@ -105,7 +105,7 @@ export default {
         // Use cached messages if available
         let messages = getCachedMessages(channel.id)
         if (!messages) {
-            messages = await Utils.fetchMessages(channel, 3)
+            messages = await Utils.fetchMessages(channel, 500)
             setCachedMessages(channel.id, messages)
         }
 
