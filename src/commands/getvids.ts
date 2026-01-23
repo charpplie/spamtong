@@ -53,7 +53,7 @@ export default {
         // const guild = await instance.client.guilds.fetch('1335656368241119352')
         // const channel = await guild.channels.fetch('1340374435294740560') as TextChannel
 
-        const messages = await Utils.fetchMessages(channel, 50)
+        const messages = await Utils.fetchMessages(channel, 3)
         const userId = interaction.user.id
 
         const clientUserId = instance.client.user?.id
