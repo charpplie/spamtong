@@ -86,17 +86,17 @@ const hasUserReacted = async (message: Message, userId: string): Promise<boolean
 export default {
     name: 'getvids',
     description: 'getvids test',
-    // dev: true,
-    // guilds: ['1335656368241119352'],
-    guilds: ['1150427580734906368'],
+    dev: true,
+    guilds: ['1335656368241119352'],
+    // guilds: ['1150427580734906368'],
     callback: async (interaction, instance) => {
         await interaction.deferReply()
 
-        const guild = await instance.client.guilds.fetch('1150427580734906368')
-        const channel = await guild.channels.fetch('1181427849303965768') as TextChannel
+        // const guild = await instance.client.guilds.fetch('1150427580734906368')
+        // const channel = await guild.channels.fetch('1181427849303965768') as TextChannel
 
-        // const guild = await instance.client.guilds.fetch('1335656368241119352')
-        // const channel = await guild.channels.fetch('1340374435294740560') as TextChannel
+        const guild = await instance.client.guilds.fetch('1335656368241119352')
+        const channel = await guild.channels.fetch('1340374435294740560') as TextChannel
 
         const userId = interaction.user.id
         const clientUserId = instance.client.user?.id
@@ -105,7 +105,7 @@ export default {
         // Use cached messages if available
         let messages = getCachedMessages(channel.id)
         if (!messages) {
-            messages = await Utils.fetchMessages(channel, 500)
+            messages = await Utils.fetchMessages(channel, Infinity)
             setCachedMessages(channel.id, messages)
         }
 
@@ -118,6 +118,11 @@ export default {
         // Quick filter: remove already cached as viewed
         const uncheckedVideos = videoMessages.filter(m => !viewedMessageIds.has(m.id))
 
+        // Split: check only last 100, count the rest
+        const CHECK_LIMIT = 100
+        const videosToCheck = uncheckedVideos.slice(0, CHECK_LIMIT)
+        const remainingCount = uncheckedVideos.length - CHECK_LIMIT
+
         // URL builder
         const buildUrl = (msgId: string) => 
             `https://discord.com/channels/${guild.id}/${channel.id}/${msgId}`
@@ -126,8 +131,8 @@ export default {
         const unviewed: string[] = []
         const BATCH_SIZE = 20
 
-        for (let i = 0; i < uncheckedVideos.length; i += BATCH_SIZE) {
-            const batch = uncheckedVideos.slice(i, i + BATCH_SIZE)
+        for (let i = 0; i < videosToCheck.length; i += BATCH_SIZE) {
+            const batch = videosToCheck.slice(i, i + BATCH_SIZE)
             
             const results = await Promise.all(
                 batch.map(async m => {
@@ -148,13 +153,19 @@ export default {
         // Update cache
         setCachedViewed(userId, viewedMessageIds)
 
-        if (unviewed.length === 0) {
+        if (unviewed.length === 0 && remainingCount <= 0) {
             return interaction.editReply({ embeds: [Heleprs.createEmbed({ title: 'Непросмотренные видео', description: 'Нет непросмотренных видео.' })] })
         }
 
         // Build links: [1](url),[2](url),...
         const items = unviewed.map((url, i) => `[${i + 1}](${url})`)
-        const embed = Heleprs.createEmbed({ title: 'Непросмотренные видео', description: items.join(',') })
+        
+        let description = items.join(',')
+        if (remainingCount > 0) {
+            description += `\n\n📦 *...и ещё ${remainingCount} видео в канале*`
+        }
+        
+        const embed = Heleprs.createEmbed({ title: 'Непросмотренные видео', description })
 
         return interaction.editReply({ embeds: [embed] })
 

@@ -1,5 +1,5 @@
 import { Event, Events } from 'comx'
-import { CHANNELS } from './!mediathreadsdata'
+import { CHANNELS } from './!data'
 
 export default {
     name: Events.MessageCreate,

@@ -1,5 +1,5 @@
 import { Event, Events } from 'comx'
-import { GUILD, CHANNELS } from './!mediathreadsdata'
+import { GUILD, CHANNELS } from './!data'
 import { TextChannel } from 'discord.js'
 
 export default {
