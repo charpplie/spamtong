@@ -207,8 +207,8 @@ export class CUtils {
   private static algo = 'aes-256-cbc'
   private static key = randomBytes(32)
   private static iv = randomBytes(16)
-  private static keyZero = Buffer.from('00000000000000000000000000000000', 'hex')
-  private static ivZero = Buffer.from('0000000000000000', 'hex')
+  private static keyZero = Buffer.alloc(32, 0)
+  private static ivZero = Buffer.alloc(16, 0)
 
   public encrypt(str: string, zeros: boolean = false): string {
     const key = zeros ? CUtils.keyZero : CUtils.key

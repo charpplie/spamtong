@@ -6,7 +6,7 @@ import { EventTg, Prisma, Utils } from 'comx'
 // const GUILD_ID = '1335656368241119352'
 
 //main
-const ROLE_ID = '1422976063587352576'
+const ROLE_ID = '1484911153556750408'
 const CHAT_ID = '-1002800988001'
 const GUILD_ID = '1421557240476729417'
 

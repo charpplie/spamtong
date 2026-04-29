@@ -2,6 +2,20 @@ import { GatewayIntentBits, Partials } from 'discord.js'
 import { BotManager } from './public/classes/botManager'
 import { IBotConfig, IConfig } from './public/structures/config'
 import { join } from 'path'
+// import readline from 'readline'
+
+// readline.emitKeypressEvents(process.stdin)
+// process.stdin.setRawMode(true)
+
+// process.stdin.on('keypress', (key, data) => {
+//   if (data.ctrl && data.name == 'c') {
+//     process.exit()
+//   }
+
+//   if (data.ctrl && data.name == 'r') {
+//     console.log('reloaded')
+//   }
+// })
 
 const isDev = process.argv.slice(2).includes('--dev')
 
